@@ -38,9 +38,9 @@ cmake -DCMAKE_GENERATOR=Ninja --build .
 ### Features coming within the next 6 months
 
 - Render pipeline using [Vulkan]() as the backend
-- Customizable User Interface for the editor using [ImGui]()
+- Customizable User Interface for the editor
 - Support for both a 2D and a basic but still usable 3D renderer
-- Fully integrated ECS using [entt]()
+- Fully integrated ECS
 
 ### Features coming within 12 months
 
