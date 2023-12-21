@@ -1,0 +1,38 @@
+[
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-core.dir\\lib\\kryos\\core\\console.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\core\\console.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\core\\console.c",
+  "output": "CMakeFiles\\kryos-core.dir\\lib\\kryos\\core\\console.c.obj"
+},
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-core.dir\\lib\\kryos\\core\\context.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\core\\context.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\core\\context.c",
+  "output": "CMakeFiles\\kryos-core.dir\\lib\\kryos\\core\\context.c.obj"
+},
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\time.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\time.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\time.c",
+  "output": "CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\time.c.obj"
+},
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\utils.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\utils.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\utils.c",
+  "output": "CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\utils.c.obj"
+},
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\vector.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\vector.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\lib\\kryos\\utils\\vector.c",
+  "output": "CMakeFiles\\kryos-core.dir\\lib\\kryos\\utils\\vector.c.obj"
+},
+{
+  "directory": "C:/Users/Ewan/Dev/Oniup/kryos/out/Debug",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -D_CRT_SECURE_NO_WARNINGS -IC:/Users/Ewan/Dev/Oniup/kryos -IC:/Users/Ewan/Dev/Oniup/kryos/lib -IC:/Users/Ewan/Dev/Oniup/kryos/lib/kryos -IC:/Users/Ewan/Dev/Oniup/kryos/engine -O0 -g -Xclang -gcodeview -std=gnu11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\kryos-engine.dir\\engine\\main.c.obj -c C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\engine\\main.c",
+  "file": "C:\\Users\\Ewan\\Dev\\Oniup\\kryos\\engine\\main.c",
+  "output": "CMakeFiles\\kryos-engine.dir\\engine\\main.c.obj"
+}
+]
