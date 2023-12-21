@@ -1,5 +1,5 @@
 /**
- * @file main.c
+ * @file context.h
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,41 +27,24 @@
  * SOFTWARE.
  */
 
-#include "kryos/core/context.h"
-#include "kryos/utils/string.h"
+#ifndef KRYOS__CORE__CONTEXT_H_
+#define KRYOS__CORE__CONTEXT_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <stdbool.h>
-#include <string.h>
+#include "core/console.h"
 
-static bool first = true;
+typedef struct engine_context {
+  console_t console;
+} engine_context_t;
 
-void print_result(kry_string_t str)
-{
-  if (first) {
-    kry_string_meta_t* meta = kry_string_meta(str);
-    KRY_INFO("result: len: %zu, cap: %zu, strlen: %zu, str: \"%s\"\n",
-             meta->len, meta->cap, strlen(str), str);
-  }
+engine_context_t* context_ptr();
+
+void context_init();
+void context_terminate();
+
+#ifdef __cplusplus
 }
-
-int main(int argc, char** argv)
-{
-  kry_context_init();
-
-  for (size_t i = 0; i < 1000; i++) {
-    kry_string_t str = kry_string_create("Example string: [%s], int: [%d]",
-                                         "This is a test", 420);
-    print_result(str);
-    str = kry_string_copy(str, "Copying str");
-    print_result(str);
-    for (size_t j = 0; j < 10; j++) {
-      str = kry_string_append(str, "...%zu", j);
-    }
-    print_result(str);
-
-    kry_string_destroy(str);
-    first = false;
-  }
-
-  kry_context_terminate();
-}
+#endif
+#endif

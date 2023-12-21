@@ -1,5 +1,5 @@
 /**
- * @file string.h
+ * @file time.h
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,40 +27,20 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__UTILS__STRING_H_
-#define KRYOS__UTILS__STRING_H_
+#ifndef KRYOS__UTILS__TIME_H_
+#define KRYOS__UTILS__TIME_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdarg.h>
+#define KTIME_STR_MIN_BUF_SIZE 20
 
-#define KRY_STR_MAX_VSPRINTF_BUF_SIZE 2048
-
-typedef struct kry_string_meta {
-  size_t len;
-  size_t cap;
-} kry_string_meta_t;
-
-typedef char* kry_string_t;
-
-void kry_string_destroy(kry_string_t str);
-kry_string_meta_t* kry_string_meta(kry_string_t str);
-
-size_t kry_string_len(kry_string_t str);
-size_t kry_string_capacity(kry_string_t str);
-
-kry_string_t kry_string_resize_cap(kry_string_t str, size_t cap);
-
-kry_string_t kry_string_create(const char* fmt, ...);
-kry_string_t kry_string_append(kry_string_t dest, const char* fmt, ...);
-kry_string_t kry_string_copy(kry_string_t dest, const char* fmt, ...);
-
-kry_string_t kry_string_vcreate(const char* fmt, va_list args);
-kry_string_t kry_string_vcopy(kry_string_t dest, const char* fmt, va_list args);
-kry_string_t kry_string_vappend(kry_string_t dest, const char* fmt,
-                                va_list args);
+/**
+ * @brief Gets the current time and converts into a string
+ * @return String that needs to be freed. This uses malloc to create the result
+ */
+void get_time_as_str(char* dest, size_t size);
 
 #ifdef __cplusplus
 }

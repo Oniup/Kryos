@@ -32,23 +32,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-kry_context_t* g_context = NULL;
+engine_context_t* g_context = NULL;
 
-kry_context_t* kry_get_context()
+engine_context_t* context_ptr()
 {
   return g_context;
 }
 
-void kry_context_init()
+void context_init()
 {
-  g_context = (kry_context_t*)malloc(sizeof(kry_context_t));
+  g_context = (engine_context_t*)malloc(sizeof(engine_context_t));
 
   g_context->console.output_file = "debug.log";
   g_context->console.callback = NULL;
-  g_context->console.filter = KRY_CONSOLE_SEVERITY_NONE_BIT;
+  g_context->console.filter = CONSOLE_SEVERITY_NONE_BIT;
 }
 
-void kry_context_terminate()
+void context_terminate()
 {
   free(g_context);
   g_context = NULL;

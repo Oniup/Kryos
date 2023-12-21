@@ -1,5 +1,5 @@
 /**
- * @file context.h
+ * @file string.h
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,24 +27,42 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__CORE__CONTEXT_H_
-#define KRYOS__CORE__CONTEXT_H_
+#ifndef KRYOS__CONTAINERS__STRING_H_
+#define KRYOS__CONTAINERS__STRING_H_
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "core/console.h"
+#include <stdarg.h>
 
-typedef struct kry_context {
-  kry_console_t console;
-} kry_context_t;
+#define KSTR_MAX_VSPRINTF_BUF_SIZE 2048
 
-kry_context_t* kry_get_context();
+typedef struct string_header {
+  size_t len;
+  size_t cap;
+} string_header_t;
 
-void kry_context_init();
-void kry_context_terminate();
+typedef char* string_t;
+
+void string_destroy(string_t str);
+string_header_t* string_header(string_t str);
+
+size_t string_len(string_t str);
+size_t string_cap(string_t str);
+
+string_t string_resize_cap(string_t str, size_t cap);
+
+string_t string_create(const char* fmt, ...);
+string_t string_append(string_t dest, const char* fmt, ...);
+string_t string_copy(string_t dest, const char* fmt, ...);
+
+string_t string_vcreate(const char* fmt, va_list args);
+string_t string_vcopy(string_t dest, const char* fmt, va_list args);
+string_t string_vappend(string_t dest, const char* fmt, va_list args);
 
 #ifdef __cplusplus
 }
 #endif
+
 #endif

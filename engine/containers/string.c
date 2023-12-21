@@ -27,126 +27,125 @@
  * SOFTWARE.
  */
 
-#include "utils/string.h"
+#include "containers/string.h"
 #include "core/console.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void kry_string_destroy(kry_string_t str)
+void string_destroy(string_t str)
 {
   if (str != NULL) {
-    char* ptr = (char*)str - sizeof(kry_string_meta_t);
+    char* ptr = (char*)str - sizeof(string_header_t);
     free(ptr);
   }
 }
 
-kry_string_meta_t* kry_string_meta(kry_string_t str)
+string_header_t* string_header(string_t str)
 {
-  return (kry_string_meta_t*)((char*)str - sizeof(kry_string_meta_t));
+  return (string_header_t*)((char*)str - sizeof(string_header_t));
 }
 
-size_t kry_string_len(kry_string_t str)
+size_t string_len(string_t str)
 {
-  return kry_string_meta(str)->len;
+  return string_header(str)->len;
 }
 
-size_t kry_string_capacity(kry_string_t str)
+size_t string_cap(string_t str)
 {
-  return kry_string_meta(str)->cap;
+  return string_header(str)->cap;
 }
 
-kry_string_t kry_string_resize_cap(kry_string_t str, size_t cap)
+string_t string_resize_cap(string_t str, size_t cap)
 {
-  kry_string_meta_t* meta = kry_string_meta(str);
-  kry_string_meta_t* temp = realloc(meta, sizeof(kry_string_meta_t) + cap);
-  KRY_ASSERT(temp,
-             "Failed to copy string (%zu) into dest (%zu) due "
-             "to realloc failing",
-             cap, meta->cap);
+  string_header_t* meta = string_header(str);
+  string_header_t* temp = realloc(meta, sizeof(string_header_t) + cap);
+  KASSERT(temp,
+          "Failed to copy string (%zu) into dest (%zu) due "
+          "to realloc failing",
+          cap, meta->cap);
   meta = temp;
   meta->cap = cap;
-  return (kry_string_t)((char*)meta + sizeof(kry_string_meta_t));
+  return (string_t)((char*)meta + sizeof(string_header_t));
 }
 
-kry_string_t kry_string_create(const char* fmt, ...)
+string_t string_create(const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
-  char* result = kry_string_vcreate(fmt, args);
+  char* result = string_vcreate(fmt, args);
   va_end(args);
   return result;
 }
 
-kry_string_t kry_string_append(kry_string_t dest, const char* fmt, ...)
+string_t string_append(string_t dest, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
-  dest = kry_string_vappend(dest, fmt, args);
+  dest = string_vappend(dest, fmt, args);
   va_end(args);
   return dest;
 }
 
-kry_string_t kry_string_copy(kry_string_t dest, const char* fmt, ...)
+string_t string_copy(string_t dest, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
-  dest = kry_string_vcopy(dest, fmt, args);
+  dest = string_vcopy(dest, fmt, args);
   va_end(args);
   return dest;
 }
 
-kry_string_t kry_string_vcreate(const char* fmt, va_list args)
+string_t string_vcreate(const char* fmt, va_list args)
 {
-  char buf[KRY_STR_MAX_VSPRINTF_BUF_SIZE];
+  char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
   vsprintf(buf, fmt, args);
   size_t len = strlen(buf);
   size_t cap = len + 1;
 
-  kry_string_meta_t* meta = malloc(sizeof(kry_string_meta_t) + cap);
-  KRY_ASSERT(meta, "Failed to create string \"%s\" due to malloc failing", buf);
+  string_header_t* meta = malloc(sizeof(string_header_t) + cap);
+  KASSERT(meta, "Failed to create string \"%s\" due to malloc failing", buf);
 
-  char* str = (char*)meta + sizeof(kry_string_meta_t);
+  char* str = (char*)meta + sizeof(string_header_t);
   strncpy(str, buf, len);
   str[len] = '\0';
 
   meta->len = len;
   meta->cap = cap;
-  return (kry_string_t)str;
+  return (string_t)str;
 }
 
-kry_string_t kry_string_vcopy(kry_string_t dest, const char* fmt, va_list args)
+string_t string_vcopy(string_t dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    kry_string_meta_t* meta = kry_string_meta(dest);
+    string_header_t* meta = string_header(dest);
 
-    char buf[KRY_STR_MAX_VSPRINTF_BUF_SIZE];
+    char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
     size_t buf_len = strlen(buf);
 
     if (buf_len >= meta->cap) {
-      dest = kry_string_resize_cap(dest, buf_len + 1);
+      dest = string_resize_cap(dest, buf_len + 1);
     }
     meta->len = buf_len;
 
-    dest = (char*)meta + sizeof(kry_string_meta_t);
+    dest = (char*)meta + sizeof(string_header_t);
     strncpy(dest, buf, buf_len);
     dest[meta->len] = '\0';
 
     return dest;
   }
 
-  return kry_string_vcreate(fmt, args);
+  return string_vcreate(fmt, args);
 }
 
-kry_string_t kry_string_vappend(kry_string_t dest, const char* fmt,
-                                va_list args)
+string_t string_vappend(string_t dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    kry_string_meta_t* meta = kry_string_meta(dest);
+    string_header_t* meta = string_header(dest);
 
-    char buf[KRY_STR_MAX_VSPRINTF_BUF_SIZE];
+    char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
 
     size_t buf_len = strlen(buf);
@@ -154,14 +153,14 @@ kry_string_t kry_string_vappend(kry_string_t dest, const char* fmt,
     meta->len = buf_len + meta->len;
 
     if (meta->len >= meta->cap) {
-      dest = kry_string_resize_cap(dest, meta->len + 1);
+      dest = string_resize_cap(dest, meta->len + 1);
     }
 
-    dest = (char*)meta + sizeof(kry_string_meta_t);
+    dest = (char*)meta + sizeof(string_header_t);
     strncpy(dest + old_len, buf, buf_len);
     dest[meta->len] = '\0';
     return dest;
   }
 
-  return kry_string_vcreate(fmt, args);
+  return string_vcreate(fmt, args);
 }

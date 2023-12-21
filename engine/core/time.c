@@ -1,5 +1,5 @@
 /**
- * @file time.h
+ * @file time.c
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,23 +27,22 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__UTILS__TIME_H_
-#define KRYOS__UTILS__TIME_H_
+#include "core/time.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
-#define KRY_TIME_STR_MIN_BUF_SIZE 20
+void get_time_as_str(char* dest, size_t size)
+{
+  const char* fmt = "%d:%d:%d %d:%d:%d";
+  const size_t fmt_len = strlen(fmt);
 
-/**
- * @brief Gets the current time and converts into a string
- * @return String that needs to be freed. This uses malloc to create the result
- */
-void kry_get_time_as_str(char* dest, size_t size);
+  time_t t = time(NULL);
+  struct tm* tinfo = localtime(&t);
 
-#ifdef __cplusplus
+  /// TODO: Check if "time_info->tm_mon + 1" still needs the +1
+  snprintf(dest, size, fmt, tinfo->tm_mday, tinfo->tm_mon + 1,
+           tinfo->tm_year + 1900, tinfo->tm_hour, tinfo->tm_min, tinfo->tm_sec);
 }
-#endif
-
-#endif
