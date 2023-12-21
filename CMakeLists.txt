@@ -11,38 +11,38 @@ set(CMAKE_C_STANDARD_REQUIRED 11)
 
 # Core Library
 # ----------------------------------------------------------------------------------------------------------------------
-file(GLOB_RECURSE KRYOS_CORE_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.h)
-file(GLOB_RECURSE KRYOS_CORE_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.c)
+file(GLOB_RECURSE KRYOS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+file(GLOB_RECURSE KRYOS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 
-set(KRYOS_CORE_INCLUDE_DIRS 
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib/kryos)
+set(KRYOS_INCLUDE_DIRS 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/kryos)
 
-add_library(kryos-core STATIC
-  ${KRYOS_CORE_HEADER_FILES}
-  ${KRYOS_CORE_SOURCE_FILES})
+add_library(kryos STATIC
+  ${KRYOS_HEADER_FILES}
+  ${KRYOS_SOURCE_FILES})
 
-target_include_directories(kryos-core PRIVATE
-  ${KRYOS_CORE_INCLUDE_DIRS})
+target_include_directories(kryos PRIVATE
+  ${KRYOS_INCLUDE_DIRS})
 
-target_compile_definitions(kryos-core PUBLIC
+target_compile_definitions(kryos PUBLIC
   -D_CRT_SECURE_NO_WARNINGS)
 
 # Editor Exec
 # ----------------------------------------------------------------------------------------------------------------------
 
-# file(GLOB_RECURSE KRYOS_ENGINE_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/engine/*.h)
-file(GLOB_RECURSE KRYOS_ENGINE_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/engine/*.c)
+# file(GLOB_RECURSE KRYOS_EDITOR_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/editor/src/*.h)
+file(GLOB_RECURSE KRYOS_EDITOR_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/editor/src/*.c)
 
-add_executable(kryos-engine ${KRYOS_ENGINE_SOURCE_FILES})
+add_executable(kryos-editor ${KRYOS_EDITOR_SOURCE_FILES})
 
-target_include_directories(kryos-engine PRIVATE
+target_include_directories(kryos-editor PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib/kryos
-  ${CMAKE_CURRENT_SOURCE_DIR}/engine)
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/kryos
+  ${CMAKE_CURRENT_SOURCE_DIR}/editor/src)
 
-target_compile_definitions(kryos-engine PUBLIC
+target_compile_definitions(kryos-editor PUBLIC
   -D_CRT_SECURE_NO_WARNINGS)
 
-target_link_libraries(kryos-engine PUBLIC
-  kryos-core)
+target_link_libraries(kryos-editor PUBLIC
+  kryos)
