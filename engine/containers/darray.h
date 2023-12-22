@@ -1,5 +1,5 @@
 /**
- * @file main.c
+ * @file darray.h
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,41 +27,26 @@
  * SOFTWARE.
  */
 
+#ifndef KRYOS__CONTAINERS__DARRAY_H_
+#define KRYOS__CONTAINERS__DARRAY_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "defines.h"
-#include "engine/containers/string.h"
-#include "engine/core/context.h"
 
-#include <string.h>
+typedef struct {
+  ui64_t length;
+  ui64_t capacity;
+  ui64_t stride;
+} darray_header_t;
 
-static b8_t first = true;
+void* darray_create(ui64_t size, i32_t cap);
+void darray_destroy(void* darray);
 
-void print_result(string_t str)
-{
-  if (first) {
-    string_header_t* header = string_header(str);
-    KINFO("result: len: %zu, cap: %zu, strlen: %zu, str: \"%s\"\n", header->len,
-          header->cap, strlen(str), str);
-  }
+darray_header_t* darray_header_ptr(void* darray);
+
+#ifdef __cplusplus
 }
-
-int main(int argc, char** argv)
-{
-  context_init();
-
-  for (size_t i = 0; i < 1000; i++) {
-    string_t str =
-        string_create("Example string: [%s], int: [%d]", "This is a test", 420);
-    print_result(str);
-    str = string_copy(str, "Copying str");
-    print_result(str);
-    for (size_t j = 0; j < 10; j++) {
-      str = string_append(str, "...%zu", j);
-    }
-    print_result(str);
-
-    string_destroy(str);
-    first = false;
-  }
-
-  context_terminate();
-}
+#endif
+#endif

@@ -35,6 +35,74 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char* console_severity_to_string(console_severity_bit_t lv)
+{
+  switch (lv) {
+  case CONSOLE_SEVERITY_INFO_BIT:
+    return "Info";
+  case CONSOLE_SEVERITY_DEBUG_BIT:
+    return "Debug";
+  case CONSOLE_SEVERITY_TRACE_BIT:
+    return "Trace";
+  case CONSOLE_SEVERITY_WARN_BIT:
+    return "Warning";
+  case CONSOLE_SEVERITY_ERROR_BIT:
+    return "Error";
+  case CONSOLE_SEVERITY_FATAL_BIT:
+    return "Fatal";
+  case CONSOLE_SEVERITY_NONE_BIT:
+    return "None";
+  };
+  return "Undefined";
+}
+
+void console_log(console_severity_bit_t lv, const char* file, i32_t line,
+                 const char* col, const char* fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  console_vlog(lv, file, line, col, fmt, args);
+  va_end(args);
+}
+
+void console_vlog(console_severity_bit_t lv, const char* file, i32_t line,
+                  const char* col, const char* fmt, va_list args)
+{
+  console_t* console = &context_ptr()->console;
+
+  const char* pfx_fmt = "%s%s %s %s:%d: ";
+  const size_t pfx_fmt_len = strlen(pfx_fmt);
+  const size_t fmt_len = strlen(fmt);
+
+  char* time_buf = (char*)malloc(KTIME_STR_MIN_BUF_SIZE);
+  get_time_as_str(time_buf, KTIME_STR_MIN_BUF_SIZE);
+  const char* str_lv = console_severity_to_string(lv);
+
+  // Printing to console
+  printf(pfx_fmt, col, time_buf, str_lv, file, line);
+  vprintf(fmt, args);
+  printf("%s\n", KANSI_COL_RESET);
+  fflush(stdout); // Some IDE's require this like CLion
+
+  if (console->output_file != NULL) {
+    FILE* file = fopen(console->output_file, "a");
+    fprintf(file, pfx_fmt, "", time_buf, str_lv, file, line);
+    vfprintf(file, fmt, args);
+    fprintf(file, "\n");
+    fclose(file);
+  }
+
+  if (console->callback != NULL) {
+    console->callback(lv, file, line, col, fmt, args);
+  }
+
+  free(time_buf);
+
+  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
+    abort();
+  }
+}
+
 const char* ansi_col(const char indent)
 {
   switch (indent) {
@@ -108,73 +176,5 @@ const char* ansi_hl_col(const char indent)
     return KANSI_COL_BHL_WHITE;
   default:
     return KANSI_COL_DEFAULT;
-  }
-}
-
-const char* console_severity_to_string(console_severity_bit_t lv)
-{
-  switch (lv) {
-  case CONSOLE_SEVERITY_INFO_BIT:
-    return "Info";
-  case CONSOLE_SEVERITY_DEBUG_BIT:
-    return "Debug";
-  case CONSOLE_SEVERITY_TRACE_BIT:
-    return "Trace";
-  case CONSOLE_SEVERITY_WARN_BIT:
-    return "Warning";
-  case CONSOLE_SEVERITY_ERROR_BIT:
-    return "Error";
-  case CONSOLE_SEVERITY_FATAL_BIT:
-    return "Fatal";
-  case CONSOLE_SEVERITY_NONE_BIT:
-    return "None";
-  };
-  return "Undefined";
-}
-
-void console_log(console_severity_bit_t lv, const char* file, int line,
-                 const char* col, const char* fmt, ...)
-{
-  va_list args;
-  va_start(args, fmt);
-  console_vlog(lv, file, line, col, fmt, args);
-  va_end(args);
-}
-
-void console_vlog(console_severity_bit_t lv, const char* file, int line,
-                  const char* col, const char* fmt, va_list args)
-{
-  console_t* console = &context_ptr()->console;
-
-  const char* pfx_fmt = "%s%s %s %s:%d: ";
-  const size_t pfx_fmt_len = strlen(pfx_fmt);
-  const size_t fmt_len = strlen(fmt);
-
-  char* time_buf = (char*)malloc(KTIME_STR_MIN_BUF_SIZE);
-  get_time_as_str(time_buf, KTIME_STR_MIN_BUF_SIZE);
-  const char* str_lv = console_severity_to_string(lv);
-
-  // Printing to console
-  printf(pfx_fmt, col, time_buf, str_lv, file, line);
-  vprintf(fmt, args);
-  printf("%s\n", KANSI_COL_RESET);
-  fflush(stdout); // Some IDE's require this like CLion
-
-  if (console->output_file != NULL) {
-    FILE* file = fopen(console->output_file, "a");
-    fprintf(file, pfx_fmt, "", time_buf, str_lv, file, line);
-    vfprintf(file, fmt, args);
-    fprintf(file, "\n");
-    fclose(file);
-  }
-
-  if (console->callback != NULL) {
-    console->callback(lv, file, line, col, fmt, args);
-  }
-
-  free(time_buf);
-
-  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
-    abort();
   }
 }

@@ -33,48 +33,7 @@
 extern "C" {
 #endif
 
-#include <stdarg.h>
-
-#define KANSI_COL_RESET "\x1b[0m"
-
-#define KANSI_COL_DEFAULT "\x1b[0m"
-#define KANSI_COL_BLACK "\x1b[30m"
-#define KANSI_COL_RED "\x1b[31m"
-#define KANSI_COL_GREEN "\x1b[32m"
-#define KANSI_COL_YELLOW "\x1b[33m"
-#define KANSI_COL_BLUE "\x1b[34m"
-#define KANSI_COL_MAGENTA "\x1b[35m"
-#define KANSI_COL_CYAN "\x1b[36m"
-#define KANSI_COL_WHITE "\x1b[37m"
-#define KANSI_COL_GREY "\x1b[90m"
-
-#define KANSI_COL_B_RED "\x1b[91m"
-#define KANSI_COL_B_GREEN "\x1b[92m"
-#define KANSI_COL_B_YELLOW "\x1b[93m"
-#define KANSI_COL_B_BLUE "\x1b[94m"
-#define KANSI_COL_B_MAGENTA "\x1b[95m"
-#define KANSI_COL_B_CYAN "\x1b[96m"
-#define KANSI_COL_B_WHITE "\x1b[97m"
-
-#define KANSI_COL_HL_GREY "\x1b[37;100"
-#define KANSI_COL_HL_RED "\x1b[37;41m"
-#define KANSI_COL_HL_GREEN "\x1b[37;42m"
-#define KANSI_COL_HL_YELLOW "\x1b[30;43m"
-#define KANSI_COL_HL_BLUE "\x1b[37;44m"
-#define KANSI_COL_HL_MAGENTA "\x1b[37;45m"
-#define KANSI_COL_HL_CYAN "\x1b[437;6m"
-#define KANSI_COL_HL_WHITE "\x1b[37;47m"
-
-#define KANSI_COL_BHL_RED "\x1b[37;101m"
-#define KANSI_COL_BHL_GREEN "\x1b[30;102m"
-#define KANSI_COL_BHL_YELLOW "\x1b[30;103m"
-#define KANSI_COL_BHL_BLUE "\x1b[37;104m"
-#define KANSI_COL_BHL_MAGENTA "\x1b[30;105m"
-#define KANSI_COL_BHL_CYAN "\x1b[30;106m"
-#define KANSI_COL_BHL_WHITE "\x1b[30;107m"
-
-const char* ansi_col(const char indent);
-const char* ansi_hl_col(const char indent);
+#include "defines.h"
 
 #define KCOL_LOG(level, col, fmt, ...) \
   console_log(level, __FILE__, __LINE__, col, fmt, __VA_ARGS__)
@@ -111,12 +70,7 @@ const char* ansi_hl_col(const char indent);
 
 #define KFATAL(fmt, ...) KCOL_FATAL(KANSI_COL_BHL_RED, fmt, __VA_ARGS__)
 
-#ifndef NDEBUG
-#define KASSERT(expression, fmt, ...) \
-  (void)((!!(expression)) || (KFATAL(fmt, __VA_ARGS__), 0))
-#else
-#define KASSERT(expression, fmt, ...)
-#endif
+#include <stdarg.h>
 
 typedef enum console_severity_bit {
   CONSOLE_SEVERITY_NONE_BIT = 0,
@@ -133,7 +87,7 @@ typedef int console_filter_t;
 const char* console_severity_to_string(console_severity_bit_t lv);
 
 typedef void (*PFN_console_callback_t)(console_severity_bit_t lv,
-                                       const char* file, int line,
+                                       const char* file, i32_t line,
                                        const char* col, const char* fmt,
                                        va_list args);
 
@@ -143,11 +97,14 @@ typedef struct console {
   PFN_console_callback_t callback;
 } console_t;
 
-void console_log(console_severity_bit_t lv, const char* file, int line,
+void console_log(console_severity_bit_t lv, const char* file, i32_t line,
                  const char* col, const char* fmt, ...);
 
-void console_vlog(console_severity_bit_t lv, const char* file, int line,
+void console_vlog(console_severity_bit_t lv, const char* file, i32_t line,
                   const char* col, const char* fmt, va_list args);
+
+const char* ansi_col(const char indent);
+const char* ansi_hl_col(const char indent);
 
 #ifdef __cplusplus
 }

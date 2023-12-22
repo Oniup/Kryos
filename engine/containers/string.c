@@ -59,15 +59,15 @@ size_t string_cap(string_t str)
 
 string_t string_resize_cap(string_t str, size_t cap)
 {
-  string_header_t* meta = string_header(str);
-  string_header_t* temp = realloc(meta, sizeof(string_header_t) + cap);
+  string_header_t* header = string_header(str);
+  string_header_t* temp = realloc(header, sizeof(string_header_t) + cap);
   KASSERT(temp,
           "Failed to copy string (%zu) into dest (%zu) due "
           "to realloc failing",
-          cap, meta->cap);
-  meta = temp;
-  meta->cap = cap;
-  return (string_t)((char*)meta + sizeof(string_header_t));
+          cap, header->cap);
+  header = temp;
+  header->cap = cap;
+  return (string_t)((char*)header + sizeof(string_header_t));
 }
 
 string_t string_create(const char* fmt, ...)
@@ -104,35 +104,35 @@ string_t string_vcreate(const char* fmt, va_list args)
   size_t len = strlen(buf);
   size_t cap = len + 1;
 
-  string_header_t* meta = malloc(sizeof(string_header_t) + cap);
-  KASSERT(meta, "Failed to create string \"%s\" due to malloc failing", buf);
+  string_header_t* header = malloc(sizeof(string_header_t) + cap);
+  KASSERT(header, "Failed to create string \"%s\" due to malloc failing", buf);
 
-  char* str = (char*)meta + sizeof(string_header_t);
+  char* str = (char*)header + sizeof(string_header_t);
   strncpy(str, buf, len);
   str[len] = '\0';
 
-  meta->len = len;
-  meta->cap = cap;
+  header->len = len;
+  header->cap = cap;
   return (string_t)str;
 }
 
 string_t string_vcopy(string_t dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    string_header_t* meta = string_header(dest);
+    string_header_t* header = string_header(dest);
 
     char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
     size_t buf_len = strlen(buf);
 
-    if (buf_len >= meta->cap) {
+    if (buf_len >= header->cap) {
       dest = string_resize_cap(dest, buf_len + 1);
     }
-    meta->len = buf_len;
+    header->len = buf_len;
 
-    dest = (char*)meta + sizeof(string_header_t);
+    dest = (char*)header + sizeof(string_header_t);
     strncpy(dest, buf, buf_len);
-    dest[meta->len] = '\0';
+    dest[header->len] = '\0';
 
     return dest;
   }
@@ -143,22 +143,22 @@ string_t string_vcopy(string_t dest, const char* fmt, va_list args)
 string_t string_vappend(string_t dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    string_header_t* meta = string_header(dest);
+    string_header_t* header = string_header(dest);
 
     char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
 
     size_t buf_len = strlen(buf);
-    size_t old_len = meta->len;
-    meta->len = buf_len + meta->len;
+    size_t old_len = header->len;
+    header->len = buf_len + header->len;
 
-    if (meta->len >= meta->cap) {
-      dest = string_resize_cap(dest, meta->len + 1);
+    if (header->len >= header->cap) {
+      dest = string_resize_cap(dest, header->len + 1);
     }
 
-    dest = (char*)meta + sizeof(string_header_t);
+    dest = (char*)header + sizeof(string_header_t);
     strncpy(dest + old_len, buf, buf_len);
-    dest[meta->len] = '\0';
+    dest[header->len] = '\0';
     return dest;
   }
 

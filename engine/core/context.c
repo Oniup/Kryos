@@ -28,6 +28,7 @@
  */
 
 #include "core/context.h"
+#include "defines.h"
 
 #include <stdio.h>
 #include <stdlib.h>
