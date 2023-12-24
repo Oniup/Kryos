@@ -58,7 +58,7 @@ extern "C" {
 
 // Default log macros
 
-#define KINFO(fmt, ...) KCOL_INFO(KANSI_COL_GREEN, fmt, __VA_ARGS__)
+#define KINFO(fmt, ...) KCOL_INFO(KANSI_COL_DEFAULT, fmt, __VA_ARGS__)
 
 #define KDEBUG(fmt, ...) KCOL_DEBUG(KANSI_COL_CYAN, fmt, __VA_ARGS__)
 

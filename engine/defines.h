@@ -71,6 +71,9 @@ extern "C" {
 #define KANSI_COL_BHL_CYAN "\x1b[30;106m"
 #define KANSI_COL_BHL_WHITE "\x1b[30;107m"
 
+#define KDEFAULT_CAP_INIT_SIZE 0
+#define KDEFAULT_CAP_INCREASE_SIZE 5
+
 #ifndef NDEBUG
 #define KASSERT(expression, fmt, ...) \
   (void)((!!(expression)) || (KFATAL(fmt, __VA_ARGS__), 0))
@@ -81,12 +84,12 @@ extern "C" {
 typedef char i8_t;
 typedef short i16_t;
 typedef int i32_t;
-typedef long int i64_t;
+typedef long long i64_t;
 
 typedef unsigned char ui8_t;
 typedef unsigned short ui16_t;
 typedef unsigned int ui32_t;
-typedef unsigned long int ui64_t;
+typedef unsigned long long ui64_t;
 
 #ifdef __cplusplus
 typedef bool b8_t;

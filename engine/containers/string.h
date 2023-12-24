@@ -34,32 +34,19 @@
 extern "C" {
 #endif
 
+#include "defines.h"
+
 #include <stdarg.h>
 
 #define KSTR_MAX_VSPRINTF_BUF_SIZE 2048
 
-typedef struct string_header {
-  size_t len;
-  size_t cap;
-} string_header_t;
+char* string_create(const char* fmt, ...);
+char* string_append(char* dest, const char* fmt, ...);
+char* string_copy(char* dest, const char* fmt, ...);
 
-typedef char* string_t;
-
-void string_destroy(string_t str);
-string_header_t* string_header(string_t str);
-
-size_t string_len(string_t str);
-size_t string_cap(string_t str);
-
-string_t string_resize_cap(string_t str, size_t cap);
-
-string_t string_create(const char* fmt, ...);
-string_t string_append(string_t dest, const char* fmt, ...);
-string_t string_copy(string_t dest, const char* fmt, ...);
-
-string_t string_vcreate(const char* fmt, va_list args);
-string_t string_vcopy(string_t dest, const char* fmt, va_list args);
-string_t string_vappend(string_t dest, const char* fmt, va_list args);
+char* string_vcreate(const char* fmt, va_list args);
+char* string_vcopy(char* dest, const char* fmt, va_list args);
+char* string_vappend(char* dest, const char* fmt, va_list args);
 
 #ifdef __cplusplus
 }

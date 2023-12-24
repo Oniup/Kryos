@@ -34,43 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void string_destroy(string_t str)
-{
-  if (str != NULL) {
-    char* ptr = (char*)str - sizeof(string_header_t);
-    free(ptr);
-  }
-}
-
-string_header_t* string_header(string_t str)
-{
-  return (string_header_t*)((char*)str - sizeof(string_header_t));
-}
-
-size_t string_len(string_t str)
-{
-  return string_header(str)->len;
-}
-
-size_t string_cap(string_t str)
-{
-  return string_header(str)->cap;
-}
-
-string_t string_resize_cap(string_t str, size_t cap)
-{
-  string_header_t* header = string_header(str);
-  string_header_t* temp = realloc(header, sizeof(string_header_t) + cap);
-  KASSERT(temp,
-          "Failed to copy string (%zu) into dest (%zu) due "
-          "to realloc failing",
-          cap, header->cap);
-  header = temp;
-  header->cap = cap;
-  return (string_t)((char*)header + sizeof(string_header_t));
-}
-
-string_t string_create(const char* fmt, ...)
+char* string_create(const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -79,7 +43,7 @@ string_t string_create(const char* fmt, ...)
   return result;
 }
 
-string_t string_append(string_t dest, const char* fmt, ...)
+char* string_append(char* dest, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -88,7 +52,7 @@ string_t string_append(string_t dest, const char* fmt, ...)
   return dest;
 }
 
-string_t string_copy(string_t dest, const char* fmt, ...)
+char* string_copy(char* dest, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -97,70 +61,55 @@ string_t string_copy(string_t dest, const char* fmt, ...)
   return dest;
 }
 
-string_t string_vcreate(const char* fmt, va_list args)
+char* string_vcreate(const char* fmt, va_list args)
 {
   char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
   vsprintf(buf, fmt, args);
-  size_t len = strlen(buf);
-  size_t cap = len + 1;
+  ui64_t len = strlen(buf);
 
-  string_header_t* header = malloc(sizeof(string_header_t) + cap);
-  KASSERT(header, "Failed to create string \"%s\" due to malloc failing", buf);
-
-  char* str = (char*)header + sizeof(string_header_t);
+  char* str = malloc(len + 1);
+  KASSERT(str, "Failed to create string \"%s\" due to malloc failing", buf);
   strncpy(str, buf, len);
   str[len] = '\0';
-
-  header->len = len;
-  header->cap = cap;
-  return (string_t)str;
+  return str;
 }
 
-string_t string_vcopy(string_t dest, const char* fmt, va_list args)
+char* string_vcopy(char* dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    string_header_t* header = string_header(dest);
-
     char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
-    size_t buf_len = strlen(buf);
+    ui64_t len = strlen(buf);
 
-    if (buf_len >= header->cap) {
-      dest = string_resize_cap(dest, buf_len + 1);
-    }
-    header->len = buf_len;
-
-    dest = (char*)header + sizeof(string_header_t);
-    strncpy(dest, buf, buf_len);
-    dest[header->len] = '\0';
-
+    free(dest);
+    dest = malloc(sizeof(char) * len + 1);
+    KASSERT(dest, "Failed to copy string \"%s\" due to malloc failing", buf);
+    strncpy(dest, buf, len);
+    dest[len] = '\0';
     return dest;
   }
-
   return string_vcreate(fmt, args);
 }
 
-string_t string_vappend(string_t dest, const char* fmt, va_list args)
+char* string_vappend(char* dest, const char* fmt, va_list args)
 {
   if (dest != NULL) {
-    string_header_t* header = string_header(dest);
-
     char buf[KSTR_MAX_VSPRINTF_BUF_SIZE];
     vsprintf(buf, fmt, args);
 
-    size_t buf_len = strlen(buf);
-    size_t old_len = header->len;
-    header->len = buf_len + header->len;
+    ui64_t buf_len = strlen(buf);
+    ui64_t old_len = strlen(dest);
+    ui64_t len = buf_len + old_len;
 
-    if (header->len >= header->cap) {
-      dest = string_resize_cap(dest, header->len + 1);
-    }
+    char* temp = realloc(dest, sizeof(char) * len + 1);
+    KASSERT(temp,
+            "Failed to append string \"%s\" to \"%s\" due to realloc failing",
+            buf, dest);
+    dest = temp;
 
-    dest = (char*)header + sizeof(string_header_t);
     strncpy(dest + old_len, buf, buf_len);
-    dest[header->len] = '\0';
+    dest[len] = '\0';
     return dest;
   }
-
   return string_vcreate(fmt, args);
 }

@@ -70,7 +70,12 @@ void console_vlog(console_severity_bit_t lv, const char* file, i32_t line,
 {
   console_t* console = &context_ptr()->console;
 
-  const char* pfx_fmt = "%s%s %s %s:%d: ";
+  const char* pfx_fmt = NULL;
+  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
+    pfx_fmt = "%s%s %s %s:%d: ";
+  } else {
+    pfx_fmt = "%s%s %s: ";
+  }
   const size_t pfx_fmt_len = strlen(pfx_fmt);
   const size_t fmt_len = strlen(fmt);
 
@@ -79,12 +84,18 @@ void console_vlog(console_severity_bit_t lv, const char* file, i32_t line,
   const char* str_lv = console_severity_to_string(lv);
 
   // Printing to console
-  printf(pfx_fmt, col, time_buf, str_lv, file, line);
+  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
+    printf(pfx_fmt, col, time_buf, str_lv, file, line);
+  } else {
+    printf(pfx_fmt, col, time_buf, str_lv);
+  }
   vprintf(fmt, args);
   printf("%s\n", KANSI_COL_RESET);
   fflush(stdout); // Some IDE's require this like CLion
 
   if (console->output_file != NULL) {
+    // Should always use this format when logging to file
+    pfx_fmt = "%s%s %s %s:%d: ";
     FILE* file = fopen(console->output_file, "a");
     fprintf(file, pfx_fmt, "", time_buf, str_lv, file, line);
     vfprintf(file, fmt, args);

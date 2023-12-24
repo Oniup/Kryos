@@ -35,16 +35,51 @@ extern "C" {
 
 #include "defines.h"
 
+#define darray(type) darray_create(sizeof(type), KDEFAULT_CAP_INIT_SIZE)
+
+#define darray_push_back(darray, value)      \
+  ({                                         \
+    typeof(value) cpy = value;               \
+    darray = darray_copy_back(darray, &cpy); \
+  })
+
+#define darray_push_array_back(darray, ui64_length, arr)        \
+  ({                                                            \
+    typeof(*arr) cpy[length] = arr;                             \
+    darray = darray_copy_array_back(darray, ui64_length, &cpy); \
+  })
+
+#define darray_insert(darray, ui64_index, value)           \
+  ({                                                       \
+    typeof(value) cpy = value;                             \
+    darray = darray_copy_insert(darray, ui64_index, &cpy); \
+  })
+
 typedef struct {
   ui64_t length;
   ui64_t capacity;
   ui64_t stride;
 } darray_header_t;
 
-void* darray_create(ui64_t size, i32_t cap);
+void* darray_create(ui64_t stride, i32_t capacity);
 void darray_destroy(void* darray);
-
 darray_header_t* darray_header_ptr(void* darray);
+
+ui64_t darray_length(void* darray);
+ui64_t darray_capacity(void* darray);
+ui64_t darray_stride(void* darray);
+
+void* darray_set_length(void* darray, ui64_t length);
+void* darray_set_capacity(void* darray, ui64_t capacity);
+
+void* darray_pop_back(void* darray, ui32_t count);
+void* darray_pop(void* darray, ui64_t index, ui32_t count);
+
+void* darray_copy_back(void* darray, void* value_ptr);
+void* darray_copy_array_back(void* darray, ui64_t length, void* array_ptr);
+void* darray_copy_insert(void* darray, i64_t index, void* value_ptr);
+void* darray_copy_array_insert(void* darray, ui64_t index, ui64_t length,
+                               void* array_ptr);
 
 #ifdef __cplusplus
 }
