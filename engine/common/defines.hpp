@@ -27,11 +27,8 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__DEFINES_H_
-#define KRYOS__DEFINES_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__COMMON__DEFINES_H
+#define KRYOS__COMMON__DEFINES_H
 
 #define KANSI_COL_RESET "\x1b[0m"
 
@@ -75,10 +72,20 @@ extern "C" {
 #define KDEFAULT_CAP_INCREASE_SIZE 5
 
 #ifndef NDEBUG
-#define KASSERT(expression, fmt, ...) \
-  (void)((!!(expression)) || (KFATAL(fmt, __VA_ARGS__), 0))
-#else
-#define KASSERT(expression, fmt, ...)
+ #ifndef KDISABLE_FATAL_LOGGING
+  #ifndef KDISABLE_ASSERTS
+   #define KASSERT(expression, fmt, ...) \
+     ({                                  \
+    if (!(expression)) {                 \
+      KFATAL(fmt, __VA_ARGS__);          \
+      abort();                           \
+    }                                    \
+     })
+  #endif
+ #endif
+#endif
+#ifndef KASSERT
+ #define KASSERT(expression, fmt, ...)
 #endif
 
 typedef char i8_t;
@@ -91,15 +98,4 @@ typedef unsigned short ui16_t;
 typedef unsigned int ui32_t;
 typedef unsigned long long ui64_t;
 
-#ifdef __cplusplus
-typedef bool b8_t;
-#else
-typedef _Bool b8_t;
-#define true 1
-#define false 0
-#endif
-
-#ifdef __cplusplus
-}
-#endif
 #endif

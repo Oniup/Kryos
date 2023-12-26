@@ -1,5 +1,5 @@
 /**
- * @file context.c
+ * @file time.cpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,30 +27,22 @@
  * SOFTWARE.
  */
 
-#include "core/context.h"
-#include "defines.h"
+#include "core/time.hpp"
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
-engine_context_t* g_context = NULL;
+namespace kryos {
 
-engine_context_t* context_ptr()
+void get_time_as_c_str(char* dest, ui64_t size)
 {
-  return g_context;
+  const char* fmt = "%d:%d:%d %d:%d:%d";
+  const ui64_t fmt_len = strlen(fmt);
+  time_t t = time(nullptr);
+  tm* tinfo = localtime(&t);
+  snprintf(dest, size, fmt, tinfo->tm_mday, tinfo->tm_mon + 1,
+           tinfo->tm_year + 1900, tinfo->tm_hour, tinfo->tm_min, tinfo->tm_sec);
 }
 
-void context_init()
-{
-  g_context = (engine_context_t*)malloc(sizeof(engine_context_t));
-
-  g_context->console.output_file = "debug.log";
-  g_context->console.callback = NULL;
-  g_context->console.filter = CONSOLE_SEVERITY_NONE_BIT;
-}
-
-void context_terminate()
-{
-  free(g_context);
-  g_context = NULL;
-}
+} // namespace kryos

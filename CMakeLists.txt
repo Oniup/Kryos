@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
-project(kryos-engine C)
+project(kryos-engine CXX)
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED 11)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED 11)
 
 add_subdirectory(engine)
 
@@ -10,7 +10,7 @@ add_subdirectory(engine)
 # ----------------------------------------------------------------------------------------------------------------------
 
 # file(GLOB_RECURSE KRYOS_EDITOR_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/editor/*.h)
-file(GLOB_RECURSE KRYOS_EDITOR_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/editor/*.c)
+file(GLOB_RECURSE KRYOS_EDITOR_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/editor/*.cpp)
 
 add_executable(kryos-editor ${KRYOS_EDITOR_SOURCE_FILES})
 

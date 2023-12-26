@@ -18,7 +18,7 @@ these three commands to clone the repository, navigate to the project directory,
 and generate build/project files for your operating system
 
 ```bash
-git clone https://github.com/Oniup/Kryos.git
+git clone https://github.com/oniup/kryos.git
 cd Kryos
 cmake --build .
 ```
@@ -63,5 +63,5 @@ guidelines:
 
 ## License
 
-This project is licensed under the ZIB License - see the [LICENSE](./LICENSE.md)
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE.md)
 file for details.

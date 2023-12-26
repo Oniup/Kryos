@@ -1,5 +1,5 @@
 /**
- * @file time.h
+ * @file main.cpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,23 +27,10 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__UTILS__TIME_H_
-#define KRYOS__UTILS__TIME_H_
+#include <cstdio>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define KTIME_STR_MIN_BUF_SIZE 20
-
-/**
- * @brief Gets the current time and converts into a string
- * @return String that needs to be freed. This uses malloc to create the result
- */
-void get_time_as_str(char* dest, size_t size);
-
-#ifdef __cplusplus
+int main(int argc, char** argv)
+{
+  printf("This is a test\n");
+  return 0;
 }
-#endif
-
-#endif

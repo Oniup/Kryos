@@ -1,5 +1,5 @@
 /**
- * @file context.h
+ * @file memory.hpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,24 +27,28 @@
  * SOFTWARE.
  */
 
-#ifndef KRYOS__CORE__CONTEXT_H_
-#define KRYOS__CORE__CONTEXT_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__CORE__MEMORY_HPP
+#define KRYOS__CORE__MEMORY_HPP
 
-#include "core/console.h"
+#include "common/defines.hpp"
 
-typedef struct engine_context {
-  console_t console;
-} engine_context_t;
+namespace kryos {
 
-engine_context_t* context_ptr();
+struct MemoryHeader {
+  ui32_t ref_count;
+  ui32_t block_size;
 
-void context_init();
-void context_terminate();
+  static ui32_t get_ref_count(void* ptr);
+};
 
-#ifdef __cplusplus
-}
-#endif
+struct Allocator {
+  static void* allocate_memory(ui64_t stride, ui64_t count,
+                               bool prepad = false);
+  static void* reallocate_memory(void* ptr, ui64_t stride, ui64_t count,
+                                 bool prepad = false);
+  static void free_memory(void* ptr, bool prepad = false);
+};
+
+} // namespace kryos
+
 #endif

@@ -1,5 +1,5 @@
 /**
- * @file time.c
+ * @file time.hpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,22 +27,15 @@
  * SOFTWARE.
  */
 
-#include "core/time.h"
+#ifndef KRYOS__CORE__TIME_H
+#define KRYOS__CORE__TIME_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include "common/defines.hpp"
 
-void get_time_as_str(char* dest, size_t size)
-{
-  const char* fmt = "%d:%d:%d %d:%d:%d";
-  const size_t fmt_len = strlen(fmt);
+namespace kryos {
 
-  time_t t = time(NULL);
-  struct tm* tinfo = localtime(&t);
+void get_time_as_c_str(char* dest, ui64_t size);
 
-  /// TODO: Check if "time_info->tm_mon + 1" still needs the +1
-  snprintf(dest, size, fmt, tinfo->tm_mday, tinfo->tm_mon + 1,
-           tinfo->tm_year + 1900, tinfo->tm_hour, tinfo->tm_min, tinfo->tm_sec);
 }
+
+#endif

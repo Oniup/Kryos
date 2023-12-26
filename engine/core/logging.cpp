@@ -1,5 +1,5 @@
 /**
- * @file console.c
+ * @file logging.cpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,36 +27,39 @@
  * SOFTWARE.
  */
 
-#include "core/console.h"
-#include "core/context.h"
-#include "core/time.h"
+#ifndef KDISABLE_LOGGING
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+ #include "core/logging.hpp"
+ #include "core/time.hpp"
 
-const char* console_severity_to_string(console_severity_bit_t lv)
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+
+namespace kryos {
+
+const char* console_severity_to_string(LogSeverityBit lv)
 {
   switch (lv) {
-  case CONSOLE_SEVERITY_INFO_BIT:
+  case LogSeverity_InfoBit:
     return "Info";
-  case CONSOLE_SEVERITY_DEBUG_BIT:
+  case LogSeverity_DebugBit:
     return "Debug";
-  case CONSOLE_SEVERITY_TRACE_BIT:
+  case LogSeverity_TraceBit:
     return "Trace";
-  case CONSOLE_SEVERITY_WARN_BIT:
+  case LogSeverity_WarnBit:
     return "Warning";
-  case CONSOLE_SEVERITY_ERROR_BIT:
+  case LogSeverity_ErrorBit:
     return "Error";
-  case CONSOLE_SEVERITY_FATAL_BIT:
+  case LogSeverity_FatalBit:
     return "Fatal";
-  case CONSOLE_SEVERITY_NONE_BIT:
+  case LogSeverity_NoneBit:
     return "None";
   };
   return "Undefined";
 }
 
-void console_log(console_severity_bit_t lv, const char* file, i32_t line,
+void console_log(LogSeverityBit lv, const char* file, i32_t line,
                  const char* col, const char* fmt, ...)
 {
   va_list args;
@@ -65,53 +68,44 @@ void console_log(console_severity_bit_t lv, const char* file, i32_t line,
   va_end(args);
 }
 
-void console_vlog(console_severity_bit_t lv, const char* file, i32_t line,
+void console_vlog(LogSeverityBit lv, const char* file, i32_t line,
                   const char* col, const char* fmt, va_list args)
 {
-  console_t* console = &context_ptr()->console;
-
-  const char* pfx_fmt = NULL;
-  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
+  const char* pfx_fmt = nullptr;
+  if (lv == LogSeverity_FatalBit) {
     pfx_fmt = "%s%s %s %s:%d: ";
-  } else {
+  }
+  else {
     pfx_fmt = "%s%s %s: ";
   }
-  const size_t pfx_fmt_len = strlen(pfx_fmt);
-  const size_t fmt_len = strlen(fmt);
 
-  char* time_buf = (char*)malloc(KTIME_STR_MIN_BUF_SIZE);
-  get_time_as_str(time_buf, KTIME_STR_MIN_BUF_SIZE);
+  const ui64_t pfx_fmt_len = strlen(pfx_fmt);
+  const ui64_t fmt_len = strlen(fmt);
+
+  constexpr ui64_t time_buf_size = 64;
+  char* time_buf = (char*)malloc(time_buf_size);
+  get_time_as_c_str(time_buf, time_buf_size);
   const char* str_lv = console_severity_to_string(lv);
 
   // Printing to console
-  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
+  if (lv == LogSeverity_FatalBit) {
     printf(pfx_fmt, col, time_buf, str_lv, file, line);
-  } else {
+  }
+  else {
     printf(pfx_fmt, col, time_buf, str_lv);
   }
   vprintf(fmt, args);
   printf("%s\n", KANSI_COL_RESET);
   fflush(stdout); // Some IDE's require this like CLion
 
-  if (console->output_file != NULL) {
-    // Should always use this format when logging to file
-    pfx_fmt = "%s%s %s %s:%d: ";
-    FILE* file = fopen(console->output_file, "a");
-    fprintf(file, pfx_fmt, "", time_buf, str_lv, file, line);
-    vfprintf(file, fmt, args);
-    fprintf(file, "\n");
-    fclose(file);
-  }
-
-  if (console->callback != NULL) {
-    console->callback(lv, file, line, col, fmt, args);
-  }
-
-  free(time_buf);
-
-  if (lv == CONSOLE_SEVERITY_FATAL_BIT) {
-    abort();
-  }
+ #ifndef KDISABLE_LOGGING_OUTPUT_FILE
+  pfx_fmt = "%s%s %s %s:%d: ";
+  FILE* stream = fopen("kryos.log", "a");
+  fprintf(stream, pfx_fmt, "", time_buf, str_lv, file, line);
+  vfprintf(stream, fmt, args);
+  fprintf(stream, "\n");
+  fclose(stream);
+ #endif
 }
 
 const char* ansi_col(const char indent)
@@ -189,3 +183,7 @@ const char* ansi_hl_col(const char indent)
     return KANSI_COL_DEFAULT;
   }
 }
+
+} // namespace kryos
+
+#endif
