@@ -30,23 +30,14 @@
 #ifndef KRYOS__CORE__MEMORY_HPP
 #define KRYOS__CORE__MEMORY_HPP
 
-#include "common/defines.hpp"
-
 namespace kryos {
 
-struct MemoryHeader {
-  ui32_t ref_count;
-  ui32_t block_size;
+struct memory {
+  static void* malloc(size_t size);
 
-  static ui32_t get_ref_count(void* ptr);
-};
+  static void* realloc(void* ptr, size_t size);
 
-struct Allocator {
-  static void* allocate_memory(ui64_t stride, ui64_t count,
-                               bool prepad = false);
-  static void* reallocate_memory(void* ptr, ui64_t stride, ui64_t count,
-                                 bool prepad = false);
-  static void free_memory(void* ptr, bool prepad = false);
+  static void free(void* ptr);
 };
 
 } // namespace kryos

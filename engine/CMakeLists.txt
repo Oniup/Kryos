@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(libkryos CXX)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
 # Library
 # ----------------------------------------------------------------------------------------------------------------------

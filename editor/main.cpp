@@ -27,10 +27,36 @@
  * SOFTWARE.
  */
 
+#include "core/memory.hpp"
 #include <cstdio>
+#include <cstring>
 
 int main(int argc, char** argv)
 {
-  printf("This is a test\n");
+  const char* lhs_str = "This is a test";
+  const char* rhs_str = ", Appending this str";
+  size_t lhs_length = std::strlen(lhs_str);
+  size_t rhs_length = std::strlen(rhs_str);
+
+  bool first = true;
+  for (size_t i = 0; i < 1000; i++) {
+    char* str = (char*)kryos::memory::malloc(lhs_length + 1);
+    strncpy(str, lhs_str, lhs_length);
+    str[lhs_length] = '\0';
+    if (first) {
+      std::printf("%s\n", str);
+    }
+
+    size_t length = lhs_length + rhs_length;
+    str = (char*)kryos::memory::realloc(str, length + 1);
+    strncpy(str + lhs_length, rhs_str, rhs_length);
+    str[length] = '\0';
+    if (first) {
+      std::printf("%s\n", str);
+    }
+
+    first = false;
+    kryos::memory::free(str);
+  }
   return 0;
 }

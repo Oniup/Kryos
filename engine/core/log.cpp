@@ -1,5 +1,5 @@
 /**
- * @file memory.cpp
+ * @file main.cpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,42 +27,74 @@
  * SOFTWARE.
  */
 
-#include "core/memory.hpp"
 #include "core/log.hpp"
-
 #include <cstdio>
 #include <cstdlib>
-#include <new>
 
 namespace kryos {
 
-void* memory::malloc(size_t size)
+void _assert(const char* filename, int line, const char* format, ...)
 {
-  void* ptr = std::malloc(size);
-  KASSERT(ptr, "Failed to malloc system memory for size %zu", size);
-  return ptr;
+  va_list args;
+  va_start(args, format);
+  _assert(filename, line, format, args);
+  va_end(args);
 }
 
-void* memory::realloc(void* ptr, size_t size)
+void _assert(const char* filename, int line, const char* format, va_list args)
 {
-  if (ptr != nullptr) {
-    void* temp = nullptr;
-    temp = std::realloc(ptr, size);
-    KASSERT(temp, "Failed to realloc system memory for size %zu at address %p",
-            size, ptr);
-  }
-  else {
-    ptr = memory::malloc(size);
-  }
-  return ptr;
+  constexpr size_t buffer_length = 10000;
+  char message_buffer[buffer_length];
+  vsnprintf(message_buffer, buffer_length, format, args);
+
+  std::fprintf(stderr, "%s__assert__ at %s:%d:\n%s%s",
+               log_context::severity::ansi_fatal, filename, line,
+               message_buffer, log_context::severity::ansi_reset);
+  std::abort();
 }
 
-void memory::free(void* ptr)
+const char* log_context::severity::to_c_str(severity::level level)
 {
-  KASSERT(
-      ptr,
-      "Attempted to free pointer that is null or has already been released");
-  std::free(ptr);
+  switch (level) {
+  case none:
+    return "none";
+  case info:
+    return "info";
+  case warn:
+    return "warn";
+  case error:
+    return "error";
+  case fatal:
+    return "fatal";
+  case trace:
+    return "trace";
+  case debug:
+    return "debug";
+  default:
+    return "undefined";
+  }
+}
+
+const char* log_context::severity::to_ansi_color(severity::level level)
+{
+  switch (level) {
+  case none:
+    return ansi_reset;
+  case info:
+    return ansi_info;
+  case warn:
+    return ansi_warn;
+  case error:
+    return ansi_error;
+  case fatal:
+    return ansi_fatal;
+  case trace:
+    return ansi_trace;
+  case debug:
+    return ansi_debug;
+  default:
+    return ansi_reset;
+  }
 }
 
 } // namespace kryos
