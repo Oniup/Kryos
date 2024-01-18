@@ -28,41 +28,55 @@
  */
 
 #include "core/memory.hpp"
-#include "core/log.hpp"
 
-#include <cstdio>
-#include <cstdlib>
-#include <new>
+#include <stdlib.h>
 
 namespace kryos {
 
-void* memory::malloc(size_t size)
-{
-  void* ptr = std::malloc(size);
-  KASSERT(ptr, "Failed to malloc system memory for size %zu", size);
-  return ptr;
+void mem_free(void* ptr) {
+    if (ptr != nullptr) {
+        free(ptr);
+    }
 }
 
-void* memory::realloc(void* ptr, size_t size)
-{
-  if (ptr != nullptr) {
-    void* temp = nullptr;
-    temp = std::realloc(ptr, size);
-    KASSERT(temp, "Failed to realloc system memory for size %zu at address %p",
-            size, ptr);
-  }
-  else {
-    ptr = memory::malloc(size);
-  }
-  return ptr;
+MemOpt mem_alloc(size_t size) {
+    void* ptr = malloc(size);
+    if (ptr != nullptr) {
+        return MemOpt::some(ptr);
+    }
+    // KASSERT(ptr, "Failed to malloc system memory for size %zu", size);
+    return MemOpt::none();
 }
 
-void memory::free(void* ptr)
-{
-  KASSERT(
-      ptr,
-      "Attempted to free pointer that is null or has already been released");
-  std::free(ptr);
+MemOpt mem_realloc(void* ptr, size_t size) {
+    if (ptr != nullptr) {
+        void* tmp = nullptr;
+        tmp = realloc(ptr, size);
+        if (tmp != nullptr) {
+            return MemOpt::some(tmp);
+        }
+        // KASSERT(tmp, "Failed to realloc system memory for size %zu at address %p", size, ptr);
+        return MemOpt::failed(ptr);
+    }
+    return mem_alloc(size);
+}
+
+MemOpt mem_realloc_insert(void* ptr, size_t size, size_t pos, size_t insert_size) {
+    const size_t full_size = size + insert_size;
+    if (size == pos) {
+        return mem_realloc(ptr, full_size);
+    }
+    MemOpt opt = mem_realloc(ptr, full_size);
+    if (opt.status() == OptState::ok) {
+        const size_t chunk_size = size - pos;
+        ptr = opt.value();
+        if (memcpy((char*)ptr + (pos + insert_size), (char*)ptr + pos, chunk_size) != nullptr) {
+            return MemOpt::some(ptr);
+        }
+        // "Failed to memcpy data to make room for insert"
+        return opt;
+    }
+    return opt;
 }
 
 } // namespace kryos

@@ -1,5 +1,5 @@
 /**
- * @file main.cpp
+ * @file iterator.hpp
  *
  * This file is part of the Kryos Engine (See AUTHORS.md)
  * GitHub Repository: https://github.com/Oniup/kryos
@@ -27,30 +27,45 @@
  * SOFTWARE.
  */
 
-#include "core/memory.hpp"
-#include "core/types/templates/option.hpp"
+#ifndef KRYOS__CORE_TYPES_TEMPLATES__ITERATOR_HPP
+#define KRYOS__CORE_TYPES_TEMPLATES__ITERATOR_HPP
 
-#include <stdio.h>
+#include "core/log.hpp"
 
-void print_arr(int* arr, size_t len) {
-    for (size_t i = 0; i < len; i++) {
-        printf("%d ", arr[i]);
+namespace kryos {
+
+template <typename T>
+struct iIterator {
+public:
+    iIterator() = default;
+
+    iIterator(const iIterator& iter)
+          : m_ptr(iter.m_ptr) {}
+
+    iIterator(iIterator&& iter)
+          : m_ptr(iter.m_ptr) {
+        iter.m_ptr = nullptr;
     }
-    printf("\n");
-}
 
-int main(int argc, char** argv) {
-    const int cpy[] = {1, 2, 3, 4, 5};
+    inline T& operator*() {
+        return *m_ptr;
+    }
 
-    size_t len = 5;
-    int* arr = static_cast<int*>(KUNWRAP(kryos::mem_alloc(sizeof(int) * len)));
-    kryos::mem_copy(arr, arr + len, cpy);
-    print_arr(arr, len);
+    inline T* operator->() {
+        return m_ptr;
+    }
 
-    const int insert[] = {11, 22, 33, 44, 55};
-    arr = KUNWRAP(kryos::mem_copy_insert(arr, arr + len, insert, insert + 5, 2));
-    print_arr(arr, len + 5);
+    inline const T& operator*() const {
+        KASSERT(m_ptr != nullptr, "Cannot get iterator value as reference. Pointer is null");
+        return *m_ptr;
+    }
 
-    kryos::mem_free(arr);
-    return 0;
-}
+    inline const T* operator->() const { return m_ptr; }
+
+private:
+    T* m_ptr {nullptr};
+};
+
+} // namespace kryos
+
+#endif

@@ -28,73 +28,72 @@
  */
 
 #include "core/log.hpp"
-#include <cstdio>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 namespace kryos {
 
-void _assert(const char* filename, int line, const char* format, ...)
-{
-  va_list args;
-  va_start(args, format);
-  _assert(filename, line, format, args);
-  va_end(args);
+void impl_assert(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    impl_assert(file, line, fmt, args);
 }
 
-void _assert(const char* filename, int line, const char* format, va_list args)
-{
-  constexpr size_t buffer_length = 10000;
-  char message_buffer[buffer_length];
-  vsnprintf(message_buffer, buffer_length, format, args);
+void impl_assert(const char* file, int line, const char* fmt, va_list args) {
+    constexpr size_t buf_len = 10000;
+    char msg_buf[buf_len];
+    vsnprintf(msg_buf, buf_len, fmt, args);
 
-  std::fprintf(stderr, "%s__assert__ at %s:%d:\n%s%s",
-               log_context::severity::ansi_fatal, filename, line,
-               message_buffer, log_context::severity::ansi_reset);
-  std::abort();
+    fprintf(stderr, "%sFatal at %s:%d:\n%s%s", Logger::Severity::ansi_fatal, file, line, msg_buf,
+            Logger::Severity::ansi_reset);
+    va_end(args);
+    abort();
 }
 
-const char* log_context::severity::to_c_str(severity::level level)
-{
-  switch (level) {
-  case none:
-    return "none";
-  case info:
-    return "info";
-  case warn:
-    return "warn";
-  case error:
-    return "error";
-  case fatal:
-    return "fatal";
-  case trace:
-    return "trace";
-  case debug:
-    return "debug";
-  default:
-    return "undefined";
-  }
+const char* Logger::Severity::to_cstr(Severity::Level lv) {
+    switch (lv) {
+    case none:
+        return "None";
+    case info:
+        return "Info";
+    case warn:
+        return "Warn";
+    case error:
+        return "Error";
+    case fatal:
+        return "Fatal";
+    case trace:
+        return "Trace";
+    case debug:
+        return "Debug";
+    default:
+        return "Undefined";
+    }
 }
 
-const char* log_context::severity::to_ansi_color(severity::level level)
-{
-  switch (level) {
-  case none:
-    return ansi_reset;
-  case info:
-    return ansi_info;
-  case warn:
-    return ansi_warn;
-  case error:
-    return ansi_error;
-  case fatal:
-    return ansi_fatal;
-  case trace:
-    return ansi_trace;
-  case debug:
-    return ansi_debug;
-  default:
-    return ansi_reset;
-  }
+const char* Logger::Severity::to_ansi_col(Severity::Level lv) {
+    switch (lv) {
+    case none:
+        return ansi_reset;
+    case info:
+        return ansi_info;
+    case warn:
+        return ansi_warn;
+    case error:
+        return ansi_error;
+    case fatal:
+        return ansi_fatal;
+    case trace:
+        return ansi_trace;
+    case debug:
+        return ansi_debug;
+    default:
+        return ansi_reset;
+    }
+}
+
+Logger::Logger(Severity::Filter filter, const char* file, bool enable_ansi_col, bool enable_file,
+               bool enable_line) {
 }
 
 } // namespace kryos

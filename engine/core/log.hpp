@@ -30,68 +30,61 @@
 #ifndef KRYOS__CORE__LOG_HPP
 #define KRYOS__CORE__LOG_HPP
 
-#include <cstdarg>
+#include <stdarg.h>
 
 #ifndef NDEBUG
- #define KASSERT(expression, format, ...)                      \
-   ({                                                          \
-    if (!(expression)) {                                       \
-      kryos::_assert(__FILE__, __LINE__, format, __VA_ARGS__); \
-    }                                                          \
-   })
-
+  #define KASSERT(expr, fmt, ...)                                     \
+      ({                                                              \
+        if (!(expr)) {                                                \
+            kryos::impl_assert(__FILE__, __LINE__, fmt, __VA_ARGS__); \
+        }                                                             \
+      })
 #else
- #define KASSERT(condition, format, ...)
+  #define KASSERT(condition, format, ...)
 #endif
 
 namespace kryos {
 
-#ifndef NDEBUG
-void _assert(const char* filename, int line, const char* message, ...);
-void _assert(const char* filename, int line, const char* message, va_list args);
-#endif
+void impl_assert(const char* file, int line, const char* fmt, ...);
+void impl_assert(const char* file, int line, const char* fmt, va_list args);
 
-class log_context {
+class Logger {
 public:
-  struct severity {
-    static constexpr const char* ansi_reset = "\x1b[0m";
-    static constexpr const char* ansi_info = "\x1b[0m";
-    static constexpr const char* ansi_warn = "\x1b[33m";
-    static constexpr const char* ansi_error = "\x1b[31m";
-    static constexpr const char* ansi_fatal = "\x1b[37;101m";
-    static constexpr const char* ansi_trace = "\x1b[90m";
-    static constexpr const char* ansi_debug = "\x1b[36m";
+    struct Severity {
+        static constexpr const char* ansi_reset {"\x1b[0m"};
+        static constexpr const char* ansi_info {"\x1b[0m"};
+        static constexpr const char* ansi_warn {"\x1b[33m"};
+        static constexpr const char* ansi_error {"\x1b[31m"};
+        static constexpr const char* ansi_fatal {"\x1b[37;101m"};
+        static constexpr const char* ansi_trace {"\x1b[90m"};
+        static constexpr const char* ansi_debug {"\x1b[36m"};
 
-    using filter = int;
+        using Filter = int;
 
-    enum level {
-      none = 0,
-      info = 0x001,
-      warn = 0x002,
-      error = 0x004,
-      fatal = 0x008,
-      trace = 0x010,
-      debug = 0x020,
+        enum Level {
+            none = 0,
+            info = 0x001,
+            warn = 0x002,
+            error = 0x004,
+            fatal = 0x008,
+            trace = 0x010,
+            debug = 0x020,
+        };
+
+        const char* to_cstr(Severity::Level lv);
+        const char* to_ansi_col(Severity::Level lv);
     };
 
-    const char* to_c_str(severity::level level);
-    const char* to_ansi_color(severity::level level);
-  };
-
 public:
-  log_context(severity::filter filter, const char* output_file,
-              bool output_ansi_color = true, bool output_filename = true,
-              bool output_line_number = true);
-
-  // void log(severity::level level, const char* format, ...);
-  // void vlog(severity::level level, const char* format, va_list args);
+    Logger(Severity::Filter filter, const char* file, bool enable_ansi_col = true,
+           bool enable_file = true, bool enable_line = true);
 
 private:
-  severity::filter _filter = severity::none;
-  const char* _output_file = nullptr;
-  bool _output_ansi_color = true;
-  bool _output_filename = true;
-  bool _output_line_number = true;
+    Severity::Filter m_filter {Severity::none};
+    const char* m_file {nullptr};
+    bool m_enable_ansi_col {true};
+    bool m_enable_file {true};
+    bool m_enable_line {true};
 };
 
 } // namespace kryos

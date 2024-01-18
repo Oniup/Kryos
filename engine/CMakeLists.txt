@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(libkryos CXX)
+project(Kryos CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
@@ -13,12 +13,11 @@ set(KRYOS_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   CACHE INTERNAL "")
 
-add_library(kryos STATIC
+add_library(Kryos STATIC
   ${KRYOS_HEADER_FILES}
   ${KRYOS_SOURCE_FILES})
 
-target_include_directories(kryos PRIVATE
+target_include_directories(Kryos PRIVATE
   ${KRYOS_INCLUDE_DIRS})
 
-target_compile_definitions(kryos PUBLIC
-  -D_CRT_SECURE_NO_WARNINGS)
+target_compile_definitions(Kryos PUBLIC -D_CRT_SECURE_NO_WARNINGS)
