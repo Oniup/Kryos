@@ -1,23 +1,41 @@
-# General build output
+# Used Godot Engine's gitignore as a template
+# Original source: https://github.com/godotengine/godot/blob/master/.gitignore#L3
+
+# Build output
 ###############################################################################
 
-# Build Systems
+# Build directories
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
 [Bb]in/
-[Bb]uild
-[Oo]ut
+[Bb]uild/
+[Oo]bj/
+[Ll]og/
+[Oo]ut/
+[Oo]utput/
+x64/
+x86/
+bld/
+_build/
 *.gen.*
-CMakeCache.txt
-CMakeFiles
-cmake_install.cmake
-CMakeSettings.json
+cmake_build_Debug
+cmake_build_Release
 compile_commands.json
+
+# CMake Based
+CMakeSettings.json
+
+# Binutils tmp linker output of the form "stXXXXXX" where "X" is alphanumeric
+st[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]
 
 # C/C++ generated
 *.a
 *.ax
 *.d
-*.dll
-*.lib
+dll
+lib
 *.lo
 *.o
 *.os
@@ -25,11 +43,12 @@ compile_commands.json
 *.Plo
 *.so
 
-# Binutils tmp linker output of the form "stXXXXXX" where "X" is alphanumeric
-st[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]
-
-# IDE and tool specific
+# IDE's
 ###############################################################################
+
+# zig
+zig-out
+zig-cache
 
 # ccls
 .ccls-cache/
@@ -133,7 +152,7 @@ xcuserdata/
 *.xccheckout
 *.xcodeproj/*
 
-# Visual Studio specific
+# Visual studio
 ###############################################################################
 
 # https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
@@ -242,8 +261,7 @@ enc_temp_folder/
 *.publishsettings
 orleans.codegen.cs
 
-
-# Operating System specific
+# Operating System
 ###############################################################################
 
 # Linux
