@@ -18,23 +18,24 @@
 /// limitations under the License.
 /// ------------------------------------------------------------------------------------------------
 
-#include "kryos-tests/framework.h"
+#include "kryos-tests/tools/string.h"
 
-void test_one(test_output_t* p_out) {
-}
-
-void test_two(test_output_t* p_out) {
-}
-
-void test_three(test_output_t* p_out) {
-}
+// void test_one(test_output_t* p_out) {
+// }
+//
+// void test_two(test_output_t* p_out) {
+// }
+//
+// void test_three(test_output_t* p_out) {
+// }
 
 int main(int argc, char* p_argv[]) {
-    test_t tests[3] = {
-        {.p_name = "test_one", .test = test_one},
-        {.p_name = "test_two", .test = test_two},
-        {.p_name = "test_three", .test = test_three},
-    };
-    int code = execute_tests("Test framekwork unit testing", tests, 3);
-    return code;
+    // test_t tests[3] = {
+    //     {.p_name = "test_one", .test = test_one},
+    //     {.p_name = "test_two", .test = test_two},
+    //     {.p_name = "test_three", .test = test_three},
+    // };
+    // int code = execute_tests("Test framekwork unit testing", tests, 3);
+    execute_string_tests();
+    return 0;
 }

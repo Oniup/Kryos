@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------------------------------
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine)
-/// @file string.h
+/// @file string.c
 /// ------------------------------------------------------------------------------------------------
 /// @copyright
 /// Copyright (c) 2024 Oniup (https://github.com/Oniup/)
@@ -18,40 +18,28 @@
 /// limitations under the License.
 /// ------------------------------------------------------------------------------------------------
 
-#ifndef KRYOS__TOOLS__STRING_H
-#define KRYOS__TOOLS__STRING_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "kryos-tests/tools/string.h"
+#include "kryos-tests/framework.h"
 
-#include "kryos-tools/allocator.h"
-#include "kryos-tools/defines.h"
-
-typedef union string {
-    allocator_t allocator;
-    struct {
-        char* cstr;
-        usize len;
-    };
-} string_t;
-
-KRYAPI void deinit_string(string_t* str);
-KRYAPI string_t init_string(const char* cstr);
-
-KRYAPI string_t clone_string(const string_t* str);
-KRYAPI b8 set_string(string_t* dest, const string_t* src);
-KRYAPI b8 set_string_cstr(string_t* dest, const char* src);
-KRYAPI b8 append_string(string_t* dest, const string_t* src);
-KRYAPI b8 append_string_cstr(string_t* dest, const char* src, usize len);
-KRYAPI b8 uppercase_string(string_t* dest);
-KRYAPI b8 lowercase_string(string_t* dest);
-
-KRYAPI b8 format_string(const char* fmt, ...);
-KRYAPI string_t clone_format_string(const char* fmt, ...);
-
-KRYAPI b8 trim_string(string_t* str);
-
-#ifdef __cplusplus
+void creating_string(test_output_t* out) {
 }
-#endif
-#endif
+
+void appending_string(test_output_t* out) {
+}
+
+void format_string(test_output_t* out) {
+}
+
+void to_upper_lower(test_output_t* out) {
+}
+
+void trim_whitespaces(test_output_t* out) {
+}
+
+void execute_string_tests() {
+    TEST_TABLE() {
+        ADD_TEST(creating_string), ADD_TEST(appending_string), ADD_TEST(format_string),
+        ADD_TEST(to_upper_lower),  ADD_TEST(trim_whitespaces),
+    };
+    EXECUTE_TEST_TABLE("Tools: String");
+}

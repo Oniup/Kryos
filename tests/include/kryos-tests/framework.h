@@ -29,30 +29,33 @@ extern "C" {
 
 #include <stdarg.h>
 
-#define TEST_CHECK(expr, ...)                \
-    ({                                       \
-        if (!(expr)) {                       \
-            output.pass = false;             \
-            output.set_message(__VA_ARGS__); \
-            return;                          \
-        }                                    \
-    })
-
-#define TEST_EQ(a, b, ...)                   \
-    ({                                       \
-        if ((a) != (b)) {                    \
-            output.pass = false;             \
-            output.set_message(__VA_ARGS__); \
-            return;                          \
-        }                                    \
-    })
-
 #define TEST_TITLE_ANSI_COL DEBUG_ANSI_FG_CYAN
 #define TEST_PASS_ANSI_COL DEBUG_ANSI_FG_GREEN
 #define TEST_FAILED_ANSI_COL DEBUG_ANSI_FG_RED
 #define TEST_TEXT_ANSI_COL -1
 
 #define TEST_MAX_OUTPUT_MSG_SIZE 2000
+
+#define TEST_CHECK(expr, ...)                \
+    ({                                       \
+        if (!((expr))) {                     \
+            output.pass = false;             \
+            output.set_message(__VA_ARGS__); \
+            return;                          \
+        }                                    \
+    })
+
+#define TEST_EQUALS(a, b, ...) TEST_CHECK(((a) != (b)), __VA_ARGS__)
+#define TEST_NOT_EQUALS(a, b, ...) TEST_CHECK(((a) == (b)), __VA_ARGS__)
+#define TEST_NULL(a, b, ...) TEST_CHECK(((a) == NULL), __VA_ARGS__)
+
+#define TEST_TABLE() test_t tests[] =
+
+#define ADD_TEST(name) \
+    { .p_name = #name, .test = name, }
+
+#define EXECUTE_TEST_TABLE(table_name) \
+    execute_tests(table_name, sizeof(tests) / sizeof(tests[0]), tests)
 
 typedef struct {
     char msg[TEST_MAX_OUTPUT_MSG_SIZE];
@@ -72,7 +75,7 @@ typedef struct global_test_options {
 
 global_test_options_t* get_global_test_options();
 
-b8 execute_tests(const char* p_title, test_t* p_tests, usize count);
+b8 execute_tests(const char* p_title, usize count, test_t* p_tests);
 void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
                        usize* p_tests_passed);
 

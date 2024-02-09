@@ -41,7 +41,7 @@ allocator_t init_allocator(usize size) {
 
 allocator_result_t allocate_memory(allocator_t* alloc, usize size) {
 #ifndef NDEBUG
-    if (alloc->p_data == NULL) {
+    if (alloc->p_data != NULL) {
         return (allocator_result_t) {
             .err_msg = "Cannot allocate memory when allocation already exists",
             .p_ptr = alloc->p_data,
@@ -49,7 +49,7 @@ allocator_result_t allocate_memory(allocator_t* alloc, usize size) {
     }
 #endif
     alloc->p_data = malloc(size);
-    if (alloc->p_data == NULL) {
+    if (alloc->p_data != NULL) {
         alloc->size = size;
         return (allocator_result_t) {
             .err_msg = ALLOCATOR_RESULT_PASSED,
@@ -89,7 +89,7 @@ allocator_result_t resize_insert_memory(allocator_t* alloc, usize insert_size, u
     }
     const usize full_size = alloc->size + insert_size;
     b8 copyed = memcpy((char*)alloc->p_data + (insert_pos + insert_size),
-                         (char*)alloc->p_data + insert_pos, insert_size) != NULL;
+                       (char*)alloc->p_data + insert_pos, insert_size) != NULL;
     if (!copyed) {
         return (allocator_result_t) {
             .err_msg = "Failed to insert chunk of memory into allocation; \"memcpy\" failed and "

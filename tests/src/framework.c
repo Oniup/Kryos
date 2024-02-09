@@ -50,7 +50,7 @@ global_test_options_t* get_global_test_options() {
     return &g_opts;
 }
 
-b8 execute_tests(const char* p_title, test_t* p_tests, usize count) {
+b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
     print_msg(TEST_TITLE_ANSI_COL, "%s\n-------------------------------------------------\n",
               p_title);
     usize tests_passed = false;
@@ -67,10 +67,10 @@ b8 execute_tests(const char* p_title, test_t* p_tests, usize count) {
         }
     }
     if (tests_passed == count) {
-        print_msg(TEST_PASS_ANSI_COL, "Results  %zu out of %zu passed", tests_passed, count);
+        print_msg(TEST_PASS_ANSI_COL, "%zu out of %zu passed", tests_passed, count);
         return true;
     }
-    print_msg(TEST_FAILED_ANSI_COL, "Results  %zu out of %zu passed", tests_passed, count);
+    print_msg(TEST_FAILED_ANSI_COL, "%zu out of %zu passed", tests_passed, count);
     return false;
 }
 
@@ -85,9 +85,9 @@ void print_test_output(const char* p_name, test_output_t* p_output, usize index,
         *p_tests_passed = *p_tests_passed + 1;
     }
 
-    printf(fmt, DEBUG_ANSI_PREFIX, ansi_col, DEBUG_ANSI_SUFIX, p_name, icon, DEBUG_ANSI_RESET,
+    printf(fmt, DEBUG_ANSI_PREFIX, ansi_col, DEBUG_ANSI_SUFIX, icon, p_name, DEBUG_ANSI_RESET,
            index + 1, total_count);
-    if (p_output->msg[0] == '\0') {
+    if (strlen(p_output->msg) > 0) {
         printf(" => %s\n", p_output->msg);
     } else {
         printf("\n");
