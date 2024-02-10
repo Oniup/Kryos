@@ -23,14 +23,6 @@
 #include <memory.h>
 #include <stdlib.h>
 
-void deinit_allocator(allocator_t* alloc) {
-    if (alloc->p_data != NULL && alloc->size > 0) {
-        free(alloc->p_data);
-        alloc->p_data = NULL;
-        alloc->size = 0;
-    }
-}
-
 allocator_t init_allocator(usize size) {
     allocator_t alloc = {.size = size, .p_data = NULL};
     if (size > 0) {
@@ -39,66 +31,74 @@ allocator_t init_allocator(usize size) {
     return alloc;
 }
 
-allocator_result_t allocate_memory(allocator_t* alloc, usize size) {
+void deinit_allocator(allocator_t* p_alloc) {
+    if (p_alloc->p_data != NULL && p_alloc->size > 0) {
+        free(p_alloc->p_data);
+        p_alloc->p_data = NULL;
+        p_alloc->size = 0;
+    }
+}
+
+allocator_result_t allocate_memory(allocator_t* p_alloc, usize size) {
 #ifndef NDEBUG
-    if (alloc->p_data != NULL) {
+    if (p_alloc->p_data != NULL) {
         return (allocator_result_t) {
             .err_msg = "Cannot allocate memory when allocation already exists",
-            .p_ptr = alloc->p_data,
+            .p_ptr = p_alloc->p_data,
         };
     }
 #endif
-    alloc->p_data = malloc(size);
-    if (alloc->p_data != NULL) {
-        alloc->size = size;
+    p_alloc->p_data = malloc(size);
+    if (p_alloc->p_data != NULL) {
+        p_alloc->size = size;
         return (allocator_result_t) {
             .err_msg = ALLOCATOR_RESULT_PASSED,
-            .p_ptr = alloc->p_data,
+            .p_ptr = p_alloc->p_data,
         };
     }
     return (allocator_result_t) {
         .err_msg = "Failed to allocate memory; \"malloc\" failed and returned NULL",
-        .p_ptr = alloc->p_data,
+        .p_ptr = p_alloc->p_data,
     };
 }
 
-allocator_result_t resize_memory(allocator_t* alloc, usize size) {
-    if (alloc->p_data != NULL) {
-        void* tmp = realloc(alloc->p_data, size);
+allocator_result_t resize_memory(allocator_t* p_alloc, usize size) {
+    if (p_alloc->p_data != NULL) {
+        void* tmp = realloc(p_alloc->p_data, size);
         if (tmp != NULL) {
-            usize offset = alloc->size;
-            alloc->p_data = tmp;
-            alloc->size = size;
+            usize offset = p_alloc->size;
+            p_alloc->p_data = tmp;
+            p_alloc->size = size;
             return (allocator_result_t) {
                 .err_msg = ALLOCATOR_RESULT_PASSED,
-                .p_ptr = alloc->p_data + offset,
+                .p_ptr = p_alloc->p_data + offset,
             };
         }
         return (allocator_result_t) {
             .err_msg = "Allocator failed to resize memory; \"realloc\" failed and returned NULL",
-            .p_ptr = alloc->p_data,
+            .p_ptr = p_alloc->p_data,
         };
     }
-    return allocate_memory(alloc, size);
+    return allocate_memory(p_alloc, size);
 }
 
-allocator_result_t resize_insert_memory(allocator_t* alloc, usize insert_size, usize insert_pos) {
-    allocator_result_t res = resize_memory(alloc, alloc->size + insert_size);
-    if (alloc->size == insert_pos || res.err_msg == NULL) {
+allocator_result_t resize_insert_memory(allocator_t* p_alloc, usize insert_size, usize insert_pos) {
+    allocator_result_t res = resize_memory(p_alloc, p_alloc->size + insert_size);
+    if (p_alloc->size == insert_pos || res.err_msg == NULL) {
         return res;
     }
-    const usize full_size = alloc->size + insert_size;
-    b8 copyed = memcpy((char*)alloc->p_data + (insert_pos + insert_size),
-                       (char*)alloc->p_data + insert_pos, insert_size) != NULL;
+    const usize full_size = p_alloc->size + insert_size;
+    b8 copyed = memcpy((char*)p_alloc->p_data + (insert_pos + insert_size),
+                       (char*)p_alloc->p_data + insert_pos, insert_size) != NULL;
     if (!copyed) {
         return (allocator_result_t) {
             .err_msg = "Failed to insert chunk of memory into allocation; \"memcpy\" failed and "
                        "returned NULL",
-            .p_ptr = (char*)alloc->p_data + insert_pos,
+            .p_ptr = (char*)p_alloc->p_data + insert_pos,
         };
     }
     return (allocator_result_t) {
         .err_msg = ALLOCATOR_RESULT_PASSED,
-        (char*)alloc->p_data + insert_pos,
+        (char*)p_alloc->p_data + insert_pos,
     };
 }

@@ -25,65 +25,65 @@
 #include <stdio.h>
 #include <string.h>
 
-void deinit_string(string_t* str) {
-    deinit_allocator(&str->allocator);
+void deinit_string(string_t* p_str) {
+    deinit_allocator(&p_str->allocator);
 }
 
-string_t init_string(const char* cstr) {
+string_t init_string(const char* p_cstr) {
     const string_t str = {
         .allocator =
             {
-                .p_data = (void*)cstr,
-                .size = strlen(cstr) + 1,
+                .p_data = (void*)p_cstr,
+                .size = strlen(p_cstr) + 1,
             },
     };
     return clone_string(&str);
 }
 
-string_t clone_string(const string_t* src) {
-    string_t str = {.cstr = NULL, .len = src->len};
-    if (src->len > 0) {
+string_t clone_string(const string_t* p_src) {
+    string_t str = {.p_cstr = NULL, .len = p_src->len};
+    if (p_src->len > 0) {
         allocator_result_t res = allocate_memory(&str.allocator, str.allocator.size);
         ASSERT(res.err_msg == NULL, "String: %s", res.err_msg);
-        b8 cpy_res = memcpy(str.cstr, src->cstr, str.len) != NULL;
+        b8 cpy_res = memcpy(str.p_cstr, p_src->p_cstr, str.len) != NULL;
         ASSERT(cpy_res, "String: Failed to copy; \"memcpy\" failed to and returned NULL");
         // str.cstr[str.len - 1] = '\0';
     }
     return str;
 }
 
-b8 set_string(string_t* dest, const string_t* src) {
+b8 set_string(string_t* p_str, const string_t* p_src) {
     return false;
 }
 
-b8 set_string_cstr(string_t* dest, const char* src) {
+b8 set_string_cstr(string_t* p_str, const char* p_src) {
     return false;
 }
 
-b8 append_string(string_t* dest, const string_t* src) {
+b8 append_string(string_t* p_str, const string_t* p_src) {
     return false;
 }
 
-b8 append_string_cstr(string_t* dest, const char* src, usize len) {
+b8 append_string_cstr(string_t* p_str, const char* p_src, usize len) {
     return false;
 }
 
-b8 uppercase_string(string_t* dest) {
+b8 uppercase_string(string_t* p_str) {
     return false;
 }
 
-b8 lowercase_string(string_t* dest) {
+b8 lowercase_string(string_t* p_str) {
     return false;
 }
 
-b8 format_string(const char* fmt, ...) {
+b8 format_string(const char* p_fmt, ...) {
     return false;
 }
 
-string_t clone_format_string(const char* fmt, ...) {
-    return (string_t) {.cstr = NULL};
+string_t clone_format_string(const char* p_fmt, ...) {
+    return (string_t) {.p_cstr = NULL};
 }
 
-b8 trim_string(string_t* str) {
+b8 trim_string(string_t* p_str) {
     return false;
 }

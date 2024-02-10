@@ -28,22 +28,66 @@ extern "C" {
 
 #define ALLOCATOR_RESULT_PASSED NULL
 
+/// @brief Dynamic memory allocator structure.
 typedef struct allocator {
+    /// @brief Pointer to allocated memory
     void* p_data;
+    /// @brief Allocation size in bytes
     usize size;
 } allocator_t;
 
+/// @brief Returned result after calling any function that might fail related to the allocator
+/// object
 typedef struct allocator_result {
+    /// @brief NULL if there is no error, otherwise is a compile time string of
+    /// describing error
     const char* err_msg;
+    /// @brief Pointer to modified data
     void* p_ptr;
 } allocator_result_t;
 
-KRYAPI void deinit_allocator(allocator_t* alloc);
+/// @brief Initializes allocator object and allocates memory of given size.
+///
+/// @param `size` The size of allocation block in bytes
+///
+/// @return Newly created allocator, will need to destroy manually by calling `deinit_allocator`
 KRYAPI allocator_t init_allocator(usize size);
 
-KRYAPI allocator_result_t allocate_memory(allocator_t* alloc, usize size);
-KRYAPI allocator_result_t resize_memory(allocator_t* alloc, usize resize);
-KRYAPI allocator_result_t resize_insert_memory(allocator_t* alloc, usize insert_size,
+/// @brief Destroys/releases the given allocated memory.
+///
+/// @param `p_alloc` Pointer to allocator of target memory to be destroyed
+KRYAPI void deinit_allocator(allocator_t* p_alloc);
+
+/// @brief Allocate memory of given size into allocator.
+/// @warning Does not free existing data that is already being handled by allocator and will cause a
+/// memory leak if not released beforehand
+///
+/// @param `p_alloc` Pointer to allocator
+///
+/// @result Result structure, if `err_msg` is NULL then allocation was successful, otherwise will
+/// provided a compile time string describing the error
+KRYAPI allocator_result_t allocate_memory(allocator_t* p_alloc, usize size);
+
+/// @brief Resize allocated memory to new given size
+///
+/// @param `p_alloc` Pointer to allocator with target memory to be resized
+/// @param `resize` New size in bytes
+///
+/// @result Result structure, if `err_msg` is NULL then allocation was successful, otherwise will
+/// provided a compile time string describing the error
+KRYAPI allocator_result_t resize_memory(allocator_t* p_alloc, usize resize);
+
+/// @brief Resize allocated memory to new given size and offset existing initialised data at insert
+/// position by insert size. This enables new data to be initialized and inserted
+///
+/// @param `p_alloc` Pointer to allocator with target memory to be resized
+/// @param `insert_size` Insertion size in bytes
+/// @param `insert_pos` Offset that will be applied to pointer indicating where the insert should
+/// start
+///
+/// @result Result structure, if `err_msg` is NULL then allocation was successful, otherwise will
+/// provided a compile time string describing the error
+KRYAPI allocator_result_t resize_insert_memory(allocator_t* p_alloc, usize insert_size,
                                                usize insert_pos);
 
 #ifdef __cplusplus
