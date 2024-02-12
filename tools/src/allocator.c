@@ -23,82 +23,116 @@
 #include <memory.h>
 #include <stdlib.h>
 
-allocator_t init_allocator(usize size) {
-    allocator_t alloc = {.size = size, .p_data = NULL};
-    if (size > 0) {
-        allocate_memory(&alloc, size);
+/// @brief Dynamic memory allocator structure.
+typedef struct intl_header {
+    usize size;
+    usize cap;
+} intl_header_t;
+
+intl_header_t* intl_get_data_header(void* p_data);
+void* intl_get_header_data(intl_header_t* p_header);
+/// @warning Does not check if p_header is NULL, call `resize_dynamic_allocation` to also check NULL
+/// valid
+allocated_memory_result_t intl_resize_size(intl_header_t* p_header, usize size);
+/// @warning Does not check if p_header is NULL, call `resize_dynamic_allocation_capacity` to also
+/// check NULL valid
+allocated_memory_result_t intl_resize_capacity(intl_header_t* p_header, usize size);
+
+usize get_dynamic_allocation_size(void* p_data) {
+    if (p_data == NULL) {
+        return 0;
     }
-    return alloc;
+    intl_header_t* p_header = intl_get_data_header(p_data);
+    return p_header->size;
 }
 
-void deinit_allocator(allocator_t* p_alloc) {
-    if (p_alloc->p_data != NULL && p_alloc->size > 0) {
-        free(p_alloc->p_data);
-        p_alloc->p_data = NULL;
-        p_alloc->size = 0;
+allocated_memory_result_t create_dynamic_allocation(usize size) {
+    if (size <= 0) {
+        return (allocated_memory_result_t) {.err_msg = "Size given is 0, cannot allocate memory",
+                                            .p_data = NULL};
+    }
+    intl_header_t* p_header = malloc(sizeof(intl_header_t) + size);
+    if (p_header == NULL) {
+        return (allocated_memory_result_t) {
+            .err_msg = "Failed to allocate memory, malloc returned NULL", .p_data = NULL};
+    }
+    p_header->size = size;
+    p_header->cap = size;
+    return (allocated_memory_result_t) {.err_msg = NO_ALLOCATED_MEMORY_ERROR,
+                                        .p_data = intl_get_header_data(p_header)};
+}
+
+void destroy_dynamic_allocation(void* p_data) {
+    if (p_data != NULL) {
+        intl_header_t* p_header = intl_get_data_header(p_data);
+        free(p_header);
     }
 }
 
-allocator_result_t allocate_memory(allocator_t* p_alloc, usize size) {
-#ifndef NDEBUG
-    if (p_alloc->p_data != NULL) {
-        return (allocator_result_t) {
-            .err_msg = "Cannot allocate memory when allocation already exists",
-            .p_ptr = p_alloc->p_data,
+allocated_memory_result_t resize_dynamic_allocation(void* p_data, usize size) {
+    if (p_data == NULL) {
+        return (allocated_memory_result_t) {
+            .err_msg = "Cannot resize the size of dynamic allocation, p_data its NULL",
+            .p_data = NULL,
         };
     }
-#endif
-    p_alloc->p_data = malloc(size);
-    if (p_alloc->p_data != NULL) {
-        p_alloc->size = size;
-        return (allocator_result_t) {
-            .err_msg = ALLOCATOR_RESULT_PASSED,
-            .p_ptr = p_alloc->p_data,
-        };
-    }
-    return (allocator_result_t) {
-        .err_msg = "Failed to allocate memory; \"malloc\" failed and returned NULL",
-        .p_ptr = p_alloc->p_data,
-    };
+    intl_header_t* p_header = intl_get_data_header(p_data);
+    return intl_resize_size(p_header, size);
 }
 
-allocator_result_t resize_memory(allocator_t* p_alloc, usize size) {
-    if (p_alloc->p_data != NULL) {
-        void* tmp = realloc(p_alloc->p_data, size);
-        if (tmp != NULL) {
-            usize offset = p_alloc->size;
-            p_alloc->p_data = tmp;
-            p_alloc->size = size;
-            return (allocator_result_t) {
-                .err_msg = ALLOCATOR_RESULT_PASSED,
-                .p_ptr = p_alloc->p_data + offset,
-            };
-        }
-        return (allocator_result_t) {
-            .err_msg = "Allocator failed to resize memory; \"realloc\" failed and returned NULL",
-            .p_ptr = p_alloc->p_data,
+allocated_memory_result_t insert_dynamic_allocation(void* p_data, usize size, usize pos) {
+    intl_header_t* p_header = intl_get_data_header(p_data);
+    if (p_header->size < pos) {
+        return (allocated_memory_result_t) {
+            .err_msg =
+                "Cannot insert block into dynamic allocation, position is greater than the size",
+            .p_data = p_data,
         };
     }
-    return allocate_memory(p_alloc, size);
-}
-
-allocator_result_t resize_insert_memory(allocator_t* p_alloc, usize insert_size, usize insert_pos) {
-    allocator_result_t res = resize_memory(p_alloc, p_alloc->size + insert_size);
-    if (p_alloc->size == insert_pos || res.err_msg == NULL) {
-        return res;
+    allocated_memory_result_t resize_res = intl_resize_size(p_header, p_header->size + size);
+    if (resize_res.err_msg != NO_ALLOCATED_MEMORY_ERROR) {
+        return resize_res;
     }
-    const usize full_size = p_alloc->size + insert_size;
-    b8 copyed = memcpy((char*)p_alloc->p_data + (insert_pos + insert_size),
-                       (char*)p_alloc->p_data + insert_pos, insert_size) != NULL;
+    b8 copyed = memcpy((char*)p_data + (pos + size), (char*)p_data + pos, size) != NULL;
     if (!copyed) {
-        return (allocator_result_t) {
+        return (allocated_memory_result_t) {
             .err_msg = "Failed to insert chunk of memory into allocation; \"memcpy\" failed and "
-                       "returned NULL",
-            .p_ptr = (char*)p_alloc->p_data + insert_pos,
+                       "returned NULL ",
+            .p_data = intl_get_header_data(p_header),
         };
     }
-    return (allocator_result_t) {
-        .err_msg = ALLOCATOR_RESULT_PASSED,
-        (char*)p_alloc->p_data + insert_pos,
+    return (allocated_memory_result_t) {
+        .err_msg = NO_ALLOCATED_MEMORY_ERROR,
+        intl_get_header_data(p_header),
     };
+}
+
+allocated_memory_result_t resize_dynamic_allocation_capacity(void* p_data, usize cap) {
+    if (p_data == NULL) {
+        return (allocated_memory_result_t) {
+            .err_msg = "Cannot resize the capacity of dynamic allocation, p_data its NULL",
+            .p_data = NULL,
+        };
+    }
+    intl_header_t* p_header = intl_get_data_header(p_data);
+    return intl_resize_capacity(p_header, cap);
+}
+
+intl_header_t* intl_get_data_header(void* p_data) {
+    intl_header_t* p_header = (intl_header_t*)p_data;
+    p_header = p_header - 1;
+    return p_header;
+}
+
+void* intl_get_header_data(intl_header_t* p_header) {
+    p_header = p_header + 1;
+    return (void*)p_header;
+}
+
+allocated_memory_result_t intl_resize_size(intl_header_t* p_header, usize size) {
+    return (allocated_memory_result_t) {};
+}
+
+allocated_memory_result_t intl_resize_capacity(intl_header_t* p_header, usize size) {
+    return (allocated_memory_result_t) {};
 }

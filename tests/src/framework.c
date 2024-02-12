@@ -97,10 +97,10 @@ void print_test_output(const char* p_name, test_output_t* p_output, usize index,
 void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...) {
     va_list args;
     va_start(args, p_fmt);
-    set_output_message_v(p_output, p_fmt, args);
+    set_test_output_message_v(p_output, p_fmt, args);
     va_end(args);
 }
 
-void set_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args) {
-    vsprintf_s(p_output->msg, TEST_MAX_OUTPUT_MSG_SIZE, p_fmt, args);
+void set_test_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args) {
+    vsprintf_s(p_output->msg, MAX_TEST_OUTPUT_MESSAGE_SIZE, p_fmt, args);
 }

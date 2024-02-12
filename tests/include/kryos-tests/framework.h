@@ -34,20 +34,22 @@ extern "C" {
 #define TEST_FAILED_ANSI_COL DEBUG_ANSI_FG_RED
 #define TEST_TEXT_ANSI_COL -1
 
-#define TEST_MAX_OUTPUT_MSG_SIZE 2000
+#define MAX_TEST_OUTPUT_MESSAGE_SIZE 2000
 
-#define TEST_CHECK(expr, ...)                \
-    ({                                       \
-        if (!((expr))) {                     \
-            output.pass = false;             \
-            output.set_message(__VA_ARGS__); \
-            return;                          \
-        }                                    \
+#define CHECK_IF(expr, ...)                            \
+    ({                                                 \
+        if (!(expr)) {                                 \
+            out->pass = false;                         \
+            set_test_output_message(out, __VA_ARGS__); \
+            return;                                    \
+        }                                              \
     })
 
-#define TEST_EQUALS(a, b, ...) TEST_CHECK(((a) != (b)), __VA_ARGS__)
-#define TEST_NOT_EQUALS(a, b, ...) TEST_CHECK(((a) == (b)), __VA_ARGS__)
-#define TEST_NULL(a, b, ...) TEST_CHECK(((a) == NULL), __VA_ARGS__)
+#define IS_EQUALS(a, b, ...) CHECK_IF((a) == (b), __VA_ARGS__)
+#define NOT_EQUALS(a, b, ...) CHECK_IF((a) != (b), __VA_ARGS__)
+
+#define IS_NULL(a, ...) IS_EQUALS((a), NULL, __VA_ARGS__)
+#define NOT_NULL(a, ...) NOT_EQUALS((a), NULL, __VA_ARGS__)
 
 #define TEST_TABLE() test_t tests[] =
 
@@ -58,7 +60,7 @@ extern "C" {
     execute_tests(table_name, sizeof(tests) / sizeof(tests[0]), tests)
 
 typedef struct {
-    char msg[TEST_MAX_OUTPUT_MSG_SIZE];
+    char msg[MAX_TEST_OUTPUT_MESSAGE_SIZE];
     b8 pass;
 } test_output_t;
 
@@ -80,7 +82,7 @@ void print_test_output(const char* p_name, test_output_t* p_output, usize index,
                        usize* p_tests_passed);
 
 void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...);
-void set_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args);
+void set_test_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args);
 
 #ifdef __cplusplus
 }
