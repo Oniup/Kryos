@@ -36,13 +36,13 @@ extern "C" {
 
 #define MAX_TEST_OUTPUT_MESSAGE_SIZE 2000
 
-#define CHECK_IF(expr, ...)                            \
-    ({                                                 \
-        if (!(expr)) {                                 \
-            out->pass = false;                         \
-            set_test_output_message(out, __VA_ARGS__); \
-            return;                                    \
-        }                                              \
+#define CHECK_IF(expr, ...)                              \
+    ({                                                   \
+        if (!(expr)) {                                   \
+            p_out->pass = false;                         \
+            set_test_output_message(p_out, __VA_ARGS__); \
+            return;                                      \
+        }                                                \
     })
 
 #define IS_EQUALS(a, b, ...) CHECK_IF((a) == (b), __VA_ARGS__)

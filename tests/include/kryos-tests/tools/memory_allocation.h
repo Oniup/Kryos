@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------------------------------
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine)
-/// @file string.h
+/// @file memory_allocation.h
 /// ------------------------------------------------------------------------------------------------
 /// @copyright
 /// Copyright (c) 2024 Oniup (https://github.com/Oniup/)
@@ -18,13 +18,13 @@
 /// limitations under the License.
 /// ------------------------------------------------------------------------------------------------
 
-#ifndef KRYOS__TESTS_TOOLS__STRING_H
-#define KRYOS__TESTS_TOOLS__STRING_H
+#ifndef KRYOS__TESTS_TOOLS__MEMORY_ALLOCATION_H
+#define KRYOS__TESTS_TOOLS__MEMORY_ALLOCATION_H
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void execute_string_tests();
+void execute_memory_allocation_tests();
 
 #ifdef __cplusplus
 }
