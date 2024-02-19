@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-void execute_string_tests();
+void string_tests();
 
 #ifdef __cplusplus
 }

@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-void execute_memory_allocation_tests();
+void memory_allocation_tests();
 
 #ifdef __cplusplus
 }

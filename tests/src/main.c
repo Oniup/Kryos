@@ -22,7 +22,9 @@
 #include "kryos-tests/tools/string.h"
 
 int main(int argc, char* p_argv[]) {
-    execute_memory_allocation_tests();
-    execute_string_tests();
+    // Tools
+    memory_allocation_tests();
+    string_tests();
+
     return 0;
 }

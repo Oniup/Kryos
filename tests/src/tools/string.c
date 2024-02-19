@@ -105,7 +105,7 @@ void formatting(test_output_t* p_out) {
     destroy_string(&str);
 }
 
-void execute_string_tests() {
+void string_tests() {
     TEST_TABLE() {
         ADD_TEST(creating), ADD_TEST(get_length), ADD_TEST(comparing),
         ADD_TEST(copying),  ADD_TEST(formatting),

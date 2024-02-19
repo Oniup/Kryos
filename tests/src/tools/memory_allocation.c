@@ -57,7 +57,7 @@ void resize_capacity_and_size(test_output_t* p_out) {
     }
 }
 
-void execute_memory_allocation_tests() {
+void memory_allocation_tests() {
     TEST_TABLE() {
         ADD_TEST(allocate_and_destroy),
         ADD_TEST(resize_capacity_and_size),
