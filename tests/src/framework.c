@@ -67,10 +67,10 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
         }
     }
     if (tests_passed == count) {
-        print_msg(TEST_PASS_ANSI_COL, "%zu out of %zu passed", tests_passed, count);
+        print_msg(TEST_PASS_ANSI_COL, "%zu out of %zu passed\n", tests_passed, count);
         return true;
     }
-    print_msg(TEST_FAILED_ANSI_COL, "%zu out of %zu passed", tests_passed, count);
+    print_msg(TEST_FAILED_ANSI_COL, "%zu out of %zu passed\n", tests_passed, count);
     return false;
 }
 
@@ -88,10 +88,9 @@ void print_test_output(const char* p_name, test_output_t* p_output, usize index,
     printf(fmt, DEBUG_ANSI_PREFIX, ansi_col, DEBUG_ANSI_SUFIX, icon, p_name, DEBUG_ANSI_RESET,
            index + 1, total_count);
     if (strlen(p_output->msg) > 0) {
-        printf(" => %s\n", p_output->msg);
-    } else {
-        printf("\n");
+        printf(" => %s", p_output->msg);
     }
+    printf("\n");
 }
 
 void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...) {

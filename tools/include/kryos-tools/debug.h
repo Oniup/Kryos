@@ -141,7 +141,7 @@ KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i
         if (!(expr)) {                                                                \
             intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_FATAL, __FILE__, __LINE__, #expr, \
                                __VA_ARGS__);                                          \
-            exit(-1);                                                                 \
+            abort();                                                                  \
         }                                                                             \
     })
 

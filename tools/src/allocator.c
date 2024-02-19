@@ -46,6 +46,31 @@ usize get_dynamic_allocation_size(void* p_data) {
     return p_header->size;
 }
 
+usize get_dynamic_allocation_capacity(void* p_data) {
+    if (p_data == NULL) {
+        return 0;
+    }
+    intl_header_t* p_header = intl_get_data_header(p_data);
+    return p_header->cap;
+}
+
+b8 set_dynamic_allocation_size(void* p_data, usize size) {
+    if (p_data == NULL) {
+        return false;
+    }
+    intl_header_t* p_header = intl_get_data_header(p_data);
+#ifndef NDEBUG
+    if (size <= p_header->cap) {
+        p_header->size = size;
+    } else {
+        return false;
+    }
+#else
+    p_header->size = size;
+#endif
+    return true;
+}
+
 allocated_memory_result_t create_dynamic_allocation(usize size) {
     if (size <= 0) {
         return (allocated_memory_result_t) {.err_msg = "Size given is 0, cannot allocate memory",

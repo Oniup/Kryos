@@ -39,6 +39,8 @@ typedef struct allocated_memory_result {
 
 KRYAPI usize get_dynamic_allocation_size(void* p_data);
 KRYAPI usize get_dynamic_allocation_capacity(void* p_data);
+/// @warning The size cannot exceed the capacity size
+KRYAPI b8 set_dynamic_allocation_size(void* p_data, usize size);
 
 KRYAPI allocated_memory_result_t create_dynamic_allocation(usize size);
 

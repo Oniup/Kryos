@@ -18,43 +18,6 @@
 /// limitations under the License.
 /// ------------------------------------------------------------------------------------------------
 
-#include "kryos-tools/allocator.h"
-#include "kryos-tools/debug.h"
-
-#include <stdio.h>
-#include <string.h>
-
 int main(int argc, char* argv[]) {
-    b8 first = true;
-    const char* smaller_str = "Hello World!!!";
-    const char* larger_str = "This is a langer string";
-    for (usize i = 0; i < 100; i++) {
-        allocated_memory_result_t res = create_dynamic_allocation(strlen(smaller_str) + 1);
-        ASSERT(res.err_msg == NO_ALLOCATED_MEMORY_ERROR, "%s", res.err_msg);
-        char* p_str = (char*)res.p_data;
-        strncpy(p_str, smaller_str, strlen(smaller_str));
-        p_str[strlen(smaller_str)] = '\0';
-
-        if (first) {
-            printf("created: %s\n", p_str);
-        }
-
-        res = resize_dynamic_allocation(p_str, strlen(larger_str) +
-                                                   1); // Use the correct size for the resize
-        ASSERT(res.err_msg == NO_ALLOCATED_MEMORY_ERROR, "%s", res.err_msg);
-        p_str = (char*)res.p_data; // Update the pointer after the resize operation
-        strncpy(p_str, larger_str, strlen(larger_str));
-        p_str[strlen(larger_str)] = '\0';
-
-        if (first) {
-            printf("resized: %s\n", p_str);
-        }
-
-        destroy_dynamic_allocation(p_str);
-        if (first) {
-            first = false;
-        }
-    }
-    printf("success");
     return 0;
 }
