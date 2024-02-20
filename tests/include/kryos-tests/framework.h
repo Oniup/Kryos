@@ -1,22 +1,21 @@
-/// ------------------------------------------------------------------------------------------------
-/// This file is part of os Engine (https://github.com/Oniup/osEngine)
-/// @file framework.h
-/// ------------------------------------------------------------------------------------------------
-/// @copyright
-/// Copyright (c) 2024 Oniup (https://github.com/Oniup/)
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///   http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-/// ------------------------------------------------------------------------------------------------
+/// ------------------------------------------------------------------------ ///
+/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
+/// @file framework.h                                                        ///
+/// ------------------------------------------------------------------------ ///
+/// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
+///                                                                          ///
+/// Licensed under the Apache License, Version 2.0 (the "License");          ///
+/// you may not use this file except in compliance with the License.         ///
+/// You may obtain a copy of the License at                                  ///
+///                                                                          ///
+///   http://www.apache.org/licenses/LICENSE-2.0                             ///
+///                                                                          ///
+/// Unless required by applicable law or agreed to in writing, software      ///
+/// distributed under the License is distributed on an "AS IS" BASIS,        ///
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ///
+/// See the License for the specific language governing permissions and      ///
+/// limitations under the License.                                           ///
+/// ------------------------------------------------------------------------ ///
 
 #ifndef KRYOS__TESTS__FRAMEWORK_H
 #define KRYOS__TESTS__FRAMEWORK_H
@@ -78,8 +77,8 @@ typedef struct global_test_options {
 global_test_options_t* get_global_test_options();
 
 b8 execute_tests(const char* p_title, usize count, test_t* p_tests);
-void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
-                       usize* p_tests_passed);
+void print_test_output(const char* p_name, test_output_t* p_output, usize index,
+                       usize total, usize* p_tests_passed);
 
 void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...);
 void set_test_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args);

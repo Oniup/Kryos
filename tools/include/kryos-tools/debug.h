@@ -1,23 +1,21 @@
-/// ------------------------------------------------------------------------------------------------
-///
-/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine)
-/// @file debug.h
-/// ------------------------------------------------------------------------------------------------
-/// @copyright
-/// Copyright (c) 2024 Oniup (https://github.com/Oniup/)
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///   http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-/// ------------------------------------------------------------------------------------------------
+/// ------------------------------------------------------------------------ ///
+/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
+/// @file debug.h                                                            ///
+/// ------------------------------------------------------------------------ ///
+/// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
+///                                                                          ///
+/// Licensed under the Apache License, Version 2.0 (the "License");          ///
+/// you may not use this file except in compliance with the License.         ///
+/// You may obtain a copy of the License at                                  ///
+///                                                                          ///
+///   http://www.apache.org/licenses/LICENSE-2.0                             ///
+///                                                                          ///
+/// Unless required by applicable law or agreed to in writing, software      ///
+/// distributed under the License is distributed on an "AS IS" BASIS,        ///
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ///
+/// See the License for the specific language governing permissions and      ///
+/// limitations under the License.                                           ///
+/// ------------------------------------------------------------------------ ///
 
 #ifndef KRYOS__TOOLS__DEBUG_H
 #define KRYOS__TOOLS__DEBUG_H
@@ -97,12 +95,15 @@ KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i
                                const char* p_expr, const char* p_fmt, ...);
 
 #ifndef KRYOS_DISABLE_INFO_LOGS
-    #define TRACE(...) \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, __VA_ARGS__)
-    #define INFO(...) \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, __VA_ARGS__)
-    #define DEBUG(...) \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    #define TRACE(...)                                                           \
+        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, \
+                           __VA_ARGS__)
+    #define INFO(...)                                                           \
+        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, \
+                           __VA_ARGS__)
+    #define DEBUG(...)                                                           \
+        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, \
+                           __VA_ARGS__)
 #else
     #define TRACE(...)
     #define INFO(...)
@@ -132,7 +133,8 @@ KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i
     #define INFO_IF(expr, ...)
     #define DEBUG_IF(expr, ...)
 #endif
-#define WARN_IF(expr, ...) INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
+#define WARN_IF(expr, ...) \
+    INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
 #define ERROR_IF(expr, ...) \
     INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_ERROR, __VA_ARGS__)
 

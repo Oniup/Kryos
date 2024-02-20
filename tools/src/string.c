@@ -1,22 +1,21 @@
-/// ------------------------------------------------------------------------------------------------
-/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine)
-/// @file string.c
-/// ------------------------------------------------------------------------------------------------
-/// @copyright
-/// Copyright (c) 2024 Oniup (https://github.com/Oniup/)
-///
-/// Licensed under the Apache License, Version 2.0 (the "License");
-/// you may not use this file except in compliance with the License.
-/// You may obtain a copy of the License at
-///
-///   http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software
-/// distributed under the License is distributed on an "AS IS" BASIS,
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/// See the License for the specific language governing permissions and
-/// limitations under the License.
-/// ------------------------------------------------------------------------------------------------
+/// ------------------------------------------------------------------------ ///
+/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
+/// @file string.c                                                           ///
+/// ------------------------------------------------------------------------ ///
+/// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
+///                                                                          ///
+/// Licensed under the Apache License, Version 2.0 (the "License");          ///
+/// you may not use this file except in compliance with the License.         ///
+/// You may obtain a copy of the License at                                  ///
+///                                                                          ///
+///   http://www.apache.org/licenses/LICENSE-2.0                             ///
+///                                                                          ///
+/// Unless required by applicable law or agreed to in writing, software      ///
+/// distributed under the License is distributed on an "AS IS" BASIS,        ///
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ///
+/// See the License for the specific language governing permissions and      ///
+/// limitations under the License.                                           ///
+/// ------------------------------------------------------------------------ ///
 
 #include "kryos-tools/string.h"
 #include "kryos-tools/allocator.h"
@@ -70,7 +69,8 @@ string_t create_string_cstr(const char* p_cstr) {
     string_t str = {.p_cstr = (char*)res.p_data};
     errno_t err = memcpy_s(str.p_cstr, get_string_length(&str), p_cstr, len);
     if (err != 0) {
-        ERROR("Failed to create string from cstr ('%s): memcpy_s err returned %d", p_cstr, err);
+        ERROR("Failed to create string from cstr ('%s): memcpy_s err returned %d", p_cstr,
+              err);
         destroy_dynamic_allocation(&str);
         return EMPTY_STRING;
     }
@@ -86,15 +86,17 @@ string_t create_string(const string_t* p_str) {
     usize len = get_string_length(p_str);
     allocated_memory_result_t res = create_dynamic_allocation(len + 1);
     if (res.err_msg != NO_ALLOCATED_MEMORY_ERROR) {
-        ERROR("Failed to create string from string ('%s'): string", p_str->p_cstr, res.err_msg);
+        ERROR("Failed to create string from string ('%s'): string", p_str->p_cstr,
+              res.err_msg);
         return EMPTY_STRING;
     }
     string_t str = {.p_cstr = (char*)res.p_data};
     errno_t err = memcpy_s(str.p_cstr, get_string_length(&str), p_str->p_cstr, len);
     if (err != 0) {
-        ERROR("Failed to create string from string ('%s'): memcpy_s failed and error code "
-              "resulted in %d",
-              p_str->p_cstr, err);
+        ERROR(
+            "Failed to create string from string ('%s'): memcpy_s failed and error code "
+            "resulted in %d",
+            p_str->p_cstr, err);
         destroy_string(&str);
         return EMPTY_STRING;
     }
@@ -111,7 +113,8 @@ string_t create_string_format(const char* p_fmt, ...) {
     va_start(args, p_fmt);
     errno_t err = vsprintf_s(buf, MAX_COPY_TMP_BUF_SIZE, p_fmt, args);
     if (err < 0) {
-        ERROR("Failed to create string using format '%s': vprintf_s error result %d", p_fmt, err);
+        ERROR("Failed to create string using format '%s': vprintf_s error result %d",
+              p_fmt, err);
         return EMPTY_STRING;
     }
     va_end(args);
@@ -144,12 +147,13 @@ b8 set_string(string_t* p_str, const string_t* p_src) {
     usize src_len = get_string_length(p_src);
     allocated_memory_result_t res = resize_dynamic_allocation(p_str->p_cstr, src_len + 1);
     if (res.err_msg != NO_ALLOCATED_MEMORY_ERROR) {
-        ERROR("Failed to resize destination string of length %zu to %zu: %s", len, src_len,
-              res.err_msg);
+        ERROR("Failed to resize destination string of length %zu to %zu: %s", len,
+              src_len, res.err_msg);
         return false;
     }
     p_str->p_cstr = (char*)res.p_data;
-    errno_t err = memcpy_s(p_str->p_cstr, get_string_length(p_str), p_src->p_cstr, src_len);
+    errno_t err =
+        memcpy_s(p_str->p_cstr, get_string_length(p_str), p_src->p_cstr, src_len);
     if (err != 0) {
         ERROR("Failed to copy string: memcpy_s error code returned %d", err);
         return false;
@@ -163,8 +167,8 @@ b8 set_string_cstr(string_t* p_str, const char* p_src) {
     usize src_len = strlen(p_src);
     allocated_memory_result_t res = resize_dynamic_allocation(p_str->p_cstr, src_len + 1);
     if (res.err_msg != NO_ALLOCATED_MEMORY_ERROR) {
-        ERROR("Failed to set string to cstr '%s'. String length needs to %zu -> %zu: %s", p_src,
-              len, src_len, res.err_msg);
+        ERROR("Failed to set string to cstr '%s'. String length needs to %zu -> %zu: %s",
+              p_src, len, src_len, res.err_msg);
         return false;
     }
     p_str->p_cstr = (char*)res.p_data;
@@ -181,14 +185,16 @@ b8 append_string(string_t* p_str, const string_t* p_src) {
     usize old_len = get_string_length(p_str);
     usize src_len = get_string_length(p_src);
     if (src_len > 0) {
-        allocated_memory_result_t res = resize_dynamic_allocation(p_str->p_cstr, old_len + src_len);
+        allocated_memory_result_t res =
+            resize_dynamic_allocation(p_str->p_cstr, old_len + src_len);
         if (res.err_msg != NO_ALLOCATED_MEMORY_ERROR) {
             ERROR("Failed to append string '%s': %s", p_src->p_cstr, res.err_msg);
             return false;
         }
         p_str->p_cstr = (char*)res.p_data;
-        errno_t err = memcpy_s(p_str->p_cstr + old_len, get_string_length(p_str) - old_len,
-                               p_src->p_cstr, src_len);
+        errno_t err =
+            memcpy_s(p_str->p_cstr + old_len, get_string_length(p_str) - old_len,
+                     p_src->p_cstr, src_len);
         if (err != 0) {
             ERROR("Failed to append string '%s': memcpy_s failed, error resulted in %d",
                   p_str->p_cstr, err);
@@ -209,8 +215,8 @@ b8 append_string_cstr(string_t* p_str, const char* p_src) {
             return false;
         }
         p_str->p_cstr = (char*)res.p_data;
-        errno_t err =
-            memcpy_s(p_str->p_cstr + old_len, get_string_length(p_str) - old_len, p_src, src_len);
+        errno_t err = memcpy_s(p_str->p_cstr + old_len,
+                               get_string_length(p_str) - old_len, p_src, src_len);
         if (err != 0) {
             ERROR("Failed to append string '%s': memcpy_s failed, error resulted in %d",
                   p_str->p_cstr, err);
@@ -247,7 +253,8 @@ b8 format_string(string_t* p_str, const char* p_fmt, ...) {
     va_start(args, p_fmt);
     errno_t err = vsprintf_s(buf, MAX_COPY_TMP_BUF_SIZE, p_fmt, args);
     if (err < 0) {
-        ERROR("Failed to format string using '%s': vprintf_s error result %d", p_fmt, err);
+        ERROR("Failed to format string using '%s': vprintf_s error result %d", p_fmt,
+              err);
         return false;
     }
     va_end(args);
@@ -260,7 +267,8 @@ b8 format_string(string_t* p_str, const char* p_fmt, ...) {
     p_str->p_cstr = (char*)res.p_data;
     err = memcpy_s(p_str->p_cstr, get_string_length(p_str), buf, buf_len);
     if (err != 0) {
-        ERROR("Failed to format string using '%s': memcpy_s failed and error code resulted in %d",
+        ERROR("Failed to format string using '%s': memcpy_s failed and error code "
+              "resulted in %d",
               p_fmt, err);
         return false;
     }

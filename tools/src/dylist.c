@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file main.c                                                             ///
+/// @file dylist.c                                                           ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,6 +17,15 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-int main(int argc, char* argv[]) {
-    return 0;
+#include "kryos-tools/dylist.h"
+#include "kryos-tools/allocator.h"
+#include "kryos-tools/debug.h"
+
+void* intl_create_dylist(usize type_size, usize count) {
+    allocated_memory_result_t res = create_dynamic_allocation(type_size * count);
+    if (res.err_msg == NO_ALLOCATED_MEMORY_ERROR) {
+        ERROR("Failed to create dynamic list: %s", res.err_msg);
+        return NULL;
+    }
+    return res.p_data;
 }

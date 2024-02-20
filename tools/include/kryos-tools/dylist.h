@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file main.c                                                             ///
+/// @file dylist.h                                                           ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,6 +17,23 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-int main(int argc, char* argv[]) {
-    return 0;
+#ifndef KRYOS__TOOLS__DYLIST_H
+#define KRYOS__TOOLS__DYLIST_H
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "kryos-tools/defines.h"
+
+#define create_dylist(T, count) intl_create_dylist(sizeof(T), count)
+
+void* intl_create_dylist(usize type_size, usize count);
+void* intl_push_back_dylist(void* p_dylist, usize type_size, usize count, void* p_data);
+void* intl_push_front_dylist(void* p_dylist, usize type_size, usize count, void* p_data);
+void* intl_insert_dylist(void* p_dylist, usize type_size, usize pos, usize count,
+                         void* p_data);
+
+#ifdef __cplusplus
 }
+#endif
+#endif
