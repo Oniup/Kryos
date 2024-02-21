@@ -17,6 +17,8 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
+#include "kryos-tools/dyarray.h"
+
 int main(int argc, char* argv[]) {
     return 0;
 }

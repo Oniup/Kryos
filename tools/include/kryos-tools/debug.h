@@ -24,6 +24,7 @@ extern "C" {
 #endif
 
 #include "kryos-tools/defines.h"
+#include <stdarg.h>
 #include <stdlib.h>
 
 #define DEBUG_ANSI_PREFIX "\x1b["
@@ -55,70 +56,28 @@ extern "C" {
 
 #define MAX_ASSERT_MSG_SIZE 2000
 
-typedef int debug_log_level_t;
-typedef enum debug_log_level_flag {
-    DEBUG_LOG_LEVEL_FLAG_NONE = 0,
-    DEBUG_LOG_LEVEL_FLAG_TRACE = 0X01,
-    DEBUG_LOG_LEVEL_FLAG_INFO = 0X02,
-    DEBUG_LOG_LEVEL_FLAG_DEBUG = 0X04,
-    DEBUG_LOG_LEVEL_FLAG_WARN = 0X08,
-    DEBUG_LOG_LEVEL_FLAG_ERROR = 0X10,
-    DEBUG_LOG_LEVEL_FLAG_FATAL = 0X20,
-} debug_log_level_flag_t;
-
-KRYAPI const char* debug_log_level_flag_as_cstr(debug_log_level_flag_t lv);
-
-typedef enum debug_out_target {
-    DEBUG_OUT_TARGET_STDOUT,
-    DEBUG_OUT_TARGET_STDERR,
-    DEBUG_OUT_TARGET_LOG_FILE,
-} debug_out_target_t;
-
-typedef struct global_runtime_debug_options {
-    debug_log_level_t lv_filter;
-    struct {
-        b8 expr;
-        b8 file;
-        b8 line;
-        b8 ansi_col;
-    } enable;
-    struct {
-        b8 enable;
-        b8 ansi_col;
-        const char* p_fpath;
-    } io;
-} global_runtime_debug_options_t;
-
-KRYAPI global_runtime_debug_options_t* get_global_runtime_debug_options();
-
-KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i32 line,
-                               const char* p_expr, const char* p_fmt, ...);
-
 #ifndef KRYOS_DISABLE_INFO_LOGS
-    #define TRACE(...)                                                           \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, \
-                           __VA_ARGS__)
-    #define INFO(...)                                                           \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, \
-                           __VA_ARGS__)
-    #define DEBUG(...)                                                           \
-        intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, \
-                           __VA_ARGS__)
+    #define TRACE(...) \
+        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    #define INFO(...) \
+        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    #define DEBUG(...) \
+        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, __VA_ARGS__)
 #else
     #define TRACE(...)
     #define INFO(...)
     #define DEBUG(...)
 #endif
 #define WARN(...) \
-    intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_WARN, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_WARN, __FILE__, __LINE__, NULL, __VA_ARGS__)
 #define ERROR(...) \
-    intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_ERROR, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_ERROR, __FILE__, __LINE__, NULL, __VA_ARGS__)
 
-#define INTERNAL_LOG_WITH_CONDITION(expr, lv, ...)                          \
-    ({                                                                      \
-        if (!(expr)) {                                                      \
-            intl_print_log_msg(lv, __FILE__, __LINE__, #expr, __VA_ARGS__); \
-        }                                                                   \
+#define INTERNAL_LOG_WITH_CONDITION(expr, lv, ...)                              \
+    ({                                                                          \
+        if (!(expr)) {                                                          \
+            intl_print_log_message(lv, __FILE__, __LINE__, #expr, __VA_ARGS__); \
+        }                                                                       \
     })
 
 #ifndef KRYOS_DISABLE_INFO_LOGS
@@ -133,18 +92,17 @@ KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i
     #define INFO_IF(expr, ...)
     #define DEBUG_IF(expr, ...)
 #endif
-#define WARN_IF(expr, ...) \
-    INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
+#define WARN_IF(expr, ...) INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
 #define ERROR_IF(expr, ...) \
     INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_ERROR, __VA_ARGS__)
 
-#define INTERNAL_ASSERT(expr, ...)                                                    \
-    ({                                                                                \
-        if (!(expr)) {                                                                \
-            intl_print_log_msg(DEBUG_LOG_LEVEL_FLAG_FATAL, __FILE__, __LINE__, #expr, \
-                               __VA_ARGS__);                                          \
-            abort();                                                                  \
-        }                                                                             \
+#define INTERNAL_ASSERT(expr, ...)                                                        \
+    ({                                                                                    \
+        if (!(expr)) {                                                                    \
+            intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_FATAL, __FILE__, __LINE__, #expr, \
+                                   __VA_ARGS__);                                          \
+            abort();                                                                      \
+        }                                                                                 \
     })
 
 #define ASSERT(expr, ...) INTERNAL_ASSERT(expr, __VA_ARGS__)
@@ -153,6 +111,56 @@ KRYAPI void intl_print_log_msg(debug_log_level_flag_t lv, const char* p_fpath, i
 #else
     #define DEBUG_DEBUG_ASSERT(expr, ...)
 #endif
+
+typedef int debug_log_level_t;
+typedef enum debug_log_level_flag {
+    DEBUG_LOG_LEVEL_FLAG_NONE = 0,
+    DEBUG_LOG_LEVEL_FLAG_TRACE = 0X01,
+    DEBUG_LOG_LEVEL_FLAG_INFO = 0X02,
+    DEBUG_LOG_LEVEL_FLAG_DEBUG = 0X04,
+    DEBUG_LOG_LEVEL_FLAG_WARN = 0X08,
+    DEBUG_LOG_LEVEL_FLAG_ERROR = 0X10,
+    DEBUG_LOG_LEVEL_FLAG_FATAL = 0X20,
+} debug_log_level_flag_t;
+
+KRYAPI const char* debug_log_level_flag_as_cstr(debug_log_level_flag_t level);
+
+typedef enum debug_out_target {
+    DEBUG_OUT_TARGET_STDOUT,
+    DEBUG_OUT_TARGET_STDERR,
+    DEBUG_OUT_TARGET_LOG_FILE,
+} debug_out_target_t;
+
+typedef struct global_runtime_debug_options {
+    debug_log_level_t enable_level;
+    struct {
+        b8 expression;
+        b8 file;
+        b8 line;
+        b8 terminal_ansi_color;
+    } enable;
+    struct {
+        b8 enable;
+        b8 terminal_ansi_color;
+        const char* p_filename;
+    } io;
+} global_runtime_debug_options_t;
+
+KRYAPI global_runtime_debug_options_t* get_global_runtime_debug_options();
+
+KRYAPI void intl_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
+                                   const char* p_expression, const char* p_format, ...);
+
+inline b8 failed_error(b8 condition, const char* error_message, ...) {
+    if (!condition) {
+        va_list args;
+        va_start(args, error_message);
+        ERROR(error_message, args);
+        va_end(args);
+        return true;
+    }
+    return false;
+}
 
 #ifdef __cplusplus
 }

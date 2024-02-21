@@ -18,7 +18,6 @@
 /// ------------------------------------------------------------------------ ///
 
 #include "kryos-tests/framework.h"
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,8 +39,7 @@ void print_msg(const char* p_ansi_col, const char* p_fmt, ...) {
     }
     va_end(args);
     if (res < 0) {
-        printf("Failed to print test results. va_list args are incorrect and cased "
-               "vprintf_s to "
+        printf("Failed to print test results. va_list args are incorrect and cased vprintf_s to "
                "fail\n");
     }
 }
@@ -51,8 +49,8 @@ global_test_options_t* get_global_test_options() {
 }
 
 b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
-    print_msg(TEST_TITLE_ANSI_COL,
-              "%s\n-------------------------------------------------\n", p_title);
+    print_msg(TEST_TITLE_ANSI_COL, "%s\n-------------------------------------------------\n",
+              p_title);
     usize tests_passed = false;
     for (usize i = 0; i < count; i++) {
         if (p_tests[i].test != NULL) {
@@ -63,8 +61,7 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
             p_tests[i].test(&result);
             print_test_output(p_tests[i].p_name, &result, i, count, &tests_passed);
         } else {
-            print_msg(TEST_FAILED_ANSI_COL, "TEST '%s' HAS NO TEST FUNCTION\n",
-                      p_tests->p_name);
+            print_msg(TEST_FAILED_ANSI_COL, "TEST '%s' HAS NO TEST FUNCTION\n", p_tests->p_name);
         }
     }
     if (tests_passed == count) {
@@ -75,8 +72,8 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
     return false;
 }
 
-void print_test_output(const char* p_name, test_output_t* p_output, usize index,
-                       usize total_count, usize* p_tests_passed) {
+void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total_count,
+                       usize* p_tests_passed) {
     const char* fmt = "%s%s%s %s%s %u/%u";
     const char* ansi_col = TEST_FAILED_ANSI_COL;
     if (p_output->pass) {
@@ -84,8 +81,8 @@ void print_test_output(const char* p_name, test_output_t* p_output, usize index,
         *p_tests_passed = *p_tests_passed + 1;
     }
 
-    printf(fmt, DEBUG_ANSI_PREFIX, ansi_col, DEBUG_ANSI_SUFIX, p_name, DEBUG_ANSI_RESET,
-           index + 1, total_count);
+    printf(fmt, DEBUG_ANSI_PREFIX, ansi_col, DEBUG_ANSI_SUFIX, p_name, DEBUG_ANSI_RESET, index + 1,
+           total_count);
     if (strlen(p_output->msg) > 0) {
         printf(" => %s", p_output->msg);
     }

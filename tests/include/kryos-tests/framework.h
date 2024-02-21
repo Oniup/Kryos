@@ -23,9 +23,8 @@
 extern "C" {
 #endif
 
-#include "kryos-tools/debug.h"
 #include "kryos-tools/defines.h"
-
+#include "kryos-tools/debug.h"
 #include <stdarg.h>
 
 #define TEST_TITLE_ANSI_COL DEBUG_ANSI_FG_CYAN
@@ -77,8 +76,8 @@ typedef struct global_test_options {
 global_test_options_t* get_global_test_options();
 
 b8 execute_tests(const char* p_title, usize count, test_t* p_tests);
-void print_test_output(const char* p_name, test_output_t* p_output, usize index,
-                       usize total, usize* p_tests_passed);
+void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
+                       usize* p_tests_passed);
 
 void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...);
 void set_test_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args);

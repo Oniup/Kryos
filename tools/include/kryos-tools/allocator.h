@@ -25,20 +25,18 @@ extern "C" {
 
 #include "kryos-tools/defines.h"
 
-#define NO_ALLOCATED_MEMORY_ERROR NULL
-
 /// @brief Dynamic memory allocator structure.
 typedef struct intl_allocator_header {
     /// @brief Total size in bytes that is initialized and in current use
     usize size;
     /// @brief Total allocated buffer size in bytes. Can include uninitialized
-    usize cap;
+    usize capacity;
 } intl_allocator_header_t;
 
 typedef struct allocated_memory_result {
     /// @brief NULL if there is no error, otherwise is a compile time string of
     /// describing error
-    const char* err_msg;
+    const char* error_message;
     /// @brief Pointer to modified data
     void* p_data;
 } allocated_memory_result_t;
@@ -54,9 +52,8 @@ KRYAPI void destroy_dynamic_allocation(void* p_data);
 
 KRYAPI allocated_memory_result_t resize_dynamic_allocation(void* p_data, usize size);
 KRYAPI allocated_memory_result_t insert_dynamic_allocation(void* p_data, usize size,
-                                                           usize pos);
-KRYAPI allocated_memory_result_t resize_dynamic_allocation_capacity(void* p_data,
-                                                                    usize cap);
+                                                           usize position);
+KRYAPI allocated_memory_result_t resize_dynamic_allocation_capacity(void* p_data, usize capacity);
 
 #ifdef __cplusplus
 }

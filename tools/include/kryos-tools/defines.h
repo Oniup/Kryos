@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file define.h                                                           ///
+/// @file defines.h                                                          ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -40,6 +40,8 @@ extern "C" {
 #else
     #define KRYAPI
 #endif
+
+#define NO_ERROR_MESSAGE NULL
 
 #define KRYOS_VERSION_MAJOR 0u
 #define KRYOS_VERSION_MINOR 0u
