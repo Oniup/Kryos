@@ -88,7 +88,7 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
         p_list = (typeof(p_list))result.p_data;                                 \
     })
 
-#define push_array_list_copy_data_front(p_list, p_copy)                          \
+#define push_front_array_list_copy_data(p_list, p_copy)                          \
     ({                                                                           \
         array_list_result_t result =                                             \
             intl_push_array_list_data_front(p_list, sizeof(*p_list), 1, p_copy); \
@@ -102,6 +102,12 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
     ({                                                           \
         typeof(*p_list) array_list_tmp_data = data;              \
         push_array_list_copy_data(p_list, &array_list_tmp_data); \
+    })
+
+#define push_front_array_list_data(p_list, data)                       \
+    ({                                                                 \
+        typeof(*p_list) array_list_tmp_data = data;                    \
+        push_front_array_list_copy_data(p_list, &array_list_tmp_data); \
     })
 
 #ifdef __cplusplus

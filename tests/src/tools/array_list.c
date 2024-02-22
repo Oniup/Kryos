@@ -41,12 +41,14 @@ void create_uninitialized_list(test_output_t* p_out) {
 }
 
 void push_data_back(test_output_t* p_out) {
-    ARRAY_LIST(int) tmp = create_array_list(int);
+    ARRAY_LIST(int) array_list = create_array_list(int);
     for (usize i = 0; i < ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT + 1; i++) {
-        push_array_list_data(tmp, i + 1);
+        int* tmp = push_array_list_data(array_list, i + 1);
+        CHECK_IF(tmp != NULL, "Pushing data to back at index %zu resulted in array list of NULL",
+                 i);
     }
-    usize size = get_array_list_size(tmp);
-    usize capacity = get_array_list_capacity(tmp);
+    usize size = get_array_list_size(array_list);
+    usize capacity = get_array_list_capacity(array_list);
     IS_EQUALS(size, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT + 1,
               "Array list size isn't correct (%zu), should be %zu", size,
               ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT + 1);
@@ -54,12 +56,34 @@ void push_data_back(test_output_t* p_out) {
               "Array list capacity isn't correct (%zu), should be %zu", capacity,
               ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 2);
     for (usize i = 0; i < size; i++) {
-        IS_EQUALS(tmp[i], i + 1, "Array list element isn't correct value");
+        IS_EQUALS(array_list[i], i + 1, "Array list element isn't correct value");
     }
-    destroy_array_list(tmp);
+    destroy_array_list(array_list);
 }
 
 void push_data_front(test_output_t* p_out) {
+    ARRAY_LIST(int) array_list = create_array_list(int);
+    usize target_size = ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 2 + 1;
+    for (usize i = 0; i < target_size; i++) {
+        int* tmp = push_front_array_list_data(array_list, i + 1);
+        CHECK_IF(tmp != NULL, "Pushing data to front at index %zu resulted in array list of NULL",
+                 i);
+    }
+    usize size = get_array_list_size(array_list);
+    usize capacity = get_array_list_capacity(array_list);
+    IS_EQUALS(size, target_size, "Array list size isn't correct (%zu), should be %zu", size,
+              target_size);
+    IS_EQUALS(capacity, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 3,
+              "Array list capacity isn't correct (%zu), should be %zu", capacity,
+              ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 3);
+    usize value = size;
+    for (usize i = 0; i < size; i++) {
+        IS_EQUALS(array_list[i], value,
+                  "Array list element isn't correct value(%zu), should be %zu", array_list[i],
+                  value);
+        value -= 1;
+    }
+    destroy_array_list(array_list);
 }
 
 void insert_data(test_output_t* p_out) {

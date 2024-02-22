@@ -109,3 +109,34 @@ array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size
     }
     return (array_list_result_t) {.failed = false, .p_data = p_list};
 }
+
+array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size, usize count,
+                                                    void* p_data) {
+    usize old_size = intl_get_array_list_size(p_list, type_size);
+    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    if (result.failed) {
+        return result;
+    }
+    p_list = result.p_data;
+    usize size = intl_get_array_list_size(p_list, type_size);
+    if (size == 0) {
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    usize p_data_size = type_size * count;
+    // Shift old data over
+    errno_t error =
+        memcpy_s(p_list + p_data_size, old_size * type_size, p_list, old_size * type_size);
+    if (error != 0) {
+        ERROR("Failed to shift original array list data over to make room for the new data at "
+              "front: memcpy_s failed and returned error code %d",
+              error);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    // Copy New Data
+    error = memcpy_s(p_list, p_data_size, p_data, p_data_size);
+    if (error != 0) {
+        ERROR("Failed to memcpy_s as the error code resulted in %d", error);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    return (array_list_result_t) {.failed = false, .p_data = p_list};
+}
