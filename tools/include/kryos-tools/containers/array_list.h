@@ -26,95 +26,83 @@ extern "C" {
 #include "kryos-tools/debug.h"
 #include "kryos-tools/defines.h"
 
-typedef enum array_list_insert_type {
-    ARRAY_LIST_INSERT_TYPE_FRONT,
-    ARRAY_LIST_INSERT_TYPE_BACK,
-    ARRAY_LIST_INSERT_TYPE_ANY,
-} array_list_insert_type_t;
+#define ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT 20
 
-typedef struct array_list {
+typedef struct array_list_result {
     b8 failed;
-    void* p_array;
+    void* p_data;
 } array_list_result_t;
 
 KRYAPI void destroy_array_list(void* p_list);
 
-KRYAPI array_list_result_t intl_create_array_list(usize type_size, usize count);
-
 KRYAPI usize intl_get_array_list_size(void* p_list, usize type_size);
 KRYAPI usize intl_get_array_list_capacity(void* p_list, usize type_size);
 
-KRYAPI array_list_result_t intl_resize_array_list(void* p_list, usize type_size, usize count);
+KRYAPI array_list_result_t intl_create_array_list_uninitialized(usize type_size,
+                                                                usize capacity_count);
+
+KRYAPI array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, usize count);
+
+/// @brief Resizes capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` *
+/// `type_size`.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type bytes.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+///
+/// @return Result struct determining whether the function failed.
 KRYAPI array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_size,
-                                                           usize capacity_count);
+                                                           usize count);
 
-KRYAPI array_list_result_t intl_push_array_list_data(void* p_list, usize type_size,
-                                                     array_list_insert_type_t insert_type,
-                                                     usize count, usize pos, void* p_data);
+array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size, usize count,
+                                                   void* p_data);
 
-KRYAPI array_list_result_t intl_push_array_list_data_back(void* p_list, usize size, void* p_data);
-KRYAPI array_list_result_t intl_push_array_list_data_front(void* p_list, usize size, void* p_data);
-KRYAPI array_list_result_t intl_insert_array_list_data(void* p_list, usize position, usize size,
-                                                       void* p_data);
+array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size, usize count,
+                                                    void* p_data);
 
 #define ARRAY_LIST(T) T*
 
-#define EMPTY_ARRAY_LIST                \
-    (array_list_result_t) {             \
-        .passed = false, .p_list = NULL \
-    }
-
-#define create_empty_array_list(T)                                         \
-    ({                                                                     \
-        array_list_result_t result = intl_create_array_list(sizeof(T), 0); \
-        if (result.failed) {                                               \
-            ERROR("Failed to create empty array list");                    \
-        }                                                                  \
-        (T*)result.p_array;                                                \
+#define create_array_list_uninitialized(T, count)                                            \
+    ({                                                                                       \
+        array_list_result_t result = intl_create_array_list_uninitialized(sizeof(T), count); \
+        if (result.failed) {                                                                 \
+            ERROR("Failed to create empty array list");                                      \
+        }                                                                                    \
+        result.p_data;                                                                       \
     })
 
-#define create_array_list(T, count)                                            \
-    ({                                                                         \
-        array_list_result_t result = intl_create_array_list(sizeof(T), count); \
-        if (result.failed) {                                                   \
-            ERROR("Failed to create array list");                              \
-        }                                                                      \
-        (T*)result.p_array;                                                    \
-    })
+#define create_array_list(T) \
+    create_array_list_uninitialized(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
 
 #define get_array_list_size(p_list) intl_get_array_list_size(p_list, sizeof(*p_list))
 #define get_array_list_capacity(p_list) intl_get_array_list_capacity(p_list, sizeof(*p_list))
 
-#define push_copy_array_list_data(p_list, p_data) \
-    intl_push_array_list_data(p_list, sizeof(*p_list), ARRAY_LIST_INSERT_TYPE_BACK, 1, 0, p_data)
-
-#define push_copy_array_list_array(p_list, p_array, count)                                    \
-    intl_push_array_list_data(p_list, sizeof(*p_list), ARRAY_LIST_INSERT_TYPE_BACK, count, 0, \
-                              p_array)
-
-#define insert_copy_array_list_data(p_list, p_data, position)                                   \
-    intl_push_array_list_data(p_list, sizeof(*p_list), ARRAY_LIST_INSERT_TYPE_ANY, 1, position, \
-                              p_data)
-
-#define insert_copy_array_list_array(p_list, p_array, count, position)                    \
-    intl_push_array_list_data(p_list, sizeof(*p_list), ARRAY_LIST_INSERT_TYPE_ANY, count, \
-                              position, p_array)
-
-#define push_array_list_data(p_list, data)            \
-    ({                                                \
-        typeof(*p_list) intl_tmp = data;              \
-        push_copy_array_list_data(p_list, &intl_tmp); \
+#define push_array_list_copy_data(p_list, p_copy)                               \
+    ({                                                                          \
+        array_list_result_t result =                                            \
+            intl_push_array_list_data_back(p_list, sizeof(*p_list), 1, p_copy); \
+        if (result.failed) {                                                    \
+            ERROR("Failed to push data into array list");                       \
+        }                                                                       \
+        p_list = (typeof(p_list))result.p_data;                                 \
     })
 
-#define push_array_list_array(p_list, array)          \
-    ({                                                \
-        typeof(*p_list) intl_tmp = array;             \
-        push_copy_array_list_data(p_list, &intl_tmp); \
+#define push_array_list_copy_data_front(p_list, p_copy)                          \
+    ({                                                                           \
+        array_list_result_t result =                                             \
+            intl_push_array_list_data_front(p_list, sizeof(*p_list), 1, p_copy); \
+        if (result.failed) {                                                     \
+            ERROR("Failed to push data into array list");                        \
+        }                                                                        \
+        p_list = (typeof(p_list))result.p_data;                                  \
     })
 
-#define insert_array_list_data(p_list, p_data, position)
-
-#define insert_array_list_array(p_list, p_array, position)
+#define push_array_list_data(p_list, data)                       \
+    ({                                                           \
+        typeof(*p_list) array_list_tmp_data = data;              \
+        push_array_list_copy_data(p_list, &array_list_tmp_data); \
+    })
 
 #ifdef __cplusplus
 }

@@ -19,19 +19,11 @@
 
 #include "kryos-tools/containers/array_list.h"
 #include "kryos-tools/containers/allocator.h"
+#include <math.h>
 #include <memory.h>
 
 void destroy_array_list(void* p_list) {
     destroy_dynamic_allocation(p_list);
-}
-
-array_list_result_t intl_create_array_list(usize type_size, usize count) {
-    allocated_memory_result_t result = create_dynamic_allocation(type_size * count);
-    if (result.error_message != NO_ERROR_MESSAGE) {
-        ERROR("Failed to create dynamic array: %s", result.error_message);
-        return (array_list_result_t) {.failed = true, .p_array = result.p_data};
-    }
-    return (array_list_result_t) {.failed = false, .p_array = result.p_data};
 }
 
 usize intl_get_array_list_size(void* p_list, usize type_size) {
@@ -48,4 +40,72 @@ usize intl_get_array_list_capacity(void* p_list, usize type_size) {
         capacity = capacity / type_size;
     }
     return capacity;
+}
+
+array_list_result_t intl_create_array_list_uninitialized(usize type_size, usize capacity_count) {
+    allocated_memory_result_t result = create_dynamic_allocation(type_size * capacity_count);
+    if (result.error_message != NO_ERROR_MESSAGE) {
+        ERROR(
+            "Failed to create uninitialized array list of size %zu, type_size: %zu, count: %zu: %s",
+            type_size * capacity_count, type_size, capacity_count, result.error_message);
+        return (array_list_result_t) {.failed = true, .p_data = NULL};
+    }
+    void* p_data = result.p_data;
+    set_dynamic_allocation_size(p_data, 0);
+    return (array_list_result_t) {.failed = false, .p_data = p_data};
+}
+
+array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, usize count) {
+    usize capacity = get_dynamic_allocation_capacity(p_list);
+    usize new_size = get_dynamic_allocation_size(p_list) + type_size * count;
+    if (new_size > capacity) {
+        array_list_result_t result = intl_resize_array_list_capacity(p_list, type_size, count);
+        if (result.failed) {
+            return result;
+        }
+        p_list = result.p_data;
+    }
+    b8 result = set_dynamic_allocation_size(p_list, new_size);
+    if (!result) {
+        ERROR("Failed to resize array list to %zu, type_size: %zu, count: %zu", type_size * count,
+              type_size, count);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    return (array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_size, usize count) {
+    usize capacity_increase =
+        (usize)ceil((f64)(type_size * count) / (f64)ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT);
+    allocated_memory_result_t result = resize_dynamic_allocation_capacity(
+        p_list, get_dynamic_allocation_capacity(p_list) +
+                    capacity_increase * (type_size * ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT));
+    if (result.error_message != NO_ERROR_MESSAGE) {
+        ERROR("Failed to resize array list capacity to %zu, type_size: %zu, count: %zu",
+              type_size * count, type_size, count);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    p_list = result.p_data;
+    return (array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size, usize count,
+                                                   void* p_data) {
+    usize old_size = intl_get_array_list_size(p_list, type_size);
+    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    if (result.failed) {
+        return result;
+    }
+    p_list = result.p_data;
+    usize size = intl_get_array_list_size(p_list, type_size);
+    if (size == 0) {
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    usize p_data_size = type_size * count;
+    errno_t error = memcpy_s(p_list + type_size * old_size, p_data_size, p_data, p_data_size);
+    if (error != 0) {
+        ERROR("Failed to memcpy_s as the error code resulted in %d", error);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    return (array_list_result_t) {.failed = false, .p_data = p_list};
 }
