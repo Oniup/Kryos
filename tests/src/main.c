@@ -18,12 +18,14 @@
 /// ------------------------------------------------------------------------ ///
 
 #include "kryos-tests//tools/memory_allocation.h"
+#include "kryos-tests/tools/array_list.h"
 #include "kryos-tests/tools/string.h"
 
 int main(int argc, char* p_argv[]) {
     // Tools
     memory_allocation_tests();
-    string_tests();
+    // string_tests();
+    array_list_tests();
 
     return 0;
 }

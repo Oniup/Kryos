@@ -17,7 +17,7 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-#include "kryos-tools/allocator.h"
+#include "kryos-tools/containers/allocator.h"
 #include <memory.h>
 #include <stdlib.h>
 
@@ -63,10 +63,6 @@ b8 set_dynamic_allocation_size(void* p_data, usize size) {
 }
 
 allocated_memory_result_t create_dynamic_allocation(usize size) {
-    if (size <= 0) {
-        return (allocated_memory_result_t) {
-            .error_message = "Size given is 0, cannot allocate memory", .p_data = NULL};
-    }
     intl_allocator_header_t* p_header = malloc(sizeof(intl_allocator_header_t) + size);
     if (p_header == NULL) {
         return (allocated_memory_result_t) {

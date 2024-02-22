@@ -17,8 +17,8 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-#include "kryos-tools/string.h"
-#include "kryos-tools/allocator.h"
+#include "kryos-tools/containers/string.h"
+#include "kryos-tools/containers/allocator.h"
 #include "kryos-tools/debug.h"
 #include <memory.h>
 #include <stdarg.h>

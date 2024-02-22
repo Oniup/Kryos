@@ -24,7 +24,6 @@ extern "C" {
 #endif
 
 #include "kryos-tools/defines.h"
-#include <stdarg.h>
 #include <stdlib.h>
 
 #define DEBUG_ANSI_PREFIX "\x1b["
@@ -150,17 +149,6 @@ KRYAPI global_runtime_debug_options_t* get_global_runtime_debug_options();
 
 KRYAPI void intl_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
                                    const char* p_expression, const char* p_format, ...);
-
-inline b8 failed_error(b8 condition, const char* error_message, ...) {
-    if (!condition) {
-        va_list args;
-        va_start(args, error_message);
-        ERROR(error_message, args);
-        va_end(args);
-        return true;
-    }
-    return false;
-}
 
 #ifdef __cplusplus
 }

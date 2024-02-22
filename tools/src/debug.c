@@ -18,6 +18,7 @@
 /// ------------------------------------------------------------------------ ///
 
 #include "kryos-tools/debug.h"
+#include <stdarg.h>
 #include <stdio.h>
 
 static global_runtime_debug_options_t g_db_opts = {

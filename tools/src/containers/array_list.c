@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file main.c                                                             ///
+/// @file array_list.c                                                       ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,6 +17,35 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-int main(int argc, char* argv[]) {
-    return 0;
+#include "kryos-tools/containers/array_list.h"
+#include "kryos-tools/containers/allocator.h"
+#include <memory.h>
+
+void destroy_array_list(void* p_list) {
+    destroy_dynamic_allocation(p_list);
+}
+
+array_list_result_t intl_create_array_list(usize type_size, usize count) {
+    allocated_memory_result_t result = create_dynamic_allocation(type_size * count);
+    if (result.error_message != NO_ERROR_MESSAGE) {
+        ERROR("Failed to create dynamic array: %s", result.error_message);
+        return (array_list_result_t) {.failed = true, .p_array = result.p_data};
+    }
+    return (array_list_result_t) {.failed = false, .p_array = result.p_data};
+}
+
+usize intl_get_array_list_size(void* p_list, usize type_size) {
+    usize size = get_dynamic_allocation_size(p_list);
+    if (size > 0) {
+        size = size / type_size;
+    }
+    return size;
+}
+
+usize intl_get_array_list_capacity(void* p_list, usize type_size) {
+    usize capacity = get_dynamic_allocation_capacity(p_list);
+    if (capacity > 0) {
+        capacity = capacity / type_size;
+    }
+    return capacity;
 }

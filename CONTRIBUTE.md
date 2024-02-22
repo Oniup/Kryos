@@ -44,7 +44,7 @@ To ensure high-quality and maintainable code, we have established the following 
 
 ### Code Style
 
-* Limit lines to a maximum of 90 characters.
+* Limit lines to a maximum of 100 characters.
 * Provide Doxygen comments with detailed descriptions for all public functions and types.
 * Maintain consistent formatting with the project's style, preferably using clang-format.
 * Use spaces for indentation instead of tabs.
@@ -75,5 +75,5 @@ To ensure high-quality and maintainable code, we have established the following 
     ```
     <action><object><attribute/state>();
     ```
-* Try to follow the common pattern as the rest of the codebase to be consistant
+* Try to follow the common pattern as the rest of the codebase to be consistent
 * Prefix pointer functions with `PFN_`.

@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file main.c                                                             ///
+/// @file array_list.h                                                       ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,6 +17,15 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-int main(int argc, char* argv[]) {
-    return 0;
+#ifndef KRYOS__TESTS_TOOLS__ARRAY_LIST_H
+#define KRYOS__TESTS_TOOLS__ARRAY_LIST_H
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void array_list_tests();
+
+#ifdef __cplusplus
 }
+#endif
+#endif

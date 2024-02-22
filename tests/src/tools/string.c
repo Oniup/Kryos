@@ -19,88 +19,95 @@
 
 #include "kryos-tests/tools/string.h"
 #include "kryos-tests/framework.h"
-#include <kryos-tools/string.h>
+#include <kryos-tools/containers/string.h>
 #include <string.h>
 
-#define HELLO_WORLD_CSTR "Hello World!!!"
-#define HELLO_WORLD_CSTR_LEN 14
+#define HELLO_WORLD_CSTRING "Hello World!!!"
+#define HELLO_WORLD_CSTRING_LENGTH 14
 
 void creating(test_output_t* p_out) {
-    string_t str = create_string_cstring(HELLO_WORLD_CSTR);
-    usize len = get_string_length(&str);
-    IS_EQUALS(len, HELLO_WORLD_CSTR_LEN, "Incorrect string length");
-    CHECK_IF(strncmp(str.p_cstring, HELLO_WORLD_CSTR, len) == 0, "Resulting string not correct");
+    string_t string = create_string_cstring(HELLO_WORLD_CSTRING);
+    usize length = get_string_length(&string);
+    IS_EQUALS(length, HELLO_WORLD_CSTRING_LENGTH, "Incorrect string length");
+    CHECK_IF(strncmp(string.p_cstring, HELLO_WORLD_CSTRING, length) == 0,
+             "Resulting string not correct");
 
-    destroy_string(&str);
-    IS_NULL(str.p_cstring, "After deinit, string should be NULL");
+    destroy_string(&string);
+    IS_NULL(string.p_cstring, "After deinit, string should be NULL");
 }
 
 void get_length(test_output_t* p_out) {
-    string_t str1 = create_string_cstring(HELLO_WORLD_CSTR);
-    IS_EQUALS(HELLO_WORLD_CSTR_LEN, get_string_length(&str1), "Failed to get correct length");
+    string_t string1 = create_string_cstring(HELLO_WORLD_CSTRING);
+    IS_EQUALS(HELLO_WORLD_CSTRING_LENGTH, get_string_length(&string1),
+              "Failed to get correct length");
 
-    destroy_string(&str1);
+    destroy_string(&string1);
 }
 
 void comparing(test_output_t* p_out) {
-    string_t str1 = create_string_cstring(HELLO_WORLD_CSTR);
-    string_t str2 = create_string_cstring(HELLO_WORLD_CSTR);
-    string_t str3 = create_string_cstring("Different string"); // Diff len and txt
-    string_t str4 = create_string_cstring("World Hello");      // Only diff text
+    string_t string1 = create_string_cstring(HELLO_WORLD_CSTRING);
+    string_t string2 = create_string_cstring(HELLO_WORLD_CSTRING);
+    string_t string3 = create_string_cstring("Different string"); // Different length and text
+    string_t string4 = create_string_cstring("World Hello");      // Only different text
 
-    IS_EQUALS(compare_string_cstring(&str1, HELLO_WORLD_CSTR), true,
-              "Failed to compare string to cstr. Resulted in not being the same when they should");
-    IS_EQUALS(compare_string_cstring(&str2, HELLO_WORLD_CSTR), true,
-              "Failed to compare string to cstr. Resulted in not being the same when they should");
-    IS_EQUALS(compare_string(&str1, &str2), true,
+    IS_EQUALS(
+        compare_string_cstring(&string1, HELLO_WORLD_CSTRING), true,
+        "Failed to compare string to cstring. Resulted in not being the same when they should");
+    IS_EQUALS(
+        compare_string_cstring(&string2, HELLO_WORLD_CSTRING), true,
+        "Failed to compare string to cstring. Resulted in not being the same when they should");
+    IS_EQUALS(compare_string(&string1, &string2), true,
               "Failed to compare string to another string. Resulted in not being the same when "
               "they should");
 
-    IS_EQUALS(compare_string(&str1, &str3), false,
+    IS_EQUALS(compare_string(&string1, &string3), false,
               "Failed to compare string to another string. Resulted in being the same when should"
               "not they should");
-    IS_EQUALS(compare_string(&str1, &str4), false,
+    IS_EQUALS(compare_string(&string1, &string4), false,
               "Failed to compare string to another string. Resulted in being the same when should"
               "not they should");
 
-    destroy_string(&str1);
-    destroy_string(&str2);
-    destroy_string(&str3);
-    destroy_string(&str4);
+    destroy_string(&string1);
+    destroy_string(&string2);
+    destroy_string(&string3);
+    destroy_string(&string4);
 }
 
 void copying(test_output_t* p_out) {
-    string_t str = create_string_cstring(HELLO_WORLD_CSTR);
-    usize len = get_string_length(&str);
+    string_t string = create_string_cstring(HELLO_WORLD_CSTRING);
+    usize length = get_string_length(&string);
 
-    string_t cpy = create_string(&str);
-    IS_EQUALS(get_string_length(&cpy), len, "Copy has incorrect string length (%zu), Should be &zu",
-              get_string_length(&cpy), len);
-    CHECK_IF(compare_string(&str, &cpy), "Copy string is not the same as original string");
+    string_t copy = create_string(&string);
+    IS_EQUALS(get_string_length(&copy), length,
+              "Copy has incorrect string length (%zu), Should be &zu", get_string_length(&copy),
+              length);
+    CHECK_IF(compare_string(&string, &copy), "Copy string is not the same as original string");
 
-    const char* overriding_cstr = "I hate C";
-    usize overriding_cstr_len = strlen(overriding_cstr);
-    b8 res = set_string_cstring(&str, overriding_cstr);
-    IS_EQUALS(res, true, "set_string_cstr function failed and returned false");
-    IS_EQUALS(get_string_length(&str), overriding_cstr_len,
+    const char* overriding_cstring = "I hate C";
+    usize overriding_cstring_length = strlen(overriding_cstring);
+    b8 result = set_string_cstring(&string, overriding_cstring);
+    IS_EQUALS(result, true, "set_string_cstr function failed and returned false");
+    IS_EQUALS(get_string_length(&string), overriding_cstring_length,
               "Set string to cstr length (%zu) is not correct. Should be %zu",
-              get_string_length(&str), overriding_cstr_len);
-    CHECK_IF(compare_string_cstring(&str, overriding_cstr),
+              get_string_length(&string), overriding_cstring_length);
+    CHECK_IF(compare_string_cstring(&string, overriding_cstring),
              "Set string to cstr resulting str is not correct");
 
-    destroy_string(&str);
-    destroy_string(&cpy);
+    destroy_string(&string);
+    destroy_string(&copy);
 }
 
 void formatting(test_output_t* p_out) {
-    string_t str = create_string_format("%s%s, %d", "Hello", " World", 420);
-    CHECK_IF(compare_string_cstring(&str, "Hello World, 420"), "Failed to create string from format");
+    string_t string = create_string_format("%s%s, %d", "Hello", " World", 420);
+    CHECK_IF(compare_string_cstring(&string, "Hello World, 420"),
+             "Failed to create string from format");
 
-    b8 res = format_string(&str, "%d, %s", 420, "Hello World");
-    IS_EQUALS(res, true, "Failed to format existing string as the function returned false");
-    CHECK_IF(compare_string_cstring(&str, "420, Hello World"), "Failed to create string from format");
+    b8 result = format_string(&string, "%d, %s", 420, "Hello World");
+    IS_EQUALS(result, true, "Failed to format existing string as the function returned false");
+    CHECK_IF(compare_string_cstring(&string, "420, Hello World"),
+             "Failed to create string from format");
 
-    destroy_string(&str);
+    destroy_string(&string);
 }
 
 void string_tests() {
