@@ -23,20 +23,20 @@
 extern "C" {
 #endif
 
-#include "kryos-tools/defines.h"
 #include "kryos-tools/debug.h"
+#include "kryos-tools/defines.h"
 #include <stdarg.h>
 
-#define TEST_TITLE_ANSI_COL DEBUG_ANSI_FG_CYAN
-#define TEST_PASS_ANSI_COL DEBUG_ANSI_FG_GREEN
-#define TEST_FAILED_ANSI_COL DEBUG_ANSI_FG_RED
-#define TEST_TEXT_ANSI_COL -1
+#define TEST_TITLE_ANSI_COLOR DEBUG_ANSI_FG_CYAN
+#define TEST_PASS_ANSI_COLOR DEBUG_ANSI_FG_GREEN
+#define TEST_FAILED_ANSI_COLOR DEBUG_ANSI_FG_RED
+#define TEST_TEXT_ANSI_COLOR -1
 
 #define MAX_TEST_OUTPUT_MESSAGE_SIZE 2000
 
-#define CHECK_IF(expr, ...)                              \
+#define CHECK_IF(expression, ...)                        \
     ({                                                   \
-        if (!(expr)) {                                   \
+        if (!(expression)) {                             \
             p_out->pass = false;                         \
             set_test_output_message(p_out, __VA_ARGS__); \
             return;                                      \
@@ -57,20 +57,20 @@ extern "C" {
 #define EXECUTE_TEST_TABLE(table_name) \
     execute_tests(table_name, sizeof(tests) / sizeof(tests[0]), tests)
 
-typedef struct {
-    char msg[MAX_TEST_OUTPUT_MESSAGE_SIZE];
+typedef struct test_output {
+    char message[MAX_TEST_OUTPUT_MESSAGE_SIZE];
     b8 pass;
 } test_output_t;
 
 typedef void (*PFN_test)(test_output_t* result);
 
-typedef struct {
+typedef struct test {
     const char* p_name;
     PFN_test test;
 } test_t;
 
 typedef struct global_test_options {
-    b8 ansi_col;
+    b8 ansi_color;
 } global_test_options_t;
 
 global_test_options_t* get_global_test_options();
@@ -79,8 +79,8 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests);
 void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
                        usize* p_tests_passed);
 
-void set_test_output_message(test_output_t* p_output, const char* p_fmt, ...);
-void set_test_output_message_v(test_output_t* p_output, const char* p_fmt, va_list args);
+void set_test_output_message(test_output_t* p_output, const char* p_format, ...);
+void set_test_output_message_v(test_output_t* p_output, const char* p_format, va_list args);
 
 #ifdef __cplusplus
 }
