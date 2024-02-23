@@ -98,13 +98,6 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
         p_list = (typeof(p_list))result.p_data;                                        \
     })
 
-// #define push_array_list(p_list, ...)                                     \
-//     ({                                                                   \
-//         typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};           \
-//         usize count = *(&array_list_tmp_data + 1) - array_list_tmp_data; \
-//         push_array_list_copy(p_list, count, array_list_tmp_data);        \
-//     })
-
 #define push_array_list(p_list, ...)                                              \
     ({                                                                            \
         typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                    \
