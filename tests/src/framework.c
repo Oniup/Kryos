@@ -55,14 +55,14 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
 
 void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total_count,
                        usize* p_tests_passed) {
-    const char* fmt = "%s%s%s %s%s %u/%u";
+    const char* format = "%s%s%s %s%s %u/%u";
     const char* ansi_color = TEST_FAILED_ANSI_COLOR;
     if (p_output->pass) {
         ansi_color = TEST_PASS_ANSI_COLOR;
         *p_tests_passed = *p_tests_passed + 1;
     }
 
-    printf(fmt, DEBUG_ANSI_PREFIX, ansi_color, DEBUG_ANSI_SUFIX, p_name, DEBUG_ANSI_RESET,
+    printf(format, DEBUG_ANSI_PREFIX, ansi_color, DEBUG_ANSI_SUFIX, p_name, DEBUG_ANSI_RESET,
            index + 1, total_count);
     if (strlen(p_output->message) > 0) {
         printf(" => %s", p_output->message);
@@ -84,16 +84,16 @@ void set_test_output_message_v(test_output_t* p_output, const char* p_format, va
 void intl_print_message(const char* p_ansi_color, const char* p_format, ...) {
     va_list args;
     va_start(args, p_format);
-    int res;
+    int result;
     if (g_opts.ansi_color && p_ansi_color[0] != TEST_TEXT_ANSI_COLOR) {
         printf("%s%s%s", DEBUG_ANSI_PREFIX, p_ansi_color, DEBUG_ANSI_SUFIX);
-        res = vprintf_s(p_format, args);
+        result = vprintf_s(p_format, args);
         printf("%s", DEBUG_ANSI_RESET);
     } else {
-        res = vprintf_s(p_format, args);
+        result = vprintf_s(p_format, args);
     }
     va_end(args);
-    if (res < 0) {
+    if (result < 0) {
         printf("Failed to print test results. va_list args are incorrect and cased vprintf_s to "
                "fail\n");
     }
