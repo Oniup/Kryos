@@ -78,36 +78,45 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
 #define get_array_list_size(p_list) intl_get_array_list_size(p_list, sizeof(*p_list))
 #define get_array_list_capacity(p_list) intl_get_array_list_capacity(p_list, sizeof(*p_list))
 
-#define push_array_list_copy_data(p_list, p_copy)                               \
-    ({                                                                          \
-        array_list_result_t result =                                            \
-            intl_push_array_list_data_back(p_list, sizeof(*p_list), 1, p_copy); \
-        if (result.failed) {                                                    \
-            ERROR("Failed to push data into array list");                       \
-        }                                                                       \
-        p_list = (typeof(p_list))result.p_data;                                 \
+#define push_array_list_copy(p_list, count, p_copy)                                 \
+    ({                                                                              \
+        array_list_result_t result =                                                \
+            intl_push_array_list_data_back(p_list, sizeof(*p_list), count, p_copy); \
+        if (result.failed) {                                                        \
+            ERROR("Failed to push data (count: %zu) into array list", count);       \
+        }                                                                           \
+        p_list = (typeof(p_list))result.p_data;                                     \
     })
 
-#define push_front_array_list_copy_data(p_list, p_copy)                          \
-    ({                                                                           \
-        array_list_result_t result =                                             \
-            intl_push_array_list_data_front(p_list, sizeof(*p_list), 1, p_copy); \
-        if (result.failed) {                                                     \
-            ERROR("Failed to push data into array list");                        \
-        }                                                                        \
-        p_list = (typeof(p_list))result.p_data;                                  \
+#define push_front_array_list_copy(p_list, count, p_copy)                              \
+    ({                                                                                 \
+        array_list_result_t result =                                                   \
+            intl_push_array_list_data_front(p_list, sizeof(*p_list), count, p_copy);   \
+        if (result.failed) {                                                           \
+            ERROR("Failed to push data (count: %zu) to front into array list", count); \
+        }                                                                              \
+        p_list = (typeof(p_list))result.p_data;                                        \
     })
 
-#define push_array_list_data(p_list, data)                       \
-    ({                                                           \
-        typeof(*p_list) array_list_tmp_data = data;              \
-        push_array_list_copy_data(p_list, &array_list_tmp_data); \
+// #define push_array_list(p_list, ...)                                     \
+//     ({                                                                   \
+//         typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};           \
+//         usize count = *(&array_list_tmp_data + 1) - array_list_tmp_data; \
+//         push_array_list_copy(p_list, count, array_list_tmp_data);        \
+//     })
+
+#define push_array_list(p_list, ...)                                              \
+    ({                                                                            \
+        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                    \
+        push_array_list_copy(p_list, COMPILE_TIME_GET_VA_ARGS_COUNT(__VA_ARGS__), \
+                             array_list_tmp_data);                                \
     })
 
-#define push_front_array_list_data(p_list, data)                       \
-    ({                                                                 \
-        typeof(*p_list) array_list_tmp_data = data;                    \
-        push_front_array_list_copy_data(p_list, &array_list_tmp_data); \
+#define push_front_array_list(p_list, ...)                                              \
+    ({                                                                                  \
+        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                          \
+        push_front_array_list_copy(p_list, COMPILE_TIME_GET_VA_ARGS_COUNT(__VA_ARGS__), \
+                                   array_list_tmp_data);                                \
     })
 
 #ifdef __cplusplus

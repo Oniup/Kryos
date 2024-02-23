@@ -43,7 +43,7 @@ void create_uninitialized_list(test_output_t* p_out) {
 void push_data_back(test_output_t* p_out) {
     ARRAY_LIST(int) array_list = create_array_list(int);
     for (usize i = 0; i < ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT + 1; i++) {
-        int* tmp = push_array_list_data(array_list, i + 1);
+        int* tmp = push_array_list(array_list, i + 1);
         CHECK_IF(tmp != NULL, "Pushing data to back at index %zu resulted in array list of NULL",
                  i);
     }
@@ -65,7 +65,7 @@ void push_data_front(test_output_t* p_out) {
     ARRAY_LIST(int) array_list = create_array_list(int);
     usize target_size = ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 2 + 1;
     for (usize i = 0; i < target_size; i++) {
-        int* tmp = push_front_array_list_data(array_list, i + 1);
+        int* tmp = push_front_array_list(array_list, i + 1);
         CHECK_IF(tmp != NULL, "Pushing data to front at index %zu resulted in array list of NULL",
                  i);
     }
@@ -87,15 +87,39 @@ void push_data_front(test_output_t* p_out) {
 }
 
 void insert_data(test_output_t* p_out) {
+    ARRAY_LIST(int) array_list = create_array_list(int);
+    destroy_array_list(array_list);
 }
 
 void push_array_back(test_output_t* p_out) {
+    ARRAY_LIST(int) array_list = create_array_list(int);
+    push_array_list(array_list, 1, 2, 3, 4, 5);
+    push_array_list(array_list, 1, 2, 3, 4, 5);
+    push_array_list(array_list, 1, 2, 3, 4, 5);
+    usize size = get_array_list_size(array_list);
+    IS_EQUALS(size, 15, "Empty array list size isn't correct");
+    usize capacity = get_array_list_capacity(array_list);
+    IS_EQUALS(capacity, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT,
+              "Empty array list capacity isn't correct");
+    int value = 1;
+    for (usize i = 0; i < size; i++) {
+        if (i % 5 == 0) {
+            value = 1;
+        }
+        IS_EQUALS(array_list[i], value, "Incorect value at index %zu", i);
+        value++;
+    }
+    destroy_array_list(array_list);
 }
 
 void push_array_front(test_output_t* p_out) {
+    ARRAY_LIST(int) array_list = create_array_list(int);
+    destroy_array_list(array_list);
 }
 
 void insert_array(test_output_t* p_out) {
+    ARRAY_LIST(int) array_list = create_array_list(int);
+    destroy_array_list(array_list);
 }
 
 void array_list_tests() {
