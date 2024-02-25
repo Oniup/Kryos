@@ -18,7 +18,7 @@
 /// ------------------------------------------------------------------------ ///
 
 #include "kryos-tools/containers/array_list.h"
-#include "kryos-tools/containers/allocator.h"
+#include "kryos-tools/containers/memory_allocator.h"
 #include <math.h>
 #include <memory.h>
 
@@ -42,12 +42,12 @@ usize intl_get_array_list_capacity(void* p_list, usize type_size) {
     return capacity;
 }
 
-array_list_result_t intl_create_array_list_uninitialized(usize type_size, usize capacity_count) {
-    allocated_memory_result_t result = create_dynamic_allocation(type_size * capacity_count);
+array_list_result_t intl_create_array_list_with_capacity(usize type_size, usize count) {
+    allocated_memory_result_t result = create_dynamic_allocation(type_size * count);
     if (result.error_message != NO_ERROR_MESSAGE) {
         ERROR(
             "Failed to create uninitialized array list of size %zu, type_size: %zu, count: %zu: %s",
-            type_size * capacity_count, type_size, capacity_count, result.error_message);
+            type_size * count, type_size, count, result.error_message);
         return (array_list_result_t) {.failed = true, .p_data = NULL};
     }
     void* p_data = result.p_data;
@@ -91,6 +91,11 @@ array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_siz
 
 array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size, usize count,
                                                    void* p_data) {
+    if (p_list == NULL) {
+        ERROR("Cannot push data into the back of an empty array list. Type size: %zu, count: %zu "
+              "of `p_data`");
+        return (array_list_result_t) {.failed = true, .p_data = NULL};
+    }
     usize old_size = intl_get_array_list_size(p_list, type_size);
     array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
     if (result.failed) {
@@ -112,6 +117,12 @@ array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size
 
 array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size, usize count,
                                                     void* p_data) {
+    if (p_list == NULL) {
+        ERROR("Cannot push data into the front of an empty array list. Type size: %zu, count: "
+              "%zu of `p_data`",
+              type_size, count);
+        return (array_list_result_t) {.failed = true, .p_data = NULL};
+    }
     usize old_size = intl_get_array_list_size(p_list, type_size);
     array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
     if (result.failed) {
@@ -136,6 +147,41 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
     error = memcpy_s(p_list, p_data_size, p_data, p_data_size);
     if (error != 0) {
         ERROR("Failed to memcpy_s as the error code resulted in %d", error);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    return (array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+array_list_result_t intl_insert_array_list(void* p_list, usize type_size, usize position,
+                                           usize count, void* p_data) {
+    if (p_list == NULL) {
+        ERROR("Cannot insert data into position %zu of an empty array list. Type size: %zu, count: "
+              "%zu of `p_data`",
+              position, type_size, count);
+        return (array_list_result_t) {.failed = true, .p_data = NULL};
+    }
+    usize old_size = get_dynamic_allocation_size(p_list);
+    usize insert_size = count * type_size;
+    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    if (result.failed) {
+        return result;
+    }
+    p_list = result.p_data;
+    usize offset = position * type_size;
+    // Shift data to make room for insert
+    errno_t error = memcpy_s(p_list + offset + insert_size, old_size - offset, p_list + offset,
+                             old_size - offset);
+    if (error != 0) {
+        ERROR("Failed to insert data into array list: memcpy_s failed to copy and shift data over "
+              "to make room for insert and resulted in error code %zu",
+              error);
+        return (array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    error = memcpy_s(p_list + offset, insert_size, p_data, insert_size);
+    if (error != 0) {
+        ERROR("Failed to insert data into array list: memcpy_s failed copy insert data into "
+              "required space allocated and resulted in error code %zu",
+              error);
         return (array_list_result_t) {.failed = true, .p_data = p_list};
     }
     return (array_list_result_t) {.failed = false, .p_data = p_list};

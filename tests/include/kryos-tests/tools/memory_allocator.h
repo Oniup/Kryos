@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file memory_allocation.h                                                ///
+/// @file memory_allocator.h                                                 ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,13 +17,13 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-#ifndef KRYOS__TESTS_TOOLS__MEMORY_ALLOCATION_H
-#define KRYOS__TESTS_TOOLS__MEMORY_ALLOCATION_H
+#ifndef KRYOS__TESTS_TOOLS__MEMORY_ALLOCATOR_H
+#define KRYOS__TESTS_TOOLS__MEMORY_ALLOCATOR_H
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void memory_allocation_tests();
+void memory_allocator_tests();
 
 #ifdef __cplusplus
 }

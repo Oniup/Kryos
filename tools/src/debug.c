@@ -136,6 +136,7 @@ void print_msg_fmt(FILE* p_out, debug_log_level_flag_t level, b8 ansi_color, con
     }
     print_message_based_on_condition(ansi_color, p_out, "%s", DEBUG_ANSI_RESET);
     fprintf(p_out, "\n");
+    fflush(p_out);
 }
 
 void print_ansi_col_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t level) {

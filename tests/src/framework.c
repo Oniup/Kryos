@@ -46,16 +46,16 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
         }
     }
     if (tests_passed == count) {
-        intl_print_message(TEST_PASS_ANSI_COLOR, "%zu out of %zu passed\n", tests_passed, count);
+        printf("%zu out of %zu passed\n", tests_passed, count);
         return true;
     }
-    intl_print_message(TEST_FAILED_ANSI_COLOR, "%zu out of %zu passed\n", tests_passed, count);
+    printf("%zu out of %zu passed\n", tests_passed, count);
     return false;
 }
 
 void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total_count,
                        usize* p_tests_passed) {
-    const char* format = "%s%s%s %s%s %u/%u";
+    const char* format = "%s%s%s%s%s %u/%u";
     const char* ansi_color = TEST_FAILED_ANSI_COLOR;
     if (p_output->pass) {
         ansi_color = TEST_PASS_ANSI_COLOR;

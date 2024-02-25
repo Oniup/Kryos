@@ -38,34 +38,88 @@ KRYAPI void destroy_array_list(void* p_list);
 KRYAPI usize intl_get_array_list_size(void* p_list, usize type_size);
 KRYAPI usize intl_get_array_list_capacity(void* p_list, usize type_size);
 
-KRYAPI array_list_result_t intl_create_array_list_uninitialized(usize type_size,
-                                                                usize capacity_count);
+/// @brief Creates an empty array with a given capacity size
+///
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
+KRYAPI array_list_result_t intl_create_array_list_with_capacity(usize type_size, usize count);
 
+/// @brief Resizes size of the array list. If the size exceeds the capacity, will also resize the
+/// capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` * type_size
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 KRYAPI array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, usize count);
 
 /// @brief Resizes capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` *
 /// `type_size`.
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
-/// @param `type_size` Size of the array list type bytes.
+/// @param `type_size` Size of the array list type in bytes.
 /// @param `count` Number of new instances required to fit in the new capacity (adds the current
 /// capacity size to this new size for the total size).
 ///
-/// @return Result struct determining whether the function failed.
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 KRYAPI array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_size,
                                                            usize count);
 
-array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size, usize count,
-                                                   void* p_data);
+/// @brief Copies the given data into the back of array list.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_data` Pointer to data for copying. Must be the same type as the array list
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
+KRYAPI array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size,
+                                                          usize count, void* p_data);
 
-array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size, usize count,
-                                                    void* p_data);
+/// @brief Copies the given data into the front of array list and shifts the original data down the
+/// buffer by the size of the insert data.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_data` Pointer to data for copying. Must be the same type as the array list
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
+KRYAPI array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size,
+                                                           usize count, void* p_data);
+
+/// @brief Inserts the given data into the specified position of array list. It inserts space of
+/// size same to the insert data, the copies it to that new space
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `position` Specifics where to insert the data into the array list.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_data` Pointer to data for copying. Must be the same type as the array list
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
+KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size, usize position,
+                                                  usize count, void* p_data);
 
 #define ARRAY_LIST(T) T*
 
-#define create_array_list_uninitialized(T, count)                                            \
+#define create_array_list_with_capacity(T, count)                                            \
     ({                                                                                       \
-        array_list_result_t result = intl_create_array_list_uninitialized(sizeof(T), count); \
+        array_list_result_t result = intl_create_array_list_with_capacity(sizeof(T), count); \
         if (result.failed) {                                                                 \
             ERROR("Failed to create empty array list");                                      \
         }                                                                                    \
@@ -73,11 +127,17 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
     })
 
 #define create_array_list(T) \
-    create_array_list_uninitialized(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
+    create_array_list_with_capacity(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
 
 #define get_array_list_size(p_list) intl_get_array_list_size(p_list, sizeof(*p_list))
 #define get_array_list_capacity(p_list) intl_get_array_list_capacity(p_list, sizeof(*p_list))
 
+/// @brief Copies the given data into the back of array list.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_copy` Data for copying. Must be the same type as the array list
 #define push_array_list_copy(p_list, count, p_copy)                                 \
     ({                                                                              \
         array_list_result_t result =                                                \
@@ -88,6 +148,12 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
         p_list = (typeof(p_list))result.p_data;                                     \
     })
 
+/// @brief Copies the given data into the front of array list.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_copy` Data for copying. Must be the same type as the array list
 #define push_front_array_list_copy(p_list, count, p_copy)                              \
     ({                                                                                 \
         array_list_result_t result =                                                   \
@@ -98,18 +164,53 @@ array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_siz
         p_list = (typeof(p_list))result.p_data;                                        \
     })
 
-#define push_array_list(p_list, ...)                                              \
-    ({                                                                            \
-        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                    \
-        push_array_list_copy(p_list, COMPILE_TIME_GET_VA_ARGS_COUNT(__VA_ARGS__), \
-                             array_list_tmp_data);                                \
+/// @brief Inserts the given data into the specified position of array list. It inserts space of
+/// size same to the insert data, the copies it to that new space
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `position` Specifics where to insert the data into the array list.
+/// @param `count` Number of new instances required to fit in the new capacity (adds the current
+/// capacity size to this new size for the total size).
+/// @param `p_data` Data for copying. Must be the same type as the array list
+#define insert_array_list_copy(p_list, position, count, p_copy)                           \
+    ({                                                                                    \
+        array_list_result_t result =                                                      \
+            intl_insert_array_list(p_list, sizeof(*p_list), position, count, p_copy);     \
+        if (result.failed) {                                                              \
+            ERROR("Failed to insert data (count: %zu) to position (%zu) into array list", \
+                  position, count);                                                       \
+        }                                                                                 \
+        p_list = (typeof(p_list))result.p_data;                                           \
     })
 
-#define push_front_array_list(p_list, ...)                                              \
-    ({                                                                                  \
-        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                          \
-        push_front_array_list_copy(p_list, COMPILE_TIME_GET_VA_ARGS_COUNT(__VA_ARGS__), \
-                                   array_list_tmp_data);                                \
+/// @brief Copies the given data into the back of array list.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+#define push_array_list(p_list, ...)                                                       \
+    ({                                                                                     \
+        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                             \
+        push_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), array_list_tmp_data); \
+    })
+
+/// @brief Copies the given data into the front of array list.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+#define push_front_array_list(p_list, ...)                                                       \
+    ({                                                                                           \
+        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                                   \
+        push_front_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), array_list_tmp_data); \
+    })
+
+/// @brief Inserts the given data into the specified position of array list. It inserts space of
+/// size same to the insert data, the copies it to that new space
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `position` Specifics where to insert the data into the array list.
+#define insert_array_list(p_list, position, ...)                                 \
+    ({                                                                           \
+        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                   \
+        insert_array_list_copy(p_list, position, GET_VA_ARGS_COUNT(__VA_ARGS__), \
+                               array_list_tmp_data);                             \
     })
 
 #ifdef __cplusplus

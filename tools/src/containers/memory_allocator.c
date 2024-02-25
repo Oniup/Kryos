@@ -1,6 +1,6 @@
 /// ------------------------------------------------------------------------ ///
 /// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file allocator.c                                                        ///
+/// @file memory_allocator.c                                                 ///
 /// ------------------------------------------------------------------------ ///
 /// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
 ///                                                                          ///
@@ -17,7 +17,7 @@
 /// limitations under the License.                                           ///
 /// ------------------------------------------------------------------------ ///
 
-#include "kryos-tools/containers/allocator.h"
+#include "kryos-tools/containers/memory_allocator.h"
 #include <memory.h>
 #include <stdlib.h>
 
