@@ -53,19 +53,13 @@ To ensure high-quality and maintainable code, we have established the following 
 
 * Format header guards as `KRYOS__[MOD]__[DIR]_[FILE]_H`
 * Use `.c`, `.h` extensions.
-* Use `snake_case` for variable, struct and functions and `UPPER_SNAKE_CASE` for constants;
+* Use `snake_case` for everything other than macros and enum values, they should be
+  `UPPER_SNAKE_CASE`
   enum fields and macros
-* Prefix pointer types that are in function parameters or struct fields with `p_` indicating
-  that the memory needs to be handled
+* Prefix pointers with `p_`
 * Whenever adding `typedef` to type declaration, must add `_t` with the exception of core
   primitive types such as `u32`, `f64`, `b8`, etc...
-* Prefix internal functions and types that are not private (definition in `.c` file) with
-  `intl_` and include a comment stating `INTERNAL USE ONLY` at the top of the Doxygen comment.
-    ```c
-    /// INTERNAL USE ONLY
-    /// @brief ...
-    void intl_bar();
-    ```
+* Prefix internal functions and types with `_kint_`.
 * Ensure that opening curly brackets are always on the same line.
 * All functions should try to follow this syntactical structure:
     ```

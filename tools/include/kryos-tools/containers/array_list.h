@@ -28,15 +28,15 @@ extern "C" {
 
 #define ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT 20
 
-typedef struct array_list_result {
+typedef struct _kint_array_list_result {
     b8 failed;
     void* p_data;
-} array_list_result_t;
+} _kint_array_list_result_t;
 
-KRYAPI void destroy_array_list(void* p_list);
+void destroy_array_list(void* p_list);
 
-KRYAPI usize intl_get_array_list_size(void* p_list, usize type_size);
-KRYAPI usize intl_get_array_list_capacity(void* p_list, usize type_size);
+usize _kint_get_array_list_size(void* p_list, usize type_size);
+usize _kint_get_array_list_capacity(void* p_list, usize type_size);
 
 /// @brief Creates an empty array with a given capacity size
 ///
@@ -46,7 +46,7 @@ KRYAPI usize intl_get_array_list_capacity(void* p_list, usize type_size);
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_create_array_list_with_capacity(usize type_size, usize count);
+_kint_array_list_result_t _kint_create_array_list_with_capacity(usize type_size, usize count);
 
 /// @brief Resizes size of the array list. If the size exceeds the capacity, will also resize the
 /// capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` * type_size
@@ -58,7 +58,7 @@ KRYAPI array_list_result_t intl_create_array_list_with_capacity(usize type_size,
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, usize count);
+_kint_array_list_result_t _kint_resize_array_list_size(void* p_list, usize type_size, usize count);
 
 /// @brief Resizes capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` *
 /// `type_size`.
@@ -70,7 +70,7 @@ KRYAPI array_list_result_t intl_resize_array_list_size(void* p_list, usize type_
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_size,
+_kint_array_list_result_t _kint_resize_array_list_capacity(void* p_list, usize type_size,
                                                            usize count);
 
 /// @brief Copies the given data into the back of array list.
@@ -83,7 +83,7 @@ KRYAPI array_list_result_t intl_resize_array_list_capacity(void* p_list, usize t
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size,
+_kint_array_list_result_t _kint_push_array_list_data_back(void* p_list, usize type_size,
                                                           usize count, void* p_data);
 
 /// @brief Copies the given data into the front of array list and shifts the original data down the
@@ -97,7 +97,7 @@ KRYAPI array_list_result_t intl_push_array_list_data_back(void* p_list, usize ty
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size,
+_kint_array_list_result_t _kint_push_array_list_data_front(void* p_list, usize type_size,
                                                            usize count, void* p_data);
 
 /// @brief Inserts the given data into the specified position of array list. It inserts space of
@@ -112,25 +112,33 @@ KRYAPI array_list_result_t intl_push_array_list_data_front(void* p_list, usize t
 ///
 /// @return Result struct determining whether the function failed and a pointer to the array list as
 /// a `void*`.
-KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size, usize position,
+_kint_array_list_result_t _kint_insert_array_list(void* p_list, usize type_size, usize position,
                                                   usize count, void* p_data);
+
+_kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_size, usize count);
+
+_kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_size, usize count);
+
+_kint_array_list_result_t _kint_pop_array_list_range(void* p_list, usize type_size,
+                                                     usize begin_position, usize end_position);
 
 #define ARRAY_LIST(T) T*
 
-#define create_array_list_with_capacity(T, count)                                            \
-    ({                                                                                       \
-        array_list_result_t result = intl_create_array_list_with_capacity(sizeof(T), count); \
-        if (result.failed) {                                                                 \
-            ERROR("Failed to create empty array list");                                      \
-        }                                                                                    \
-        result.p_data;                                                                       \
+#define create_array_list_with_capacity(T, count)                    \
+    ({                                                               \
+        _kint_array_list_result_t result =                           \
+            _kint_create_array_list_with_capacity(sizeof(T), count); \
+        if (result.failed) {                                         \
+            ERROR("Failed to create empty array list");              \
+        }                                                            \
+        result.p_data;                                               \
     })
 
 #define create_array_list(T) \
     create_array_list_with_capacity(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
 
-#define get_array_list_size(p_list) intl_get_array_list_size(p_list, sizeof(*p_list))
-#define get_array_list_capacity(p_list) intl_get_array_list_capacity(p_list, sizeof(*p_list))
+#define get_array_list_size(p_list) _kint_get_array_list_size(p_list, sizeof(*p_list))
+#define get_array_list_capacity(p_list) _kint_get_array_list_capacity(p_list, sizeof(*p_list))
 
 /// @brief Copies the given data into the back of array list.
 ///
@@ -138,14 +146,14 @@ KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size,
 /// @param `count` Number of new instances required to fit in the new capacity (adds the current
 /// capacity size to this new size for the total size).
 /// @param `p_copy` Data for copying. Must be the same type as the array list
-#define push_array_list_copy(p_list, count, p_copy)                                 \
-    ({                                                                              \
-        array_list_result_t result =                                                \
-            intl_push_array_list_data_back(p_list, sizeof(*p_list), count, p_copy); \
-        if (result.failed) {                                                        \
-            ERROR("Failed to push data (count: %zu) into array list", count);       \
-        }                                                                           \
-        p_list = (typeof(p_list))result.p_data;                                     \
+#define push_array_list_copy(p_list, count, p_copy)                                  \
+    ({                                                                               \
+        _kint_array_list_result_t result =                                           \
+            _kint_push_array_list_data_back(p_list, sizeof(*p_list), count, p_copy); \
+        if (result.failed) {                                                         \
+            ERROR("Failed to push data (count: %zu) into array list", count);        \
+        }                                                                            \
+        p_list = (typeof(p_list))result.p_data;                                      \
     })
 
 /// @brief Copies the given data into the front of array list.
@@ -156,8 +164,8 @@ KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size,
 /// @param `p_copy` Data for copying. Must be the same type as the array list
 #define push_front_array_list_copy(p_list, count, p_copy)                              \
     ({                                                                                 \
-        array_list_result_t result =                                                   \
-            intl_push_array_list_data_front(p_list, sizeof(*p_list), count, p_copy);   \
+        _kint_array_list_result_t result =                                             \
+            _kint_push_array_list_data_front(p_list, sizeof(*p_list), count, p_copy);  \
         if (result.failed) {                                                           \
             ERROR("Failed to push data (count: %zu) to front into array list", count); \
         }                                                                              \
@@ -174,8 +182,8 @@ KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size,
 /// @param `p_data` Data for copying. Must be the same type as the array list
 #define insert_array_list_copy(p_list, position, count, p_copy)                           \
     ({                                                                                    \
-        array_list_result_t result =                                                      \
-            intl_insert_array_list(p_list, sizeof(*p_list), position, count, p_copy);     \
+        _kint_array_list_result_t result =                                                \
+            _kint_insert_array_list(p_list, sizeof(*p_list), position, count, p_copy);    \
         if (result.failed) {                                                              \
             ERROR("Failed to insert data (count: %zu) to position (%zu) into array list", \
                   position, count);                                                       \
@@ -186,19 +194,19 @@ KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size,
 /// @brief Copies the given data into the back of array list.
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
-#define push_array_list(p_list, ...)                                                       \
-    ({                                                                                     \
-        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                             \
-        push_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), array_list_tmp_data); \
+#define push_array_list_back(p_list, ...)                                         \
+    ({                                                                            \
+        typeof(*p_list) _kint_data[] = {__VA_ARGS__};                             \
+        push_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
     })
 
 /// @brief Copies the given data into the front of array list.
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
-#define push_front_array_list(p_list, ...)                                                       \
-    ({                                                                                           \
-        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                                   \
-        push_front_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), array_list_tmp_data); \
+#define push_array_list_front(p_list, ...)                                              \
+    ({                                                                                  \
+        typeof(*p_list) _kint_data[] = {__VA_ARGS__};                                   \
+        push_front_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
     })
 
 /// @brief Inserts the given data into the specified position of array list. It inserts space of
@@ -206,12 +214,33 @@ KRYAPI array_list_result_t intl_insert_array_list(void* p_list, usize type_size,
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
 /// @param `position` Specifics where to insert the data into the array list.
-#define insert_array_list(p_list, position, ...)                                 \
-    ({                                                                           \
-        typeof(*p_list) array_list_tmp_data[] = {__VA_ARGS__};                   \
-        insert_array_list_copy(p_list, position, GET_VA_ARGS_COUNT(__VA_ARGS__), \
-                               array_list_tmp_data);                             \
+#define insert_array_list(p_list, position, ...)                                              \
+    ({                                                                                        \
+        typeof(*p_list) _kint_data[] = {__VA_ARGS__};                                         \
+        insert_array_list_copy(p_list, position, GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
     })
+
+#define pop_array_list_back(p_list, count)                                 \
+    ({                                                                     \
+        _kint_array_list_result_t _kint_result =                           \
+            _kint_pop_array_list_back(p_list, sizeof(*p_list), count);     \
+        if (_kint_result.failed) {                                         \
+            ERROR("Failed to pop back %zu elements in array list", count); \
+        }                                                                  \
+        p_list = (typeof(p_list))_kint_result.p_data;                      \
+    })
+
+#define pop_array_list_front(p_list, count)                                 \
+    ({                                                                      \
+        _kint_array_list_result_t _kint_result =                            \
+            _kint_pop_array_list_front(p_list, sizeof(*p_list), count);     \
+        if (_kint_result.failed) {                                          \
+            ERROR("Failed to pop front %zu elements in array list", count); \
+        }                                                                   \
+        p_list = (typeof(p_list))_kint_result.p_data;                       \
+    })
+
+#define pop_array_list_range(p_list, begin_position, end_position)
 
 #ifdef __cplusplus
 }

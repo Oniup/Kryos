@@ -21,36 +21,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-static global_runtime_debug_options_t g_db_opts = {
-    // Doesn't include trace and info flags by default
-    .enable_level = DEBUG_LOG_LEVEL_FLAG_DEBUG | DEBUG_LOG_LEVEL_FLAG_WARN |
-                    DEBUG_LOG_LEVEL_FLAG_ERROR | DEBUG_LOG_LEVEL_FLAG_FATAL,
-    .enable =
-        {
-            .expression = true,
-            .file = true,
-            .line = true,
-            .terminal_ansi_color = true,
-        },
-    .io =
-        {
-            .enable = true,
-            .terminal_ansi_color = false,
-            .p_filename = "kryos-engine.log",
-        },
-};
-
-void print_log_msg_to_target_v(debug_out_target_t out, debug_log_level_flag_t level,
-                               const char* p_filename, i32 line, const char* p_expression,
-                               const char* p_format, va_list args);
-void print_message_based_on_condition(b8 condition, FILE* p_out, const char* p_format, ...);
-void print_msg_with_conditional_msg_v(b8 condition, FILE* p_out, const char* p_format,
-                                      va_list args);
-void print_msg_fmt(FILE* p_out, debug_log_level_flag_t level, b8 ansi_color, const char* p_filename,
-                   i32 line, const char* p_expression, const char* p_format, va_list args);
-void print_ansi_col_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t level);
-
-const char* debug_log_level_flag_as_cstr(debug_log_level_flag_t level) {
+const char* debug_log_level_flag_as_cstring(debug_log_level_flag_t level) {
     switch (level) {
         case DEBUG_LOG_LEVEL_FLAG_NONE:
             return "";
@@ -69,50 +40,62 @@ const char* debug_log_level_flag_as_cstr(debug_log_level_flag_t level) {
     }
 }
 
-global_runtime_debug_options_t* get_global_runtime_debug_options() {
-    return &g_db_opts;
+const char* debug_out_target_as_cstring(debug_out_target_t target) {
+    switch (target) {
+        case DEBUG_OUT_TARGET_STDOUT:
+            return "stdout";
+        case DEBUG_OUT_TARGET_STDERR:
+            return "stderror";
+        case DEBUG_OUT_TARGET_LOG_FILE:
+            return "logfile";
+    };
 }
 
-void intl_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
-                            const char* p_expression, const char* p_format, ...) {
+global_runtime_debug_options_t* get_global_runtime_debug_options() {
+    return &_kint_debug_settings;
+}
+
+void _kint_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
+                             const char* p_expression, const char* p_format, ...) {
     va_list args;
     va_start(args, p_format);
-    print_log_msg_to_target_v(DEBUG_OUT_TARGET_LOG_FILE, level, p_filename, line, p_expression,
-                              p_format, args);
+    _kint_log_message_to_target_args(DEBUG_OUT_TARGET_LOG_FILE, level, p_filename, line,
+                                     p_expression, p_format, args);
     if (level > DEBUG_LOG_LEVEL_FLAG_WARN) {
-        print_log_msg_to_target_v(DEBUG_OUT_TARGET_STDERR, level, p_filename, line, p_expression,
-                                  p_format, args);
+        _kint_log_message_to_target_args(DEBUG_OUT_TARGET_STDERR, level, p_filename, line,
+                                         p_expression, p_format, args);
     } else {
-        print_log_msg_to_target_v(DEBUG_OUT_TARGET_STDOUT, level, p_filename, line, p_expression,
-                                  p_format, args);
+        _kint_log_message_to_target_args(DEBUG_OUT_TARGET_STDOUT, level, p_filename, line,
+                                         p_expression, p_format, args);
     }
     va_end(args);
 }
 
-void print_log_msg_to_target_v(debug_out_target_t out, debug_log_level_flag_t level,
-                               const char* p_filename, i32 line, const char* p_expression,
-                               const char* p_format, va_list args) {
+void _kint_log_message_to_target_args(debug_out_target_t out, debug_log_level_flag_t level,
+                                      const char* p_filename, i32 line, const char* p_expression,
+                                      const char* p_format, va_list args) {
     switch (out) {
         case DEBUG_OUT_TARGET_STDOUT:
-            print_msg_fmt(stdout, level, g_db_opts.enable.terminal_ansi_color, p_filename, line,
-                          p_expression, p_format, args);
+            _kint_message_format(stdout, level, _kint_debug_settings.enable.terminal_ansi_color,
+                                 p_filename, line, p_expression, p_format, args);
             break;
         case DEBUG_OUT_TARGET_STDERR:
-            print_msg_fmt(stderr, level, g_db_opts.enable.terminal_ansi_color, p_filename, line,
-                          p_expression, p_format, args);
+            _kint_message_format(stderr, level, _kint_debug_settings.enable.terminal_ansi_color,
+                                 p_filename, line, p_expression, p_format, args);
             break;
         case DEBUG_OUT_TARGET_LOG_FILE:
             {
                 FILE* p_stream = NULL;
                 errno_t err = 0;
-                err = fopen_s(&p_stream, g_db_opts.io.p_filename, "a");
+                err = fopen_s(&p_stream, _kint_debug_settings.io.p_filename, "a");
                 if (err != 0) {
                     fprintf(stderr, "Failed to open \"%s\" with error number = %d",
-                            g_db_opts.io.p_filename, err);
-                    g_db_opts.io.enable = false;
+                            _kint_debug_settings.io.p_filename, err);
+                    _kint_debug_settings.io.enable = false;
                 } else {
-                    print_msg_fmt(p_stream, level, g_db_opts.io.terminal_ansi_color, p_filename,
-                                  line, p_expression, p_format, args);
+                    _kint_message_format(p_stream, level,
+                                         _kint_debug_settings.io.terminal_ansi_color, p_filename,
+                                         line, p_expression, p_format, args);
                     fclose(p_stream);
                 }
             }
@@ -120,26 +103,27 @@ void print_log_msg_to_target_v(debug_out_target_t out, debug_log_level_flag_t le
     }
 }
 
-void print_msg_fmt(FILE* p_out, debug_log_level_flag_t level, b8 ansi_color, const char* p_filename,
-                   i32 line, const char* p_expression, const char* p_format, va_list args) {
-    print_ansi_col_prefix(ansi_color, p_out, level);
-    fprintf(p_out, "%s ", debug_log_level_flag_as_cstr(level));
-    print_message_based_on_condition(g_db_opts.enable.file && p_filename != NULL, p_out,
+void _kint_message_format(FILE* p_out, debug_log_level_flag_t level, b8 ansi_color,
+                          const char* p_filename, i32 line, const char* p_expression,
+                          const char* p_format, va_list args) {
+    _kint_ansi_color_prefix(ansi_color, p_out, level);
+    fprintf(p_out, "%s ", debug_log_level_flag_as_cstring(level));
+    _kint_message_based_on_condition(_kint_debug_settings.enable.file && p_filename != NULL, p_out,
                                      "File: %s, ", p_filename);
-    print_message_based_on_condition(g_db_opts.enable.line && line != -1, p_out, "Line: %d, ",
-                                     line);
-    print_message_based_on_condition(g_db_opts.enable.expression && p_expression != NULL, p_out,
-                                     "expr: %s, ", p_expression);
+    _kint_message_based_on_condition(_kint_debug_settings.enable.line && line != -1, p_out,
+                                     "Line: %d, ", line);
+    _kint_message_based_on_condition(_kint_debug_settings.enable.expression && p_expression != NULL,
+                                     p_out, "expr: %s, ", p_expression);
     if (p_format != NULL) {
         fprintf(p_out, "Msg: ");
         vfprintf(p_out, p_format, args);
     }
-    print_message_based_on_condition(ansi_color, p_out, "%s", DEBUG_ANSI_RESET);
+    _kint_message_based_on_condition(ansi_color, p_out, "%s", DEBUG_ANSI_RESET);
     fprintf(p_out, "\n");
     fflush(p_out);
 }
 
-void print_ansi_col_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t level) {
+void _kint_ansi_color_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t level) {
     if (ansi_color) {
         switch (level) {
             case DEBUG_LOG_LEVEL_FLAG_NONE:
@@ -167,7 +151,7 @@ void print_ansi_col_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t le
     }
 }
 
-void print_message_based_on_condition(b8 condition, FILE* p_out, const char* p_format, ...) {
+void _kint_message_based_on_condition(b8 condition, FILE* p_out, const char* p_format, ...) {
     if (condition) {
         va_list args;
         va_start(args, p_format);
@@ -176,8 +160,8 @@ void print_message_based_on_condition(b8 condition, FILE* p_out, const char* p_f
     }
 }
 
-void print_msg_with_conditional_msg_v(b8 condition, FILE* p_out, const char* p_format,
-                                      va_list args) {
+void _kint_message_with_conditional_message_args(b8 condition, FILE* p_out, const char* p_format,
+                                                 va_list args) {
     if (condition) {
         vfprintf(p_out, p_format, args);
     }

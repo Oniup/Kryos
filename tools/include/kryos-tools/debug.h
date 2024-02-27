@@ -57,56 +57,55 @@ extern "C" {
 
 #ifndef KRYOS_DISABLE_INFO_LOGS
     #define TRACE(...) \
-        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, __VA_ARGS__)
+        _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_TRACE, __FILE__, __LINE__, NULL, __VA_ARGS__)
     #define INFO(...) \
-        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, __VA_ARGS__)
+        _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_INFO, __FILE__, __LINE__, NULL, __VA_ARGS__)
     #define DEBUG(...) \
-        intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, __VA_ARGS__)
+        _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_DEBUG, __FILE__, __LINE__, NULL, __VA_ARGS__)
 #else
     #define TRACE(...)
     #define INFO(...)
     #define DEBUG(...)
 #endif
 #define WARN(...) \
-    intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_WARN, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_WARN, __FILE__, __LINE__, NULL, __VA_ARGS__)
 #define ERROR(...) \
-    intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_ERROR, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_ERROR, __FILE__, __LINE__, NULL, __VA_ARGS__)
 
-#define INTERNAL_LOG_WITH_CONDITION(expr, lv, ...)                              \
-    ({                                                                          \
-        if (!(expr)) {                                                          \
-            intl_print_log_message(lv, __FILE__, __LINE__, #expr, __VA_ARGS__); \
-        }                                                                       \
+#define _KINT_LOG_WITH_CONDITION(expr, lv, ...)                                  \
+    ({                                                                           \
+        if (!(expr)) {                                                           \
+            _kint_print_log_message(lv, __FILE__, __LINE__, #expr, __VA_ARGS__); \
+        }                                                                        \
     })
 
 #ifndef KRYOS_DISABLE_INFO_LOGS
     #define TRACE_IF(expr, ...) \
-        INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_TRACE, __VA_ARGS__)
+        _KINT_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_TRACE, __VA_ARGS__)
     #define INFO_IF(expr, ...) \
-        INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_INFO, __VA_ARGS__)
+        _KINT_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_INFO, __VA_ARGS__)
     #define DEBUG_IF(expr, ...) \
-        INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_DEBUG, __VA_ARGS__)
+        _KINT_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_DEBUG, __VA_ARGS__)
 #else
     #define TRACE_IF(expr, ...)
     #define INFO_IF(expr, ...)
     #define DEBUG_IF(expr, ...)
 #endif
-#define WARN_IF(expr, ...) INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
-#define ERROR_IF(expr, ...) \
-    INTERNAL_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_ERROR, __VA_ARGS__)
+#define WARN_IF(expr, ...) _KINT_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_WARN, __VA_ARGS__)
+#define ERROR_IF(expr, ...) _KINT_LOG_WITH_CONDITION(expr, DEBUG_LOG_LEVEL_FLAG_ERROR, __VA_ARGS__)
 
-#define INTERNAL_ASSERT(expr, ...)                                                        \
-    ({                                                                                    \
-        if (!(expr)) {                                                                    \
-            intl_print_log_message(DEBUG_LOG_LEVEL_FLAG_FATAL, __FILE__, __LINE__, #expr, \
-                                   __VA_ARGS__);                                          \
-            abort();                                                                      \
-        }                                                                                 \
+#define _KINT_ASSERT(expr, ...)                                                            \
+    ({                                                                                     \
+        if (!(expr)) {                                                                     \
+            _kint_print_log_message(DEBUG_LOG_LEVEL_FLAG_FATAL, __FILE__, __LINE__, #expr, \
+                                    __VA_ARGS__);                                          \
+            abort();                                                                       \
+        }                                                                                  \
     })
 
-#define ASSERT(expr, ...) INTERNAL_ASSERT(expr, __VA_ARGS__)
+#define ASSERT(expr, ...) _KINT_ASSERT(expr, __VA_ARGS__)
 #ifndef NDEBUG
-    #define DEBUG_ASSERT(expr, ...) INTERNAL_ASSERT(expr, __VA_ARGS__)
+    #define DEBUG_ASSERT(expr, ...) _KINT_ASSERT(expr, __VA_ARGS__)
 #else
     #define DEBUG_DEBUG_ASSERT(expr, ...)
 #endif
@@ -122,13 +121,14 @@ typedef enum debug_log_level_flag {
     DEBUG_LOG_LEVEL_FLAG_FATAL = 0X20,
 } debug_log_level_flag_t;
 
-KRYAPI const char* debug_log_level_flag_as_cstr(debug_log_level_flag_t level);
-
 typedef enum debug_out_target {
     DEBUG_OUT_TARGET_STDOUT,
     DEBUG_OUT_TARGET_STDERR,
     DEBUG_OUT_TARGET_LOG_FILE,
 } debug_out_target_t;
+
+const char* debug_log_level_flag_as_cstring(debug_log_level_flag_t level);
+const char* debug_out_target_as_cstring(debug_out_target_t target);
 
 typedef struct global_runtime_debug_options {
     debug_log_level_t enable_level;
@@ -145,10 +145,41 @@ typedef struct global_runtime_debug_options {
     } io;
 } global_runtime_debug_options_t;
 
-KRYAPI global_runtime_debug_options_t* get_global_runtime_debug_options();
+static global_runtime_debug_options_t _kint_debug_settings = {
+    // Doesn't include trace and info flags by default
+    .enable_level = DEBUG_LOG_LEVEL_FLAG_DEBUG | DEBUG_LOG_LEVEL_FLAG_WARN |
+                    DEBUG_LOG_LEVEL_FLAG_ERROR | DEBUG_LOG_LEVEL_FLAG_FATAL,
+    .enable =
+        {
+            .expression = true,
+            .file = true,
+            .line = true,
+            .terminal_ansi_color = true,
+        },
+    .io =
+        {
+            .enable = true,
+            .terminal_ansi_color = false,
+            .p_filename = "kryos-engine.log",
+        },
+};
 
-KRYAPI void intl_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
-                                   const char* p_expression, const char* p_format, ...);
+global_runtime_debug_options_t* get_global_runtime_debug_options();
+
+void _kint_print_log_message(debug_log_level_flag_t level, const char* p_filename, i32 line,
+                             const char* p_expression, const char* p_format, ...);
+
+static void _kint_log_message_to_target_args(debug_out_target_t out, debug_log_level_flag_t level,
+                                             const char* p_filename, i32 line,
+                                             const char* p_expression, const char* p_format,
+                                             va_list args);
+static void _kint_message_based_on_condition(b8 condition, FILE* p_out, const char* p_format, ...);
+static void _kint_message_with_conditional_message_args(b8 condition, FILE* p_out,
+                                                        const char* p_format, va_list args);
+static void _kint_message_format(FILE* p_out, debug_log_level_flag_t level, b8 ansi_color,
+                                 const char* p_filename, i32 line, const char* p_expression,
+                                 const char* p_format, va_list args);
+static void _kint_ansi_color_prefix(b8 ansi_color, FILE* p_out, debug_log_level_flag_t level);
 
 #ifdef __cplusplus
 }

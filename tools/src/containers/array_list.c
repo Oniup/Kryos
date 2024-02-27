@@ -26,7 +26,7 @@ void destroy_array_list(void* p_list) {
     destroy_dynamic_allocation(p_list);
 }
 
-usize intl_get_array_list_size(void* p_list, usize type_size) {
+usize _kint_get_array_list_size(void* p_list, usize type_size) {
     usize size = get_dynamic_allocation_size(p_list);
     if (size > 0) {
         size = size / type_size;
@@ -34,7 +34,7 @@ usize intl_get_array_list_size(void* p_list, usize type_size) {
     return size;
 }
 
-usize intl_get_array_list_capacity(void* p_list, usize type_size) {
+usize _kint_get_array_list_capacity(void* p_list, usize type_size) {
     usize capacity = get_dynamic_allocation_capacity(p_list);
     if (capacity > 0) {
         capacity = capacity / type_size;
@@ -42,24 +42,25 @@ usize intl_get_array_list_capacity(void* p_list, usize type_size) {
     return capacity;
 }
 
-array_list_result_t intl_create_array_list_with_capacity(usize type_size, usize count) {
+_kint_array_list_result_t _kint_create_array_list_with_capacity(usize type_size, usize count) {
     allocated_memory_result_t result = create_dynamic_allocation(type_size * count);
     if (result.error_message != NO_ERROR_MESSAGE) {
         ERROR(
             "Failed to create uninitialized array list of size %zu, type_size: %zu, count: %zu: %s",
             type_size * count, type_size, count, result.error_message);
-        return (array_list_result_t) {.failed = true, .p_data = NULL};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = NULL};
     }
     void* p_data = result.p_data;
     set_dynamic_allocation_size(p_data, 0);
-    return (array_list_result_t) {.failed = false, .p_data = p_data};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_data};
 }
 
-array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, usize count) {
+_kint_array_list_result_t _kint_resize_array_list_size(void* p_list, usize type_size, usize count) {
     usize capacity = get_dynamic_allocation_capacity(p_list);
     usize new_size = get_dynamic_allocation_size(p_list) + type_size * count;
     if (new_size > capacity) {
-        array_list_result_t result = intl_resize_array_list_capacity(p_list, type_size, count);
+        _kint_array_list_result_t result =
+            _kint_resize_array_list_capacity(p_list, type_size, count);
         if (result.failed) {
             return result;
         }
@@ -69,12 +70,13 @@ array_list_result_t intl_resize_array_list_size(void* p_list, usize type_size, u
     if (!result) {
         ERROR("Failed to resize array list to %zu, type_size: %zu, count: %zu", type_size * count,
               type_size, count);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    return (array_list_result_t) {.failed = false, .p_data = p_list};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
-array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_size, usize count) {
+_kint_array_list_result_t _kint_resize_array_list_capacity(void* p_list, usize type_size,
+                                                           usize count) {
     usize capacity_increase =
         (usize)ceil((f64)(type_size * count) / (f64)ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT);
     allocated_memory_result_t result = resize_dynamic_allocation_capacity(
@@ -83,86 +85,86 @@ array_list_result_t intl_resize_array_list_capacity(void* p_list, usize type_siz
     if (result.error_message != NO_ERROR_MESSAGE) {
         ERROR("Failed to resize array list capacity to %zu, type_size: %zu, count: %zu",
               type_size * count, type_size, count);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     p_list = result.p_data;
-    return (array_list_result_t) {.failed = false, .p_data = p_list};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
-array_list_result_t intl_push_array_list_data_back(void* p_list, usize type_size, usize count,
-                                                   void* p_data) {
+_kint_array_list_result_t _kint_push_array_list_data_back(void* p_list, usize type_size,
+                                                          usize count, void* p_data) {
     if (p_list == NULL) {
         ERROR("Cannot push data into the back of an empty array list. Type size: %zu, count: %zu "
               "of `p_data`");
-        return (array_list_result_t) {.failed = true, .p_data = NULL};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = NULL};
     }
-    usize old_size = intl_get_array_list_size(p_list, type_size);
-    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    usize old_size = _kint_get_array_list_size(p_list, type_size);
+    _kint_array_list_result_t result = _kint_resize_array_list_size(p_list, type_size, count);
     if (result.failed) {
         return result;
     }
     p_list = result.p_data;
-    usize size = intl_get_array_list_size(p_list, type_size);
+    usize size = _kint_get_array_list_size(p_list, type_size);
     if (size == 0) {
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     usize p_data_size = type_size * count;
     errno_t error = memcpy_s(p_list + type_size * old_size, p_data_size, p_data, p_data_size);
     if (error != 0) {
         ERROR("Failed to memcpy_s as the error code resulted in %d", error);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    return (array_list_result_t) {.failed = false, .p_data = p_list};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
-array_list_result_t intl_push_array_list_data_front(void* p_list, usize type_size, usize count,
-                                                    void* p_data) {
+_kint_array_list_result_t _kint_push_array_list_data_front(void* p_list, usize type_size,
+                                                           usize count, void* p_data) {
     if (p_list == NULL) {
         ERROR("Cannot push data into the front of an empty array list. Type size: %zu, count: "
               "%zu of `p_data`",
               type_size, count);
-        return (array_list_result_t) {.failed = true, .p_data = NULL};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = NULL};
     }
-    usize old_size = intl_get_array_list_size(p_list, type_size);
-    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    usize old_size = _kint_get_array_list_size(p_list, type_size);
+    _kint_array_list_result_t result = _kint_resize_array_list_size(p_list, type_size, count);
     if (result.failed) {
         return result;
     }
     p_list = result.p_data;
-    usize size = intl_get_array_list_size(p_list, type_size);
+    usize size = _kint_get_array_list_size(p_list, type_size);
     if (size == 0) {
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    usize p_data_size = type_size * count;
+    usize data_size = type_size * count;
     // Shift old data over
     errno_t error =
-        memcpy_s(p_list + p_data_size, old_size * type_size, p_list, old_size * type_size);
+        memcpy_s(p_list + data_size, old_size * type_size, p_list, old_size * type_size);
     if (error != 0) {
         ERROR("Failed to shift original array list data over to make room for the new data at "
               "front: memcpy_s failed and returned error code %d",
               error);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     // Copy New Data
-    error = memcpy_s(p_list, p_data_size, p_data, p_data_size);
+    error = memcpy_s(p_list, data_size, p_data, data_size);
     if (error != 0) {
         ERROR("Failed to memcpy_s as the error code resulted in %d", error);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    return (array_list_result_t) {.failed = false, .p_data = p_list};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
-array_list_result_t intl_insert_array_list(void* p_list, usize type_size, usize position,
-                                           usize count, void* p_data) {
+_kint_array_list_result_t _kint_insert_array_list(void* p_list, usize type_size, usize position,
+                                                  usize count, void* p_data) {
     if (p_list == NULL) {
         ERROR("Cannot insert data into position %zu of an empty array list. Type size: %zu, count: "
               "%zu of `p_data`",
               position, type_size, count);
-        return (array_list_result_t) {.failed = true, .p_data = NULL};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = NULL};
     }
     usize old_size = get_dynamic_allocation_size(p_list);
     usize insert_size = count * type_size;
-    array_list_result_t result = intl_resize_array_list_size(p_list, type_size, count);
+    _kint_array_list_result_t result = _kint_resize_array_list_size(p_list, type_size, count);
     if (result.failed) {
         return result;
     }
@@ -175,14 +177,63 @@ array_list_result_t intl_insert_array_list(void* p_list, usize type_size, usize 
         ERROR("Failed to insert data into array list: memcpy_s failed to copy and shift data over "
               "to make room for insert and resulted in error code %zu",
               error);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     error = memcpy_s(p_list + offset, insert_size, p_data, insert_size);
     if (error != 0) {
         ERROR("Failed to insert data into array list: memcpy_s failed copy insert data into "
               "required space allocated and resulted in error code %zu",
               error);
-        return (array_list_result_t) {.failed = true, .p_data = p_list};
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    return (array_list_result_t) {.failed = false, .p_data = p_list};
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+_kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_size, usize count) {
+    if (p_list == NULL) {
+        ERROR("Cannot pop back %zu elements in array list: p_list is NULL", count);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    usize size = get_dynamic_allocation_size(p_list);
+    usize popping_size = count * type_size;
+    allocated_memory_result_t result = resize_dynamic_allocation(p_list, size - popping_size);
+    if (result.error_message != NO_ERROR_MESSAGE) {
+        ERROR("Failed to pop back %zu elements in array list: %s", count, result.error_message);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = result.p_data};
+    }
+    p_list = result.p_data;
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+_kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_size, usize count) {
+    if (p_list == NULL) {
+        ERROR("Cannot pop front %zu elements in array list, array list is NULL", count);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    usize size = get_dynamic_allocation_size(p_list);
+    usize popping_size = count * type_size;
+    usize new_size = size - popping_size;
+    errno_t error = memcpy_s(p_list, new_size, p_list + popping_size, new_size);
+    if (error != 0) {
+        ERROR("Failed to pop front %zu elements in array list: memcpy_s failed to copy data to "
+              "front of array list to override the popped and resulted in error code %d",
+              count, error);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    allocated_memory_result_t result = resize_dynamic_allocation(p_list, new_size);
+    if (result.error_message != NO_ERROR_MESSAGE) {
+        ERROR("Failed to pop front %zu elements in array list: %s", result.error_message);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = result.p_data};
+    }
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
+}
+
+_kint_array_list_result_t _kint_pop_array_list_range(void* p_list, usize type_size, usize position,
+                                                     usize count) {
+    if (p_list == NULL) {
+        ERROR("Cannot pop %zu elements in array list at position %zu, array list is NULL", count,
+              position);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
