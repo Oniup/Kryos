@@ -33,12 +33,31 @@ typedef struct _kint_array_list_result {
     void* p_data;
 } _kint_array_list_result_t;
 
+/// @brief Releases memory allocated back to the OS.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Target array list to destroy.
 void destroy_array_list(void* p_list);
 
+/// @brief Get the number of elements within the array list.
+///
+/// @param `p_list` Array list to get length.
+/// @param `type_size` Size of the array list type in bytes.
+///
+/// @return The size/length of the array list.
 usize _kint_get_array_list_size(void* p_list, usize type_size);
+
+/// @brief Get the max space available for new elements that doesn't require a heap allocation call.
+///
+/// @param `p_list` Array list to get length.
+/// @param `type_size` Size of the array list type in bytes.
+///
+/// @return Max buffer size.
 usize _kint_get_array_list_capacity(void* p_list, usize type_size);
 
-/// @brief Creates an empty array with a given capacity size
+/// @brief Creates an empty array with a given capacity size.
 ///
 /// @param `type_size` Size of the array list type in bytes.
 /// @param `count` Number of new instances required to fit in the new capacity (adds the current
@@ -49,7 +68,7 @@ usize _kint_get_array_list_capacity(void* p_list, usize type_size);
 _kint_array_list_result_t _kint_create_array_list_with_capacity(usize type_size, usize count);
 
 /// @brief Resizes size of the array list. If the size exceeds the capacity, will also resize the
-/// capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` * type_size
+/// capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` * type_size.
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
 /// @param `type_size` Size of the array list type in bytes.
@@ -101,7 +120,7 @@ _kint_array_list_result_t _kint_push_array_list_data_front(void* p_list, usize t
                                                            usize count, void* p_data);
 
 /// @brief Inserts the given data into the specified position of array list. It inserts space of
-/// size same to the insert data, the copies it to that new space
+/// size same to the insert data, the copies it to that new space.
 ///
 /// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
 /// @param `type_size` Size of the array list type in bytes.
@@ -115,10 +134,45 @@ _kint_array_list_result_t _kint_push_array_list_data_front(void* p_list, usize t
 _kint_array_list_result_t _kint_insert_array_list(void* p_list, usize type_size, usize position,
                                                   usize count, void* p_data);
 
+/// @brief Removes the given number of elements from the back of the array list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 _kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_size, usize count);
 
+/// @brief Removes the given number of elements from the front of the array list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 _kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_size, usize count);
 
+/// @brief Removes the given number of elements starting at a target position/index of the array
+/// list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `type_size` Size of the array list type in bytes.
+/// @param `position` Start of the target popping elements.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size, usize position,
                                                   usize count);
 
@@ -137,7 +191,18 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
 #define create_array_list(T) \
     create_array_list_with_capacity(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
 
+/// @brief Get the number of elements within the array list.
+///
+/// @param `p_list` Array list to get length.
+///
+/// @return The size/length of the array list.
 #define get_array_list_size(p_list) _kint_get_array_list_size(p_list, sizeof(*p_list))
+
+/// @brief Get the max space available for new elements that doesn't require a heap allocation call.
+///
+/// @param `p_list` Array list to get length.
+///
+/// @return Max buffer size.
 #define get_array_list_capacity(p_list) _kint_get_array_list_capacity(p_list, sizeof(*p_list))
 
 /// @brief Copies the given data into the back of array list.
@@ -220,6 +285,16 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
         insert_array_list_copy(p_list, position, GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
     })
 
+/// @brief Removes the given number of elements from the back of the array list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 #define pop_array_list_back(p_list, count)                                 \
     ({                                                                     \
         _kint_array_list_result_t _kint_result =                           \
@@ -230,6 +305,16 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
         p_list = (typeof(p_list))_kint_result.p_data;                      \
     })
 
+/// @brief Removes the given number of elements from the front of the array list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 #define pop_array_list_front(p_list, count)                                 \
     ({                                                                      \
         _kint_array_list_result_t _kint_result =                            \
@@ -240,6 +325,18 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
         p_list = (typeof(p_list))_kint_result.p_data;                       \
     })
 
+/// @brief Removes the given number of elements starting at a target position/index of the array
+/// list.
+///
+/// @warning If data type has heap allocated memory, you'll need to deal with that before popping,
+/// otherwise there will be a memory leak.
+///
+/// @param `p_list` Array list instance. Cannot be a NULL value otherwise will fail.
+/// @param `position` Start of the target popping elements.
+/// @param `count` Number of elements to be removed.
+///
+/// @return Result struct determining whether the function failed and a pointer to the array list as
+/// a `void*`.
 #define pop_array_list_at(p_list, position, count)                                               \
     ({                                                                                           \
         _kint_array_list_result_t _kint_result =                                                 \
