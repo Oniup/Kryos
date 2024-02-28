@@ -196,12 +196,12 @@ _kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_siz
     }
     usize size = get_dynamic_allocation_size(p_list);
     usize popping_size = count * type_size;
-    allocated_memory_result_t result = resize_dynamic_allocation(p_list, size - popping_size);
-    if (result.error_message != NO_ERROR_MESSAGE) {
-        ERROR("Failed to pop back %zu elements in array list: %s", count, result.error_message);
-        return (_kint_array_list_result_t) {.failed = true, .p_data = result.p_data};
+    b8 result = set_dynamic_allocation_size(p_list, size - popping_size);
+    if (!result) {
+        ERROR("Failed to pop front %zu elements in array list: set dynamic allocation size failed",
+              count);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    p_list = result.p_data;
     return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
@@ -220,19 +220,46 @@ _kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_si
               count, error);
         return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
-    allocated_memory_result_t result = resize_dynamic_allocation(p_list, new_size);
-    if (result.error_message != NO_ERROR_MESSAGE) {
-        ERROR("Failed to pop front %zu elements in array list: %s", result.error_message);
-        return (_kint_array_list_result_t) {.failed = true, .p_data = result.p_data};
+    b8 result = set_dynamic_allocation_size(p_list, new_size);
+    if (!result) {
+        ERROR("Failed to pop front %zu elements in array list: set dynamic allocation size failed",
+              count);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};
 }
 
-_kint_array_list_result_t _kint_pop_array_list_range(void* p_list, usize type_size, usize position,
-                                                     usize count) {
+_kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size, usize position,
+                                                  usize count) {
     if (p_list == NULL) {
-        ERROR("Cannot pop %zu elements in array list at position %zu, array list is NULL", count,
+        ERROR("Cannot pop %zu elements in array list at position %zu: array list is NULL", count,
               position);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    usize old_size = get_dynamic_allocation_size(p_list);
+    usize popping_size = count * type_size;
+    usize new_size = old_size - popping_size;
+    usize offset = position * type_size;
+    if (count + position > old_size) {
+        ERROR("Cannot pop %zu elements in array list at position %zu: count + position(%zu) = %zu "
+              "is greater than the size of the array list %zu",
+              count, position, count + position, old_size / type_size);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    errno_t error =
+        memcpy_s(p_list + offset, new_size - offset, p_list + offset + popping_size, popping_size);
+    if (error != 0) {
+        ERROR("Cannot pop %zu elements in array list at position %zu: memcpy_s failed to copy data "
+              "after popping data into removed position to setup resize array list buffer and "
+              "returned error code %d",
+              count, position, error);
+        return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
+    }
+    b8 resize_success = set_dynamic_allocation_size(p_list, new_size);
+    if (!resize_success) {
+        ERROR("Cannot pop %zu elements in array list at position %zu: Failed to resize array list "
+              "size",
+              count, position);
         return (_kint_array_list_result_t) {.failed = true, .p_data = p_list};
     }
     return (_kint_array_list_result_t) {.failed = false, .p_data = p_list};

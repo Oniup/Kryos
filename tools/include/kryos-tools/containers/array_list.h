@@ -119,8 +119,8 @@ _kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_siz
 
 _kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_size, usize count);
 
-_kint_array_list_result_t _kint_pop_array_list_range(void* p_list, usize type_size,
-                                                     usize begin_position, usize end_position);
+_kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size, usize position,
+                                                  usize count);
 
 #define ARRAY_LIST(T) T*
 
@@ -240,7 +240,15 @@ _kint_array_list_result_t _kint_pop_array_list_range(void* p_list, usize type_si
         p_list = (typeof(p_list))_kint_result.p_data;                       \
     })
 
-#define pop_array_list_range(p_list, begin_position, end_position)
+#define pop_array_list_at(p_list, position, count)                                               \
+    ({                                                                                           \
+        _kint_array_list_result_t _kint_result =                                                 \
+            _kint_pop_array_list_at(p_list, sizeof(*p_list), position, count);                   \
+        if (_kint_result.failed) {                                                               \
+            ERROR("Failed to pop %zu elements at position %zu  in array list", count, position); \
+        }                                                                                        \
+        p_list = (typeof(p_list))_kint_result.p_data;                                            \
+    })
 
 #ifdef __cplusplus
 }

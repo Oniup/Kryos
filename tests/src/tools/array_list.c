@@ -190,7 +190,17 @@ void pop_front(test_output_t* p_out) {
     destroy_array_list(p_list);
 }
 
-void pop_range(test_output_t* p_out) {
+void pop_at_index(test_output_t* p_out) {
+    ARRAY_LIST(i32) p_list = create_array_list(i32);
+    push_array_list_back(p_list, 1, 2, 3, 4, 5);
+    pop_array_list_at(p_list, 1, 2);
+    usize size = get_array_list_size(p_list);
+    usize capacity = get_array_list_capacity(p_list);
+    IS_EQUALS(size, 3, "Incorrect size, it should be 3, not %zu", size);
+    IS_EQUALS(capacity, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT,
+              "Incorrect size, it should be %zu, not %zu",
+              ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT, capacity);
+    destroy_array_list(p_list);
 }
 
 void array_list_tests() {
@@ -205,7 +215,7 @@ void array_list_tests() {
         ADD_TEST(insert_array),
         ADD_TEST(pop_back),
         ADD_TEST(pop_front),
-        ADD_TEST(pop_range),
+        ADD_TEST(pop_at_index),
     };
     EXECUTE_TEST_TABLE("Array List");
 }

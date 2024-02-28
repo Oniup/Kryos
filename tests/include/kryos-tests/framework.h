@@ -33,6 +33,7 @@ extern "C" {
 #define TEST_TEXT_ANSI_COLOR -1
 
 #define MAX_TEST_OUTPUT_MESSAGE_SIZE 2000
+#define EXECUTE_PER_TEST_COUNT 5
 
 #define CHECK_IF(expression, ...)                        \
     ({                                                   \

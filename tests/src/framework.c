@@ -38,7 +38,9 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
                 .message = "\0",
                 .pass = true,
             };
-            p_tests[i].test(&result);
+            for (usize j = 0; j < EXECUTE_PER_TEST_COUNT; j++) {
+                p_tests[i].test(&result);
+            }
             print_test_output(p_tests[i].p_name, &result, i, count, &tests_passed);
         } else {
             intl_print_message(TEST_FAILED_ANSI_COLOR, "TEST '%s' HAS NO TEST FUNCTION\n",
