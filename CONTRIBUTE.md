@@ -22,8 +22,7 @@ To ensure high-quality and maintainable code, we have established the following 
 * Each file must begin with the specified license statement:
 
 ```c
-/*
- * ------------------------------------------------------------------------ *
+/* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
  * @file [FILENAME]                                                         *
  * ------------------------------------------------------------------------ *
@@ -40,8 +39,7 @@ To ensure high-quality and maintainable code, we have established the following 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
  * See the License for the specific language governing permissions and      *
  * limitations under the License.                                           *
- * ------------------------------------------------------------------------ *
- */
+ * ------------------------------------------------------------------------ */
 ```
 
 ### Code Style
