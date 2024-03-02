@@ -1,25 +1,26 @@
-/// ------------------------------------------------------------------------ ///
-/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file debug.c                                                            ///
-/// ------------------------------------------------------------------------ ///
-/// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
-///                                                                          ///
-/// Licensed under the Apache License, Version 2.0 (the "License");          ///
-/// you may not use this file except in compliance with the License.         ///
-/// You may obtain a copy of the License at                                  ///
-///                                                                          ///
-///   http://www.apache.org/licenses/LICENSE-2.0                             ///
-///                                                                          ///
-/// Unless required by applicable law or agreed to in writing, software      ///
-/// distributed under the License is distributed on an "AS IS" BASIS,        ///
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ///
-/// See the License for the specific language governing permissions and      ///
-/// limitations under the License.                                           ///
-/// ------------------------------------------------------------------------ ///
+/* ------------------------------------------------------------------------ *
+ * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
+ * @file debug.c                                                            *
+ * ------------------------------------------------------------------------ *
+ * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *   http://www.apache.org/licenses/LICENSE-2.0                             *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ * ------------------------------------------------------------------------ */
 
 #include "kryos-tools/debug.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 const char* debug_log_level_flag_as_cstring(debug_log_level_flag_t level) {
     switch (level) {
@@ -85,18 +86,17 @@ void _kint_log_message_to_target_args(debug_out_target_t out, debug_log_level_fl
             break;
         case DEBUG_OUT_TARGET_LOG_FILE:
             {
-                FILE* p_stream = NULL;
-                errno_t err = 0;
-                err = fopen_s(&p_stream, _kint_debug_settings.io.p_filename, "a");
-                if (err != 0) {
-                    fprintf(stderr, "Failed to open \"%s\" with error number = %d",
-                            _kint_debug_settings.io.p_filename, err);
-                    _kint_debug_settings.io.enable = false;
-                } else {
+                FILE* p_stream = fopen(_kint_debug_settings.io.p_filename, "a");
+                if (p_stream != NULL) {
                     _kint_message_format(p_stream, level,
                                          _kint_debug_settings.io.terminal_ansi_color, p_filename,
                                          line, p_expression, p_format, args);
                     fclose(p_stream);
+                } else {
+                    fprintf(stderr, "Failed to open debug log file with path \"%s\"",
+                            _kint_debug_settings.io.p_filename);
+                    fflush(stderr);
+                    _kint_debug_settings.io.enable = false;
                 }
             }
             break;

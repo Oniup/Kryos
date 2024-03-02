@@ -1,21 +1,21 @@
-/// ------------------------------------------------------------------------ ///
-/// This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) ///
-/// @file framework.c                                                        ///
-/// ------------------------------------------------------------------------ ///
-/// @copyright (c) 2024 Oniup (https://github.com/Oniup)                     ///
-///                                                                          ///
-/// Licensed under the Apache License, Version 2.0 (the "License");          ///
-/// you may not use this file except in compliance with the License.         ///
-/// You may obtain a copy of the License at                                  ///
-///                                                                          ///
-///   http://www.apache.org/licenses/LICENSE-2.0                             ///
-///                                                                          ///
-/// Unless required by applicable law or agreed to in writing, software      ///
-/// distributed under the License is distributed on an "AS IS" BASIS,        ///
-/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. ///
-/// See the License for the specific language governing permissions and      ///
-/// limitations under the License.                                           ///
-/// ------------------------------------------------------------------------ ///
+/* ------------------------------------------------------------------------ *
+ * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
+ * @file framework.c                                                        *
+ * ------------------------------------------------------------------------ *
+ * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
+ *                                                                          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * you may not use this file except in compliance with the License.         *
+ * You may obtain a copy of the License at                                  *
+ *                                                                          *
+ *   http://www.apache.org/licenses/LICENSE-2.0                             *
+ *                                                                          *
+ * Unless required by applicable law or agreed to in writing, software      *
+ * distributed under the License is distributed on an "AS IS" BASIS,        *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
+ * See the License for the specific language governing permissions and      *
+ * limitations under the License.                                           *
+ * ------------------------------------------------------------------------ */
 
 #include "kryos-tests/framework.h"
 #include <stdarg.h>
@@ -26,11 +26,11 @@ static global_test_options_t g_opts = {
     .ansi_color = true,
 };
 
-void intl_print_message(const char* p_ansi_color, const char* p_format, ...);
+void _kint_print_message(const char* p_ansi_color, const char* p_format, ...);
 
 b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
-    intl_print_message(TEST_TITLE_ANSI_COLOR,
-                       "%s\n-------------------------------------------------\n", p_title);
+    _kint_print_message(TEST_TITLE_ANSI_COLOR,
+                        "%s\n-------------------------------------------------\n", p_title);
     usize tests_passed = false;
     for (usize i = 0; i < count; i++) {
         if (p_tests[i].test != NULL) {
@@ -43,8 +43,8 @@ b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
             }
             print_test_output(p_tests[i].p_name, &result, i, count, &tests_passed);
         } else {
-            intl_print_message(TEST_FAILED_ANSI_COLOR, "TEST '%s' HAS NO TEST FUNCTION\n",
-                               p_tests->p_name);
+            _kint_print_message(TEST_FAILED_ANSI_COLOR, "TEST '%s' HAS NO TEST FUNCTION\n",
+                                p_tests->p_name);
         }
     }
     if (tests_passed == count) {
@@ -80,24 +80,25 @@ void set_test_output_message(test_output_t* p_output, const char* p_format, ...)
 }
 
 void set_test_output_message_v(test_output_t* p_output, const char* p_format, va_list args) {
-    vsprintf_s(p_output->message, MAX_TEST_OUTPUT_MESSAGE_SIZE, p_format, args);
+    vsnprintf(p_output->message, MAX_TEST_OUTPUT_MESSAGE_SIZE, p_format, args);
 }
 
-void intl_print_message(const char* p_ansi_color, const char* p_format, ...) {
+void _kint_print_message(const char* p_ansi_color, const char* p_format, ...) {
     va_list args;
     va_start(args, p_format);
-    int result;
+    i32 error;
     if (g_opts.ansi_color && p_ansi_color[0] != TEST_TEXT_ANSI_COLOR) {
         printf("%s%s%s", DEBUG_ANSI_PREFIX, p_ansi_color, DEBUG_ANSI_SUFIX);
-        result = vprintf_s(p_format, args);
+        error = vprintf(p_format, args);
         printf("%s", DEBUG_ANSI_RESET);
     } else {
-        result = vprintf_s(p_format, args);
+        error = vprintf(p_format, args);
     }
     va_end(args);
-    if (result < 0) {
-        printf("Failed to print test results. va_list args are incorrect and cased vprintf_s to "
-               "fail\n");
+    if (error != 0) {
+        printf("Failed to print test results. va_list args are incorrect and cased vpritnf to "
+               "fail and resulted in error: %d\n",
+               error);
     }
 }
 
