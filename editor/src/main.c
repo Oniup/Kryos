@@ -20,7 +20,7 @@
 #include "kryos-core/window.h"
 
 window_manager_t create_editor_window_manager() {
-    window_create_options_t options = {
+    window_handle_create_options_t options = {
         .title = "Kryos Engine",
         .width = 600,
         .height = 600,

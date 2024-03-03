@@ -25,7 +25,7 @@
 
 #include <GLFW/glfw3.h>
 
-window_manager_t create_window_manager(const window_create_options_t* p_handles_options,
+window_manager_t create_window_manager(const window_handle_create_options_t* p_handles_options,
                                        usize count) {
     if (!_kint_glfw_init) {
         b8 glfw_init_result = glfwInit();
@@ -63,7 +63,7 @@ void destroy_window_handle(window_handle_t* p_handle) {
 }
 
 window_handle_t* add_window_handle(window_manager_t* p_manager,
-                                   window_create_options_t handle_options) {
+                                   window_handle_create_options_t handle_options) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -142,4 +142,20 @@ void update_window_handles_frames(window_manager_t* p_manager) {
         glClearColor(0.0f, 0.2f, 0.7f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
+}
+
+const char* get_window_handle_title(window_handle_t* handle) {
+    return glfwGetWindowTitle(handle->p_instance);
+}
+
+void get_window_handle_size(window_handle_t* handle, ivec2 size) {
+    glfwGetWindowSize(handle->p_instance, &size[1], &size[2]);
+}
+
+void get_window_handle_frame_size(window_handle_t* handle, ivec4 size) {
+    glfwGetWindowFrameSize(handle->p_instance, &size[1], &size[2], &size[3], &size[4]);
+}
+
+void set_window_handle_title(window_handle_t* handle, const char* title) {
+    glfwSetWindowTitle(handle->p_instance, title);
 }

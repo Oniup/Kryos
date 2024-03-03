@@ -25,6 +25,7 @@ extern "C" {
 
 #include "kryos-tools/containers/array_list.h"
 #include "kryos-tools/defines.h"
+#include <cglm/cglm.h>
 
 static b8 _kint_glfw_init = false;
 static b8 _kint_glad_init = false;
@@ -42,13 +43,13 @@ typedef struct enabled_window_features {
     b8 fullscreen;
 } enabled_window_features_t;
 
-typedef struct window_create_options {
+typedef struct window_handle_create_options {
     const char* title;
     i32 width;
     i32 height;
     enabled_window_features_t enabled;
     window_mode_t mode;
-} window_create_options_t;
+} window_handle_create_options_t;
 
 typedef struct window_handle {
     struct GLFWwindow* p_instance;
@@ -60,17 +61,35 @@ typedef struct window_manager {
     ARRAY_LIST(window_handle_t) p_handles;
 } window_manager_t;
 
-window_manager_t create_window_manager(const window_create_options_t* p_handles_options,
+window_manager_t create_window_manager(const window_handle_create_options_t* p_handles_options,
                                        usize count);
 
 void destroy_window_manager(window_manager_t* p_manager);
 void destroy_window_handle(window_handle_t* p_handle);
 
 window_handle_t* add_window_handle(window_manager_t* p_manager,
-                                   window_create_options_t handle_options);
+                                   window_handle_create_options_t handle_options);
 
 b8 continue_window_manager_runloop(window_manager_t* p_manager);
 void update_window_handles_frames(window_manager_t* p_manager);
+
+void set_window_handle_title(window_handle_t* handle, const char* title);
+
+const char* get_window_handle_title(window_handle_t* handle);
+void get_window_handle_size(window_handle_t* handle, ivec2 size);
+
+/**
+ * @brief Retrieves the size of the frame of the window. This function retrieves the size, in screen
+ * coordinates, of each edge of the frame of the specified window. This size includes the title bar,
+ * if the window has one.
+ *
+ * @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref GLFW_PLATFORM_ERROR.
+ * @thread_safety This function must only be called from the main thread.
+ *
+ * @param[in] handle The window whose frame size to query.
+ * @param[out] size Index 1 is the left, 2: top, 3: left, 4: bottom coordinates
+ */
+void get_window_handle_frame_size(window_handle_t* handle, ivec4 size);
 
 #ifdef __cplusplus
 }
