@@ -62,14 +62,18 @@ void _kint_print_log_message(debug_log_level_flag_t level, const char* p_filenam
     va_start(args, p_format);
     _kint_log_message_to_target_args(DEBUG_OUT_TARGET_LOG_FILE, level, p_filename, line,
                                      p_expression, p_format, args);
+    va_end(args);
     if (level > DEBUG_LOG_LEVEL_FLAG_WARN) {
+        va_start(args, p_format);
         _kint_log_message_to_target_args(DEBUG_OUT_TARGET_STDERR, level, p_filename, line,
                                          p_expression, p_format, args);
+        va_end(args);
     } else {
+        va_start(args, p_format);
         _kint_log_message_to_target_args(DEBUG_OUT_TARGET_STDOUT, level, p_filename, line,
                                          p_expression, p_format, args);
+        va_end(args);
     }
-    va_end(args);
 }
 
 void _kint_log_message_to_target_args(debug_out_target_t out, debug_log_level_flag_t level,

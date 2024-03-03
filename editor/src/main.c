@@ -17,6 +17,31 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
+#include "kryos-core/window.h"
+
+window_manager_t create_editor_window_manager() {
+    window_create_options_t options = {
+        .title = "Kryos Engine",
+        .width = 600,
+        .height = 600,
+        .enabled =
+            {
+                .fullscreen = true,
+                .resizable = true,
+                .transparent_buffer = false,
+                .vsync = false,
+            },
+        .mode = WINDOW_MODE_WINDOWED,
+    };
+    window_manager_t manager = create_window_manager(&options, 1);
+    return manager;
+}
+
 int main(int argc, char* argv[]) {
+    window_manager_t windows = create_editor_window_manager();
+    while (continue_window_manager_runloop(&windows)) {
+        update_window_handles_frames(&windows);
+    }
+    destroy_window_manager(&windows);
     return 0;
 }

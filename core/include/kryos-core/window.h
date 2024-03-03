@@ -66,8 +66,11 @@ window_manager_t create_window_manager(const window_create_options_t* p_handles_
 void destroy_window_manager(window_manager_t* p_manager);
 void destroy_window_handle(window_handle_t* p_handle);
 
-window_handle_t add_window_handle(window_manager_t* p_manager,
-                                  window_create_options_t handle_options);
+window_handle_t* add_window_handle(window_manager_t* p_manager,
+                                   window_create_options_t handle_options);
+
+b8 continue_window_manager_runloop(window_manager_t* p_manager);
+void update_window_handles_frames(window_manager_t* p_manager);
 
 #ifdef __cplusplus
 }

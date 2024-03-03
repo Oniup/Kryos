@@ -86,20 +86,14 @@ void set_test_output_message_v(test_output_t* p_output, const char* p_format, va
 void _kint_print_message(const char* p_ansi_color, const char* p_format, ...) {
     va_list args;
     va_start(args, p_format);
-    i32 error;
     if (g_opts.ansi_color && p_ansi_color[0] != TEST_TEXT_ANSI_COLOR) {
         printf("%s%s%s", DEBUG_ANSI_PREFIX, p_ansi_color, DEBUG_ANSI_SUFIX);
-        error = vprintf(p_format, args);
+        vprintf(p_format, args);
         printf("%s", DEBUG_ANSI_RESET);
     } else {
-        error = vprintf(p_format, args);
+        vprintf(p_format, args);
     }
     va_end(args);
-    if (error != 0) {
-        printf("Failed to print test results. va_list args are incorrect and cased vpritnf to "
-               "fail and resulted in error: %d\n",
-               error);
-    }
 }
 
 global_test_options_t* get_global_test_options() {

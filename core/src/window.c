@@ -20,25 +20,25 @@
 
 #include "kryos-core/window.h"
 #include "kryos-tools/containers/array_list.h"
-#include <stdlib.h>
-
 #include <glad/glad.h>
+#include <stdlib.h>
 
 #include <GLFW/glfw3.h>
 
 window_manager_t create_window_manager(const window_create_options_t* p_handles_options,
                                        usize count) {
     if (!_kint_glfw_init) {
-        i32 glfw_init_result = glfwInit();
+        b8 glfw_init_result = glfwInit();
         ASSERT(glfw_init_result, "Failed to initialize glfw. Required for Kryos engine to run");
         _kint_glfw_init = true;
     }
     window_manager_t manager = {
         .p_handles = create_array_list(window_handle_t),
     };
-    for (usize i = 0; i < count; i++) {
-        window_handle_t handle = add_window_handle(&manager, p_handles_options[i]);
-        if (handle.p_instance != NULL) {
+    for (usize i = 0; i < count; ++i) {
+        INFO("created window %s", p_handles_options[i].title);
+        window_handle_t* handle = add_window_handle(&manager, p_handles_options[i]);
+        if (handle == NULL && handle->p_instance == NULL) {
             ERROR("Failed to create window handle %s for index %zu", p_handles_options[i].title, i);
             continue;
         }
@@ -62,10 +62,10 @@ void destroy_window_handle(window_handle_t* p_handle) {
     p_handle->p_instance = NULL;
 }
 
-window_handle_t add_window_handle(window_manager_t* p_manager,
-                                  window_create_options_t handle_options) {
+window_handle_t* add_window_handle(window_manager_t* p_manager,
+                                   window_create_options_t handle_options) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     if (handle_options.enabled.transparent_buffer) {
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
@@ -97,17 +97,49 @@ window_handle_t add_window_handle(window_manager_t* p_manager,
     }
     if (p_instance == NULL) {
         ERROR("Failed to create window handle with title \"%s\"", handle_options.title);
-        return (window_handle_t) {.p_instance = NULL};
+        return NULL;
+    }
+    glfwMakeContextCurrent(p_instance);
+    if (handle_options.enabled.vsync) {
+        glfwSwapInterval(1);
+    } else {
+        glfwSwapInterval(0);
     }
     if (!_kint_glad_init) {
-        i32 glad_init_result = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        b8 glad_init_result = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         ASSERT(glad_init_result,
                "Failed to load opengl through glad, this is required for kryos engine to run");
         _kint_glad_init = true;
     }
-    return (window_handle_t) {
+    window_handle_t handle = {
         .p_instance = p_instance,
         .enabled = handle_options.enabled,
         .mode = handle_options.mode,
     };
+    push_array_list_back(p_manager->p_handles, handle);
+    return &p_manager->p_handles[get_array_list_size(p_manager->p_handles) - 1];
+}
+
+b8 continue_window_manager_runloop(window_manager_t* p_manager) {
+    if (get_array_list_size(p_manager->p_handles) > 0) {
+        return true;
+    }
+    return false;
+}
+
+void update_window_handles_frames(window_manager_t* p_manager) {
+    glfwPollEvents(); // TODO: Remove this function when implementing input
+    usize size = get_array_list_size(p_manager->p_handles);
+    for (usize i = 0; i < size; i++) {
+        window_handle_t* p_handle = &p_manager->p_handles[i];
+        glfwMakeContextCurrent(p_handle->p_instance);
+        if (glfwWindowShouldClose(p_handle->p_instance)) {
+            destroy_window_handle(p_handle);
+            pop_array_list_at(p_handle, i, 1);
+            continue;
+        }
+        glfwSwapBuffers(p_handle->p_instance);
+        glClearColor(0.0f, 0.2f, 0.7f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 }
