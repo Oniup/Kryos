@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file main.c                                                             *
+ * @file engine_context.h                                                   *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,15 +17,26 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests//tools/memory_allocator.h"
-#include "kryos-tests/tools/array_list.h"
-#include "kryos-tests/tools/node.h"
+#ifndef KRYOS__CORE__ENGINE_CONTEXT_H
+#define KRYOS__CORE__ENGINE_CONTEXT_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int main(int argc, char* p_argv[]) {
-    // Tools
-    memory_allocator_tests();
-    array_list_tests();
-    node_tests();
+#include "kryos-core/asset_manager.h"
+#include "kryos-core/window.h"
 
-    return 0;
+typedef enum graphics_backend {
+    RENDERER_API_BACKEND_OPENGL,
+    RENDERER_API_BACKEND_WEBGL,
+    RENDERER_API_BACKEND_VULKAN,
+} graphics_backend_t;
+
+typedef struct engine_context {
+    graphics_backend_t graphics_backend;
+} engine_context_t;
+
+#ifdef __cplusplus
 }
+#endif
+#endif

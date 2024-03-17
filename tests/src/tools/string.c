@@ -61,11 +61,11 @@
 //               "they should");
 //
 //     IS_EQUALS(compare_string(&string1, &string3), false,
-//               "Failed to compare string to another string. Resulted in being the same when should"
-//               "not they should");
+//               "Failed to compare string to another string. Resulted in being the same when
+//               should" "not they should");
 //     IS_EQUALS(compare_string(&string1, &string4), false,
-//               "Failed to compare string to another string. Resulted in being the same when should"
-//               "not they should");
+//               "Failed to compare string to another string. Resulted in being the same when
+//               should" "not they should");
 //
 //     destroy_string(&string1);
 //     destroy_string(&string2);

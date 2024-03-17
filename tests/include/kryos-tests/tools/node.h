@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file main.c                                                             *
+ * @file node.h                                                             *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,15 +17,15 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests//tools/memory_allocator.h"
-#include "kryos-tests/tools/array_list.h"
-#include "kryos-tests/tools/node.h"
+#ifndef KRYOS__TESTS_TOOLS__NODE_H
+#define KRYOS__TESTS_TOOLS__NODE_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int main(int argc, char* p_argv[]) {
-    // Tools
-    memory_allocator_tests();
-    array_list_tests();
-    node_tests();
+void node_tests();
 
-    return 0;
+#ifdef __cplusplus
 }
+#endif
+#endif

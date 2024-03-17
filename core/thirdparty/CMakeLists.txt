@@ -9,18 +9,11 @@ FetchContent_Declare(cglm
     GIT_TAG master)
 FetchContent_MakeAvailable(glfw cglm)
 
-add_library(
-    glad STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/glad/include/glad/glad.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/glad/include/KHR/khrplatform.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/glad/src/glad.c)
-target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/glad/include)
-
 set(kryos_core_thirdparty_include_dirs
     PRIVATE
-    ${glfw_SOURCE_DIR}/include
-    ${cglm_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/glad/include
+    ${glfw_SOURCE_DIR}/include/
+    ${cglm_SOURCE_DIR}/include/
     CACHE INTERNAL "")
 
-append_global_property(kryos_engine_libraries glad glfw cglm)
+append_global_property(kryos_engine_include_dirs ${kryos_core_thirdparty_include_dirs})
+append_global_property(kryos_engine_libraries glfw cglm)

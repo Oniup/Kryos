@@ -6,5 +6,6 @@ file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR} "include/*.h")
 append_global_property(kryos_engine_sources ${sources})
 append_global_property(kryos_engine_sources ${headers})
 append_global_property(kryos_engine_include_dirs ${include_dirs})
+append_global_property(kryos_engine_compile_definitions RENDERER_USE_OPENGL_BACKEND)
 
 add_subdirectory(thirdparty)

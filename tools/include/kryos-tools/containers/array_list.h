@@ -212,8 +212,20 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
         result.p_data;                                               \
     })
 
+#define create_array_list_with_type_size_and_capacity(size, count)                             \
+    ({                                                                                         \
+        _kint_array_list_result_t result = _kint_create_array_list_with_capacity(size, count); \
+        if (result.failed) {                                                                   \
+            ERROR("Failed to create empty array list");                                        \
+        }                                                                                      \
+        result.p_data;                                                                         \
+    })
+
 #define create_array_list(T) \
     create_array_list_with_capacity(T, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
+
+#define create_array_list_with_type_size(size) \
+    create_array_list_with_type_size_and_capacity(size, ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT)
 
 /**
  * @brief Get the number of elements within the array list

@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file main.c                                                             *
+ * @file data_types.c                                                       *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * Licensed under the Apache License, Version 2.0 (the "License"){}          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
  *                                                                          *
@@ -17,15 +17,17 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests//tools/memory_allocator.h"
-#include "kryos-tests/tools/array_list.h"
-#include "kryos-tests/tools/node.h"
+#include "kryos-renderer/opengl/data_types.h"
+#include <glad/glad.h>
 
-int main(int argc, char* p_argv[]) {
-    // Tools
-    memory_allocator_tests();
-    array_list_tests();
-    node_tests();
+shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
+                       usize count) {
+    // TODO: OpenGL shader creation code ...
+    return (shader_t) {};
+}
 
-    return 0;
+void destroy_shader(shader_t* p_shader) {
+    glDeleteProgram(p_shader->gl.program_id);
+    free(p_shader->p_name);
+    p_shader->p_name = NULL;
 }

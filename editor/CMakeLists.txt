@@ -12,4 +12,5 @@ if (KRYOS_BUILD_EDITOR)
         PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
                 ${include_dirs})
     target_link_libraries(${name} PUBLIC ${kryos_name})
+    append_global_property(kryos_engine_compile_definitions KRYOS_EDITOR)
 endif()
