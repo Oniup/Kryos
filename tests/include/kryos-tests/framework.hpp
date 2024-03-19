@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file framework.h                                                        *
+ * @file framework.hpp                                                      *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,14 +17,11 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TESTS__FRAMEWORK_H
-#define KRYOS__TESTS__FRAMEWORK_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TESTS__FRAMEWORK_HPP
+#define KRYOS__TESTS__FRAMEWORK_HPP
 
-#include "kryos-tools/debug.h"
-#include "kryos-tools/defines.h"
+#include "kryos-tools/debug.hpp"
+#include "kryos-tools/defines.hpp"
 #include <stdarg.h>
 
 #define TEST_TITLE_ANSI_COLOR DEBUG_ANSI_FG_CYAN
@@ -60,7 +57,7 @@ extern "C" {
 
 typedef struct test_output {
     char message[MAX_TEST_OUTPUT_MESSAGE_SIZE];
-    b8 pass;
+    bool pass;
 } test_output_t;
 
 typedef void (*PFN_test)(test_output_t* result);
@@ -71,19 +68,16 @@ typedef struct test {
 } test_t;
 
 typedef struct global_test_options {
-    b8 ansi_color;
+    bool ansi_color;
 } global_test_options_t;
 
 global_test_options_t* get_global_test_options();
 
-b8 execute_tests(const char* p_title, usize count, test_t* p_tests);
+bool execute_tests(const char* p_title, usize count, test_t* p_tests);
 void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
                        usize* p_tests_passed);
 
 void set_test_output_message(test_output_t* p_output, const char* p_format, ...);
 void set_test_output_message_v(test_output_t* p_output, const char* p_format, va_list args);
 
-#ifdef __cplusplus
-}
-#endif
 #endif

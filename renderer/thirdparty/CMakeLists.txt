@@ -5,13 +5,6 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/glad/src/glad.c)
 target_include_directories(glad PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/glad/include/)
 
-# file(GLOB_RECURSE NUKLEAR_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/Nuklear/src/ "*.c")
-# file(GLOB_RECURSE NUKLEAR_HEADER_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/Nuklear/src/ "*.h")
-# add_library(
-#     nuklear STATIC
-#     ${NUKLEAR_SOURCE_FILES} ${NUKLEAR_HEADER_FILES})
-# target_include_directories(nuklear PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuklear/src/)
-
 set(kryos_gl_renderer_thirdparty_include_dirs
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/glad/include/

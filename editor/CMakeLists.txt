@@ -6,7 +6,7 @@ if (KRYOS_BUILD_EDITOR)
 
     get_property(include_dirs GLOBAL PROPERTY kryos_engine_include_dirs)
 
-    file(GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR} "src/*.c")
+    file(GLOB_RECURSE source_files ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
     add_executable(${name} ${source_files})
     target_include_directories(${name}
         PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include

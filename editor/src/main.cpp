@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file node.h                                                             *
+ * @file main.cpp                                                           *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,15 +17,35 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TESTS_TOOLS__NODE_H
-#define KRYOS__TESTS_TOOLS__NODE_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "kryos-core/window.hpp"
 
-void node_tests();
+// window_manager_t create_editor_window_manager() {
+//     window_handle_create_options_t options = {
+//         .title = "Kryos Engine",
+//         .width = 600,
+//         .height = 600,
+//         .enabled =
+//             {
+//                 .vsync = false,
+//                 .transparent_buffer = false,
+//                 .resizable = true,
+//                 .fullscreen = true,
+//             },
+//         .mode = WINDOW_MODE_WINDOWED,
+//     };
+//     window_manager_t manager = create_window_manager(&options, 1);
+//     return manager;
+// }
+//
+// int main(int argc, char* argv[]) {
+//     window_manager_t windows = create_editor_window_manager();
+//     while (continue_window_manager_runloop(&windows)) {
+//         update_window_handles_frames(&windows);
+//     }
+//     destroy_window_manager(&windows);
+//     return 0;
+// }
 
-#ifdef __cplusplus
+int main(int argc, char** argv) {
+    return 0;
 }
-#endif
-#endif

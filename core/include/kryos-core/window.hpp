@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file window.h                                                           *
+ * @file window.hpp                                                         *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,18 +17,15 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__CORE__WINDOW_H
-#define KRYOS__CORE__WINDOW_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__CORE__WINDOW_HPP
+#define KRYOS__CORE__WINDOW_HPP
 
-#include "kryos-tools/containers/array_list.h"
-#include "kryos-tools/defines.h"
+#include "kryos-tools/containers/array_list.hpp"
+#include "kryos-tools/defines.hpp"
 #include <cglm/cglm.h>
 
-static b8 _kint_glfw_init = false;
-static b8 _kint_glad_init = false;
+static bool _kint_glfw_init = false;
+static bool _kint_glad_init = false;
 
 typedef enum window_mode {
     WINDOW_MODE_WINDOWED,
@@ -37,10 +34,10 @@ typedef enum window_mode {
 } window_mode_t;
 
 typedef struct enabled_window_features {
-    b8 vsync;
-    b8 transparent_buffer;
-    b8 resizable;
-    b8 fullscreen;
+    bool vsync;
+    bool transparent_buffer;
+    bool resizable;
+    bool fullscreen;
 } enabled_window_features_t;
 
 typedef struct window_handle_create_options {
@@ -70,7 +67,7 @@ void destroy_window_handle(window_handle_t* p_handle);
 window_handle_t* add_window_handle(window_manager_t* p_manager,
                                    window_handle_create_options_t handle_options);
 
-b8 continue_window_manager_runloop(window_manager_t* p_manager);
+bool continue_window_manager_runloop(window_manager_t* p_manager);
 void update_window_handles_frames(window_manager_t* p_manager);
 
 void set_window_handle_title(window_handle_t* handle, const char* title);
@@ -91,7 +88,4 @@ void get_window_handle_size(window_handle_t* handle, ivec2 size);
  */
 void get_window_handle_frame_size(window_handle_t* handle, ivec4 size);
 
-#ifdef __cplusplus
-}
-#endif
 #endif

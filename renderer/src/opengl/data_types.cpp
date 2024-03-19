@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file renderer.h                                                         *
+ * @file data_types.cpp                                                     *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * Licensed under the Apache License, Version 2.0 (the "License"){}         *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
  *                                                                          *
@@ -17,36 +17,17 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__RENDERER_OPENGL__RENDERER_H
-#define KRYOS__RENDERER_OPENGL__RENDERER_H
-#ifdef RENDERER_USE_OPENGL_BACKEND
-    #ifdef __cplusplus
-extern "C" {
-    #endif
+#include "kryos-renderer/opengl/data_types.hpp"
+#include <glad/glad.h>
 
-    #include "kryos-renderer/opengl/data_types.h"
-    #include "kryos-tools/containers/array_list.h"
-
-typedef struct renderer_context {
-    ARRAY_LIST(shader_t) p_shaders;
-    ARRAY_LIST(texture_t) p_textures;
-    u32 max_textures_per_pass;
-    b8 refresh_pass_data_every_frame;
-} renderer_context_t;
-
-typedef struct render_pass {
-    ARRAY_LIST(vertex_t) p_vertices;
-    ARRAY_LIST(u32) p_indices;
-    const material_t* p_material;
-    u32 texture_count;
-    b8 sprites_only;
-} render_pass_t;
-
-renderer_context_t create_renderer();
-void destroy_renderer(renderer_context_t* p_context);
-
-#endif
-#ifdef __cplusplus
+shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
+                       usize count) {
+    // TODO: OpenGL shader creation code ...
+    return (shader_t) {};
 }
-#endif
-#endif
+
+void destroy_shader(shader_t* p_shader) {
+    glDeleteProgram(p_shader->gl.program_id);
+    free(p_shader->p_name);
+    p_shader->p_name = NULL;
+}

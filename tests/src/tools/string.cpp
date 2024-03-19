@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file string.c                                                           *
+ * @file string.cpp                                                           *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,9 +17,9 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests/tools/string.h"
-#include "kryos-tests/framework.h"
-#include <kryos-tools/containers/string.h>
+#include "kryos-tests/framework.hpp"
+#include "kryos-tests/tools/containers.hpp"
+#include <kryos-tools/containers/string.hpp>
 #include <string.h>
 
 #define HELLO_WORLD_CSTRING "Hello World!!!"

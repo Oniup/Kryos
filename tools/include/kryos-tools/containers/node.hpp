@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file node.h                                                             *
+ * @file node.hpp                                                             *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,13 +17,10 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TOOLS_CONTAINERS__NODE_H
-#define KRYOS__TOOLS_CONTAINERS__NODE_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TOOLS_CONTAINERS__NODE_HPP
+#define KRYOS__TOOLS_CONTAINERS__NODE_HPP
 
-#include "kryos-tools/defines.h"
+#include "kryos-tools/defines.hpp"
 
 typedef struct node {
     struct node* p_next;
@@ -72,7 +69,4 @@ void destroy_nodes_left(void* p_node_data);
         _kint_current;                                                 \
     })
 
-#ifdef __cplusplus
-}
-#endif
 #endif

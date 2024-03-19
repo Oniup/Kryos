@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file memory_allocator.h                                                 *
+ * @file memory_allocator.hpp                                               *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,13 +17,10 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TOOLS_CONTAINERS__MEMORY_ALLOCATOR_H
-#define KRYOS__TOOLS_CONTAINERS__MEMORY_ALLOCATOR_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TOOLS_CONTAINERS__MEMORY_ALLOCATOR_HPP
+#define KRYOS__TOOLS_CONTAINERS__MEMORY_ALLOCATOR_HPP
 
-#include "kryos-tools/defines.h"
+#include "kryos-tools/defines.hpp"
 
 /**
  * @typedef _kint_allocator_header
@@ -47,7 +44,7 @@ typedef struct allocated_memory_result {
 usize get_dynamic_allocation_size(void* p_data);
 usize get_dynamic_allocation_capacity(void* p_data);
 // @warning The size cannot exceed the capacity size
-b8 set_dynamic_allocation_size(void* p_data, usize size);
+bool set_dynamic_allocation_size(void* p_data, usize size);
 
 allocated_memory_result_t create_dynamic_allocation(usize size);
 
@@ -69,7 +66,4 @@ static allocated_memory_result_t
 _kint_resize_dynamic_allocation_capacity(_kint_allocator_header_t* p_header, void* p_data,
                                          usize size);
 
-#ifdef __cplusplus
-}
-#endif
 #endif

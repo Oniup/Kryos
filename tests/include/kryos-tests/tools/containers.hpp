@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file engine_context.h                                                   *
+ * @file containers.hpp                                                     *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,26 +17,12 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__CORE__ENGINE_CONTEXT_H
-#define KRYOS__CORE__ENGINE_CONTEXT_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TESTS_TOOLS__CONATINERS_HPP
+#define KRYOS__TESTS_TOOLS__CONATINERS_HPP
 
-#include "kryos-core/asset_manager.h"
-#include "kryos-core/window.h"
+void memory_allocator_tests();
+void array_list_tests();
+void node_tests();
+void string_tests();
 
-typedef enum graphics_backend {
-    RENDERER_API_BACKEND_OPENGL,
-    RENDERER_API_BACKEND_WEBGL,
-    RENDERER_API_BACKEND_VULKAN,
-} graphics_backend_t;
-
-typedef struct engine_context {
-    graphics_backend_t graphics_backend;
-} engine_context_t;
-
-#ifdef __cplusplus
-}
-#endif
 #endif

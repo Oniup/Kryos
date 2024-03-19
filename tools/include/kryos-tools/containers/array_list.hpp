@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file array_list.h                                                       *
+ * @file array_list.hpp                                                     *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,19 +17,16 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TOOLS_CONTAINERS__ARRAY_LIST_H
-#define KRYOS__TOOLS_CONTAINERS__ARRAY_LIST_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TOOLS_CONTAINERS__ARRAY_LIST_HPP
+#define KRYOS__TOOLS_CONTAINERS__ARRAY_LIST_HPP
 
-#include "kryos-tools/debug.h"
-#include "kryos-tools/defines.h"
+#include "kryos-tools/debug.hpp"
+#include "kryos-tools/defines.hpp"
 
 #define ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT 20
 
 typedef struct _kint_array_list_result {
-    b8 failed;
+    bool failed;
     void* p_data;
 } _kint_array_list_result_t;
 
@@ -79,7 +76,7 @@ _kint_array_list_result_t _kint_create_array_list_with_capacity(usize type_size,
  * @brief Resizes size of the array list. If the size exceeds the capacity, will also resize the
  * capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` * type_size
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size)
@@ -93,7 +90,7 @@ _kint_array_list_result_t _kint_resize_array_list_size(void* p_list, usize type_
  * @brief Resizes capacity by intervals of the `ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT` *
  * `type_size`
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail.
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail.
  * @param type_size Size of the array list type in bytes.
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size).
@@ -107,7 +104,7 @@ _kint_array_list_result_t _kint_resize_array_list_capacity(void* p_list, usize t
 /**
  * @brief Copies the given data into the back of array list.
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size)
@@ -123,7 +120,7 @@ _kint_array_list_result_t _kint_push_array_list_data_back(void* p_list, usize ty
  * @brief Copies the given data into the front of array list and shifts the original data down the
  * buffer by the size of the insert data.
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail.
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail.
  * @param type_size Size of the array list type in bytes.
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size).
@@ -139,7 +136,7 @@ _kint_array_list_result_t _kint_push_array_list_data_front(void* p_list, usize t
  * @brief Inserts the given data into the specified position of array list. It inserts space of
  * size same to the insert data, the copies it to that new space
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param position Specifics where to insert the data into the array list.
  * @param count Number of new instances required to fit in the new capacity (adds the current
@@ -158,7 +155,7 @@ _kint_array_list_result_t _kint_insert_array_list(void* p_list, usize type_size,
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param count Number of elements to be removed
  *
@@ -173,7 +170,7 @@ _kint_array_list_result_t _kint_pop_array_list_back(void* p_list, usize type_siz
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param count Number of elements to be removed
  *
@@ -189,7 +186,7 @@ _kint_array_list_result_t _kint_pop_array_list_front(void* p_list, usize type_si
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param type_size Size of the array list type in bytes
  * @param position Start of the target popping elements
  * @param count Number of elements to be removed
@@ -248,7 +245,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
 /**
  * @brief Copies the given data into the back of array list
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size)
  * @param p_copy Data for copying. Must be the same type as the array list
@@ -266,7 +263,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
 /**
  * @brief Copies the given data into the front of array list
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size)
  * @param p_copy Data for copying. Must be the same type as the array list
@@ -285,7 +282,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
  * @brief Inserts the given data into the specified position of array list. It inserts space of
  * size same to the insert data, the copies it to that new space
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param position Specifics where to insert the data into the array list
  * @param count Number of new instances required to fit in the new capacity (adds the current
  * capacity size to this new size for the total size)
@@ -305,18 +302,18 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
 /**
  * @brief Copies the given data into the back of array list
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  */
 #define push_array_list_back(p_list, ...)                                         \
     ({                                                                            \
         typeof(*p_list) _kint_data[] = {__VA_ARGS__};                             \
-        push_array_list_copy(p_list, GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
+        push_array_list_copy(p_list, INTERNAL_GET_VA_ARGS_COUNT(__VA_ARGS__), _kint_data); \
     })
 
 /**
  * @brief Copies the given data into the front of array list.
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail.
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail.
  */
 #define push_array_list_front(p_list, ...)                                              \
     ({                                                                                  \
@@ -328,7 +325,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
  * @brief Inserts the given data into the specified position of array list. It inserts space of
  * size same to the insert data, the copies it to that new space
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param position Specifics where to insert the data into the array list
  */
 #define insert_array_list(p_list, position, ...)                                              \
@@ -343,7 +340,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param count Number of elements to be removed
  *
  * @return Result struct determining whether the function failed and a pointer to the array list as
@@ -365,7 +362,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail.
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail.
  * @param count Number of elements to be removed
  *
  * @return Result struct determining whether the function failed and a pointer to the array list as
@@ -388,7 +385,7 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
  * @warning If data type has heap allocated memory, you'll need to deal with that before popping,
  * otherwise there will be a memory leak
  *
- * @param p_list Array list instance. Cannot be a NULL value otherwise will fail
+ * @param p_list Array list instance. Cannot be a nullptr value otherwise will fail
  * @param position Start of the target popping elements
  * @param count Number of elements to be removed
  *
@@ -405,7 +402,4 @@ _kint_array_list_result_t _kint_pop_array_list_at(void* p_list, usize type_size,
         p_list = (typeof(p_list))_kint_result.p_data;                                            \
     })
 
-#ifdef __cplusplus
-}
-#endif
 #endif

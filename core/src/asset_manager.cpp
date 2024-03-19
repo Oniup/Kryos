@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file main.c                                                             *
+ * @file asset_manager.cpp                                                  *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License");          *
+ * Licensed under the Apache License, Version 2.0 (the "License"){}         *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
  *                                                                          *
@@ -17,31 +17,29 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-core/window.h"
+#include "kryos-core/asset_manager.hpp"
+#include <stdio.h>
 
-window_manager_t create_editor_window_manager() {
-    window_handle_create_options_t options = {
-        .title = "Kryos Engine",
-        .width = 600,
-        .height = 600,
-        .enabled =
-            {
-                .fullscreen = true,
-                .resizable = true,
-                .transparent_buffer = false,
-                .vsync = false,
-            },
-        .mode = WINDOW_MODE_WINDOWED,
-    };
-    window_manager_t manager = create_window_manager(&options, 1);
-    return manager;
-}
-
-int main(int argc, char* argv[]) {
-    window_manager_t windows = create_editor_window_manager();
-    while (continue_window_manager_runloop(&windows)) {
-        update_window_handles_frames(&windows);
-    }
-    destroy_window_manager(&windows);
-    return 0;
-}
+// asset_manager_t create_asset_manager(usize shader_size, usize texture_size) {
+//     asset_manager_t manager = {};
+//     return manager;
+// }
+//
+// void destroy_asset_manager(asset_manager_t* p_manager) {
+// }
+//
+// shader_t load_managed_shader_asset(const char* p_shader_asset_filename) {
+//     return (shader_t) {};
+// }
+//
+// bool create_managed_shader_asset(const char* p_serialize_path, const char* name,
+//                                  const shader_source_info_t* p_sources_create_info, usize count) {
+//     FILE* file = fopen(p_serialize_path, "w");
+//     if (file == nullptr) {
+//         ERROR("Failed to write shader to path \"%s\": fopen failed to open file to write source to",
+//               p_serialize_path);
+//         return false;
+//     }
+//     fclose(file);
+//     return true;
+// }

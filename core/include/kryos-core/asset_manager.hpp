@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file asset_manager.h                                                    *
+ * @file asset_manager.hpp                                                  *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,18 +17,15 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__CORE__ASSET_MANAGER_H
-#define KRYOS__CORE__ASSET_MANAGER_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__CORE__ASSET_MANAGER_HPP
+#define KRYOS__CORE__ASSET_MANAGER_HPP
 
-#include "kryos-tools/containers/array_list.h"
-#include "kryos-tools/defines.h"
+#include "kryos-tools/containers/array_list.hpp"
+#include "kryos-tools/defines.hpp"
 
 #ifdef RENDERER_USE_OPENGL_BACKEND
-    #include "kryos-renderer/opengl/data_types.h"
-    #include "kryos-renderer/opengl/renderer.h"
+    #include "kryos-renderer/opengl/data_types.hpp"
+    #include "kryos-renderer/opengl/renderer.hpp"
 #endif
 
 typedef struct mesh {
@@ -78,7 +75,4 @@ void unload_managed_shader_asset(const char* shader_name);
 
 #endif
 
-#ifdef __cplusplus
-}
-#endif
 #endif

@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file main.h                                                             *
+ * @file main.cpp                                                           *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,13 +17,12 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__EDITOR__MAIN_H
-#define KRYOS__EDITOR__MAIN_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "kryos-tests/tools/containers.hpp"
 
-#ifdef __cplusplus
+int main(int argc, char* p_argv[]) {
+    memory_allocator_tests();
+    array_list_tests();
+    node_tests();
+
+    return 0;
 }
-#endif
-#endif

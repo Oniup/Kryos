@@ -1,10 +1,10 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file data_types.c                                                       *
+ * @file main.hpp                                                           *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
- * Licensed under the Apache License, Version 2.0 (the "License"){}          *
+ * Licensed under the Apache License, Version 2.0 (the "License");          *
  * you may not use this file except in compliance with the License.         *
  * You may obtain a copy of the License at                                  *
  *                                                                          *
@@ -17,17 +17,6 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-renderer/opengl/data_types.h"
-#include <glad/glad.h>
-
-shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
-                       usize count) {
-    // TODO: OpenGL shader creation code ...
-    return (shader_t) {};
-}
-
-void destroy_shader(shader_t* p_shader) {
-    glDeleteProgram(p_shader->gl.program_id);
-    free(p_shader->p_name);
-    p_shader->p_name = NULL;
-}
+#ifndef KRYOS__EDITOR__MAIN_HPP
+#define KRYOS__EDITOR__MAIN_HPP
+#endif

@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file string.h                                                           *
+ * @file defines.hpp                                                        *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,18 +17,31 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__TOOLS_CONTAINERS__STRING_H
-#define KRYOS__TOOLS_CONTAINERS__STRING_H
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef KRYOS__TOOLS__DEFINES_HPP
+#define KRYOS__TOOLS__DEFINES_HPP
 
-#include "kryos-tools/defines.h"
+#include <cstdint>
+#include <cstdio>
 
-#define EMPTY_STRING (string_t) {.p_cstring = NULL};
-#define MAX_COPY_TMP_BUFFER_SIZE 10000
+#define NO_ERROR_MESSAGE NULL
 
-#ifdef __cplusplus
-}
-#endif
+#define KRYOS_VERSION_MAJOR 0u
+#define KRYOS_VERSION_MINOR 0u
+#define KRYOS_VERSION_PATCH 1u
+
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+
+typedef size_t usize;
+
+typedef float f32;
+typedef double f64;
+
 #endif

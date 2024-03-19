@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file memory_allocator.c                                                 *
+ * @file memory_allocator.cpp                                               *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,9 +17,10 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests/tools/memory_allocator.h"
-#include "kryos-tests/framework.h"
-#include "kryos-tools/containers/memory_allocator.h"
+#include "kryos-tests/tools/containers.hpp"
+
+#include "kryos-tests/framework.hpp"
+#include "kryos-tools/containers/memory_allocator.hpp"
 
 // NOTE: These tests are checking whether the program crashes with undefined behaviour or not
 #define ITERATION_COUNT 50

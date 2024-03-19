@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file data_types.h                                                       *
+ * @file data_types.hpp                                                     *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,15 +17,12 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#ifndef KRYOS__RENDERER__OPENGL_DATA_TYPES_H
-#define KRYOS__RENDERER__OPENGL_DATA_TYPES_H
+#ifndef KRYOS__RENDERER__OPENGL_DATA_TYPES_HPP
+#define KRYOS__RENDERER__OPENGL_DATA_TYPES_HPP
 #ifdef RENDERER_USE_OPENGL_BACKEND
-    #ifdef __cplusplus
-extern "C" {
-    #endif
 
-    #include "kryos-tools/containers/array_list.h"
-    #include "kryos-tools/defines.h"
+    #include "kryos-tools/containers/array_list.hpp"
+    #include "kryos-tools/defines.hpp"
     #include <cglm/cglm.h>
 
 typedef enum shader_type {
@@ -73,8 +70,5 @@ typedef struct vertex {
     vec2 uv;
 } vertex_t;
 
-#endif
-#ifdef __cplusplus
-}
 #endif
 #endif

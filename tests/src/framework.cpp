@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
- * @file framework.c                                                        *
+ * @file framework.cpp                                                      *
  * ------------------------------------------------------------------------ *
  * @copyright (c) 2024 Oniup (https://github.com/Oniup)                     *
  *                                                                          *
@@ -17,10 +17,10 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-tests/framework.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include "kryos-tests/framework.hpp"
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 
 static global_test_options_t g_opts = {
     .ansi_color = true,
@@ -28,7 +28,7 @@ static global_test_options_t g_opts = {
 
 void _kint_print_message(const char* p_ansi_color, const char* p_format, ...);
 
-b8 execute_tests(const char* p_title, usize count, test_t* p_tests) {
+bool execute_tests(const char* p_title, usize count, test_t* p_tests) {
     _kint_print_message(TEST_TITLE_ANSI_COLOR,
                         "%s\n-------------------------------------------------\n", p_title);
     usize tests_passed = false;
