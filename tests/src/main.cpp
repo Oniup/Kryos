@@ -20,9 +20,9 @@
 #include "kryos-tests/tools/containers.hpp"
 
 int main(int argc, char* p_argv[]) {
-    memory_allocator_tests();
-    array_list_tests();
-    node_tests();
+    tools::containers::memoryAllocator();
+    tools::containers::arrayList();
+    tools::containers::nodes();
 
     return 0;
 }

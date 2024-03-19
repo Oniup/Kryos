@@ -31,7 +31,7 @@ void create(TestOutput& out) {
     destroy_node(p_data);
 }
 
-void append_next(TestOutput& out) {
+void appendNext(TestOutput& out) {
     // i32* p_root = create_node(1);
     // i32* p_tail = append_nodes_next(p_root, 5, 2, 1, 7, 4, 6);
     // i32 correct_values[] = {1, 5, 2, 1, 7, 4, 6};
@@ -45,7 +45,7 @@ void append_next(TestOutput& out) {
     // destroy_nodes_right(p_root);
 }
 
-void append_previous(TestOutput& out) {
+void appendPrevious(TestOutput& out) {
     // i32* p_root = create_node(1);
     // i32* p_tail = append_nodes_previous(p_root, 5, 2, 1, 7, 4, 6);
     // IS_EQUALS(get_node(p_root)->p_next, NULL, "Next from root should be NULL");
@@ -60,11 +60,15 @@ void append_previous(TestOutput& out) {
     // destroy_nodes_left(p_root);
 }
 
-void node_tests() {
+namespace tools::containers {
+
+void nodes() {
     TEST_TABLE() {
         ADD_TEST(create),
-        ADD_TEST(append_next),
-        ADD_TEST(append_previous),
+        ADD_TEST(appendNext),
+        ADD_TEST(appendPrevious),
     };
     EXECUTE_TEST_TABLE("Nodes");
 }
+
+} // namespace tools::containers

@@ -110,10 +110,14 @@
 //     destroy_string(&string);
 // }
 
-void string_tests() {
+namespace tools::containers {
+
+void strings() {
     // TEST_TABLE() {
     //     ADD_TEST(creating), ADD_TEST(get_length), ADD_TEST(comparing),
     //     ADD_TEST(copying),  ADD_TEST(formatting),
     // };
     // EXECUTE_TEST_TABLE("Tools: String");
 }
+
+} // namespace tools::containers

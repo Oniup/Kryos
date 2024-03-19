@@ -20,9 +20,13 @@
 #ifndef KRYOS__TESTS_TOOLS__CONATINERS_HPP
 #define KRYOS__TESTS_TOOLS__CONATINERS_HPP
 
-void memory_allocator_tests();
-void array_list_tests();
-void node_tests();
-void string_tests();
+namespace tools::containers {
+
+void memoryAllocator();
+void arrayList();
+void nodes();
+void strings();
+
+} // namespace tools::containers
 
 #endif

@@ -25,7 +25,7 @@
 // NOTE: These tests are checking whether the program crashes with undefined behaviour or not
 #define ITERATION_COUNT 50
 
-void allocate_and_destroy(TestOutput& out) {
+void allocateAndDestroy(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         usize size = sizeof(i32);
         allocated_memory_result_t result = create_dynamic_allocation(size);
@@ -49,7 +49,7 @@ void allocate_and_destroy(TestOutput& out) {
     }
 }
 
-void resize_capacity_and_size(TestOutput& out) {
+void resizeCapacityAndResize(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         allocated_memory_result_t result = create_dynamic_allocation(sizeof(i32) * 10);
         IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
@@ -72,7 +72,7 @@ void resize_capacity_and_size(TestOutput& out) {
     }
 }
 
-void insert_size_at_position(TestOutput& out) {
+void insertSizeAtPosition(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         usize size = sizeof(i32) * 10;
         allocated_memory_result_t result = create_dynamic_allocation(size);
@@ -97,11 +97,15 @@ void insert_size_at_position(TestOutput& out) {
     }
 }
 
-void memory_allocator_tests() {
+namespace tools::containers {
+
+void memoryAllocator() {
     TEST_TABLE() {
-        ADD_TEST(allocate_and_destroy),
-        ADD_TEST(resize_capacity_and_size),
-        ADD_TEST(insert_size_at_position),
+        ADD_TEST(allocateAndDestroy),
+        ADD_TEST(resizeCapacityAndResize),
+        ADD_TEST(insertSizeAtPosition),
     };
     EXECUTE_TEST_TABLE("Memory Allocation");
 }
+
+} // namespace tools::containers

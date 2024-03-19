@@ -21,7 +21,7 @@
 #include "kryos-tests/tools/containers.hpp"
 #include <kryos-tools/containers/array_list.hpp>
 
-void create_empty_instance(TestOutput& out) {
+void createEmptyInstance(TestOutput& out) {
     // ARRAY_LIST(i32) p_list = create_array_list(i32);
     // usize size = get_array_list_size(p_list);
     // IS_EQUALS(size, 0, "Empty array list size isn't correct");
@@ -31,7 +31,7 @@ void create_empty_instance(TestOutput& out) {
     // destroy_array_list(p_list);
 }
 
-void create_with_specified_capacity(TestOutput& out) {
+void createWithSpecifiedCapacity(TestOutput& out) {
     // ARRAY_LIST(i32) p_list = create_array_list_with_capacity(i32, 10);
     // usize size = get_array_list_size(p_list);
     // IS_EQUALS(size, 0, "Array list size isn't correct");
@@ -204,9 +204,11 @@ void create_with_specified_capacity(TestOutput& out) {
 //     destroy_array_list(p_list);
 // }
 
-void array_list_tests() {
+namespace tools::containers {
+
+void arrayList() {
     TEST_TABLE() {
-        ADD_TEST(create_empty_instance), ADD_TEST(create_with_specified_capacity),
+        ADD_TEST(createEmptyInstance), ADD_TEST(createWithSpecifiedCapacity),
         // ADD_TEST(push_data_back),
         // ADD_TEST(push_data_front),
         // ADD_TEST(insert_data),
@@ -219,3 +221,5 @@ void array_list_tests() {
     };
     EXECUTE_TEST_TABLE("Array List");
 }
+
+} // namespace tools::containers
