@@ -21,7 +21,7 @@
 #include "kryos-tests/tools/containers.hpp"
 #include <kryos-tools/containers/array_list.hpp>
 
-void create_empty_instance(test_output_t* p_out) {
+void create_empty_instance(TestOutput& out) {
     // ARRAY_LIST(i32) p_list = create_array_list(i32);
     // usize size = get_array_list_size(p_list);
     // IS_EQUALS(size, 0, "Empty array list size isn't correct");
@@ -31,7 +31,7 @@ void create_empty_instance(test_output_t* p_out) {
     // destroy_array_list(p_list);
 }
 
-void create_with_specified_capacity(test_output_t* p_out) {
+void create_with_specified_capacity(TestOutput& out) {
     // ARRAY_LIST(i32) p_list = create_array_list_with_capacity(i32, 10);
     // usize size = get_array_list_size(p_list);
     // IS_EQUALS(size, 0, "Array list size isn't correct");
@@ -40,7 +40,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
     // destroy_array_list(p_list);
 }
 
-// void push_data_back(test_output_t* p_out) {
+// void push_data_back(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     for (usize i = 0; i < ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT + 1; ++i) {
 //         i32* tmp = push_array_list_back(p_list, i + 1);
@@ -61,7 +61,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void push_data_front(test_output_t* p_out) {
+// void push_data_front(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     usize target_size = ARRAY_LIST_DEFAULT_CAPACITY_INCREASE_COUNT * 2 + 1;
 //     for (usize i = 0; i < target_size; ++i) {
@@ -86,10 +86,10 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void insert_data(test_output_t* p_out) {
+// void insert_data(test_output_t* out) {
 // }
 //
-// void push_array_back(test_output_t* p_out) {
+// void push_array_back(test_output_t* out) {
 //     ARRAY_LIST(i32) array_list = create_array_list(i32);
 //     push_array_list_back(array_list, 1, 2, 3, 4, 5);
 //     push_array_list_back(array_list, 1, 2, 3, 4, 5);
@@ -110,7 +110,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(array_list);
 // }
 //
-// void push_array_front(test_output_t* p_out) {
+// void push_array_front(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     push_array_list_front(p_list, 1, 2, 3, 4, 5);
 //     push_array_list_front(p_list, 1, 2, 3, 4, 5);
@@ -131,7 +131,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void insert_array(test_output_t* p_out) {
+// void insert_array(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     push_array_list_back(p_list, 1, 2, 3, 4, 5);
 //     usize size = get_array_list_size(p_list);
@@ -159,7 +159,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void pop_back(test_output_t* p_out) {
+// void pop_back(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     push_array_list_back(p_list, 1, 2, 3, 4, 5);
 //     pop_array_list_back(p_list, 3);
@@ -175,7 +175,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void pop_front(test_output_t* p_out) {
+// void pop_front(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     push_array_list_back(p_list, 1, 2, 3, 4, 5);
 //     pop_array_list_front(p_list, 3);
@@ -191,7 +191,7 @@ void create_with_specified_capacity(test_output_t* p_out) {
 //     destroy_array_list(p_list);
 // }
 //
-// void pop_at_index(test_output_t* p_out) {
+// void pop_at_index(test_output_t* out) {
 //     ARRAY_LIST(i32) p_list = create_array_list(i32);
 //     push_array_list_back(p_list, 1, 2, 3, 4, 5);
 //     pop_array_list_at(p_list, 1, 2);

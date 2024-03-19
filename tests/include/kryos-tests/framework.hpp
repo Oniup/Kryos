@@ -32,13 +32,13 @@
 #define MAX_TEST_OUTPUT_MESSAGE_SIZE 2000
 #define EXECUTE_PER_TEST_COUNT 5
 
-#define CHECK_IF(expression, ...)                        \
-    ({                                                   \
-        if (!(expression)) {                             \
-            p_out->pass = false;                         \
-            set_test_output_message(p_out, __VA_ARGS__); \
-            return;                                      \
-        }                                                \
+#define CHECK_IF(expression, ...)                   \
+    ({                                              \
+        if (!(expression)) {                        \
+            out.pass = false;                       \
+            setTestOutputMessage(out, __VA_ARGS__); \
+            return;                                 \
+        }                                           \
     })
 
 #define IS_EQUALS(a, b, ...) CHECK_IF((a) == (b), __VA_ARGS__)
@@ -47,37 +47,39 @@
 #define IS_NULL(a, ...) IS_EQUALS((a), NULL, __VA_ARGS__)
 #define NOT_NULL(a, ...) NOT_EQUALS((a), NULL, __VA_ARGS__)
 
-#define TEST_TABLE() test_t tests[] =
+#define TEST_TABLE() Test internal_tests[] =
 
-#define ADD_TEST(name) \
-    { .p_name = #name, .test = name, }
+#define ADD_TEST(test_ptr_func)                         \
+    Test {                                              \
+        .name = #test_ptr_func, .test = &test_ptr_func, \
+    }
 
 #define EXECUTE_TEST_TABLE(table_name) \
-    execute_tests(table_name, sizeof(tests) / sizeof(tests[0]), tests)
+    executeTests(table_name, sizeof(internal_tests) / sizeof(internal_tests[0]), internal_tests)
 
-typedef struct test_output {
+struct TestOutput {
     char message[MAX_TEST_OUTPUT_MESSAGE_SIZE];
     bool pass;
-} test_output_t;
+};
 
-typedef void (*PFN_test)(test_output_t* result);
+typedef void (*TestFunc)(TestOutput& out);
 
-typedef struct test {
-    const char* p_name;
-    PFN_test test;
-} test_t;
+struct Test {
+    const char* name;
+    TestFunc test;
+};
 
-typedef struct global_test_options {
+struct GlobalTestOptions {
     bool ansi_color;
-} global_test_options_t;
 
-global_test_options_t* get_global_test_options();
+    static GlobalTestOptions& get_instance();
+};
 
-bool execute_tests(const char* p_title, usize count, test_t* p_tests);
-void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total,
-                       usize* p_tests_passed);
+bool executeTests(const char* title, usize count, const Test* tests);
+void printTestOutput(const char* name, const TestOutput& output, usize index, usize total,
+                     usize& tests_passed);
 
-void set_test_output_message(test_output_t* p_output, const char* p_format, ...);
-void set_test_output_message_v(test_output_t* p_output, const char* p_format, va_list args);
+void setTestOutputMessage(TestOutput& output, const char* format, ...);
+void setTestOutputMessageV(TestOutput& output, const char* format, va_list args);
 
 #endif

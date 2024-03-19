@@ -22,29 +22,45 @@
 #include <cstdio>
 #include <cstring>
 
-static global_test_options_t g_opts = {
-    .ansi_color = true,
-};
+namespace internal {
+void printMessage(const char* ansi_color, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    if (GlobalTestOptions::get_instance().ansi_color && ansi_color[0] != TEST_TEXT_ANSI_COLOR) {
+        printf("%s%s%s", DEBUG_ANSI_PREFIX, ansi_color, DEBUG_ANSI_SUFIX);
+        vprintf(format, args);
+        printf("%s", DEBUG_ANSI_RESET);
+    } else {
+        vprintf(format, args);
+    }
+    va_end(args);
+}
+} // namespace internal
 
-void _kint_print_message(const char* p_ansi_color, const char* p_format, ...);
+GlobalTestOptions& GlobalTestOptions::get_instance() {
+    static GlobalTestOptions settings = {
+        .ansi_color = true,
+    };
+    return settings;
+}
 
-bool execute_tests(const char* p_title, usize count, test_t* p_tests) {
-    _kint_print_message(TEST_TITLE_ANSI_COLOR,
-                        "%s\n-------------------------------------------------\n", p_title);
+bool executeTests(const char* title, usize count, const Test* tests) {
+    internal::printMessage(TEST_TITLE_ANSI_COLOR,
+                           "%s\n-------------------------------------------------\n", title);
     usize tests_passed = false;
     for (usize i = 0; i < count; i++) {
-        if (p_tests[i].test != NULL) {
-            test_output_t result = {
+        if (tests[i].test != NULL) {
+            TestOutput result = {
                 .message = "\0",
                 .pass = true,
             };
             for (usize j = 0; j < EXECUTE_PER_TEST_COUNT; j++) {
-                p_tests[i].test(&result);
+                tests[i].test(result);
             }
-            print_test_output(p_tests[i].p_name, &result, i, count, &tests_passed);
+            printTestOutput(tests[i].name, result, i, count, tests_passed);
         } else {
-            _kint_print_message(TEST_FAILED_ANSI_COLOR, "TEST '%s' HAS NO TEST FUNCTION\n",
-                                p_tests->p_name);
+            internal::printMessage(TEST_FAILED_ANSI_COLOR, "TEST '%s' HAS NO TEST FUNCTION\n",
+                                   tests->name);
         }
     }
     if (tests_passed == count) {
@@ -55,47 +71,30 @@ bool execute_tests(const char* p_title, usize count, test_t* p_tests) {
     return false;
 }
 
-void print_test_output(const char* p_name, test_output_t* p_output, usize index, usize total_count,
-                       usize* p_tests_passed) {
+void printTestOutput(const char* name, const TestOutput& output, usize index, usize total_count,
+                     usize& tests_passed) {
     const char* format = "%s%s%s%s%s %u/%u";
     const char* ansi_color = TEST_FAILED_ANSI_COLOR;
-    if (p_output->pass) {
+    if (output.pass) {
         ansi_color = TEST_PASS_ANSI_COLOR;
-        *p_tests_passed = *p_tests_passed + 1;
+        tests_passed++;
     }
 
-    printf(format, DEBUG_ANSI_PREFIX, ansi_color, DEBUG_ANSI_SUFIX, p_name, DEBUG_ANSI_RESET,
+    printf(format, DEBUG_ANSI_PREFIX, ansi_color, DEBUG_ANSI_SUFIX, name, DEBUG_ANSI_RESET,
            index + 1, total_count);
-    if (strlen(p_output->message) > 0) {
-        printf(" => %s", p_output->message);
+    if (strlen(output.message) > 0) {
+        printf(" => %s", output.message);
     }
     printf("\n");
 }
 
-void set_test_output_message(test_output_t* p_output, const char* p_format, ...) {
+void setTestOutputMessage(TestOutput& output, const char* format, ...) {
     va_list args;
-    va_start(args, p_format);
-    set_test_output_message_v(p_output, p_format, args);
+    va_start(args, format);
+    setTestOutputMessageV(output, format, args);
     va_end(args);
 }
 
-void set_test_output_message_v(test_output_t* p_output, const char* p_format, va_list args) {
-    vsnprintf(p_output->message, MAX_TEST_OUTPUT_MESSAGE_SIZE, p_format, args);
-}
-
-void _kint_print_message(const char* p_ansi_color, const char* p_format, ...) {
-    va_list args;
-    va_start(args, p_format);
-    if (g_opts.ansi_color && p_ansi_color[0] != TEST_TEXT_ANSI_COLOR) {
-        printf("%s%s%s", DEBUG_ANSI_PREFIX, p_ansi_color, DEBUG_ANSI_SUFIX);
-        vprintf(p_format, args);
-        printf("%s", DEBUG_ANSI_RESET);
-    } else {
-        vprintf(p_format, args);
-    }
-    va_end(args);
-}
-
-global_test_options_t* get_global_test_options() {
-    return &g_opts;
+void setTestOutputMessageV(TestOutput& output, const char* format, va_list args) {
+    vsnprintf(output.message, MAX_TEST_OUTPUT_MESSAGE_SIZE, format, args);
 }

@@ -25,7 +25,7 @@
 // NOTE: These tests are checking whether the program crashes with undefined behaviour or not
 #define ITERATION_COUNT 50
 
-void allocate_and_destroy(test_output_t* p_out) {
+void allocate_and_destroy(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         usize size = sizeof(i32);
         allocated_memory_result_t result = create_dynamic_allocation(size);
@@ -49,7 +49,7 @@ void allocate_and_destroy(test_output_t* p_out) {
     }
 }
 
-void resize_capacity_and_size(test_output_t* p_out) {
+void resize_capacity_and_size(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         allocated_memory_result_t result = create_dynamic_allocation(sizeof(i32) * 10);
         IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
@@ -72,7 +72,7 @@ void resize_capacity_and_size(test_output_t* p_out) {
     }
 }
 
-void insert_size_at_position(test_output_t* p_out) {
+void insert_size_at_position(TestOutput& out) {
     for (usize i = 0; i < ITERATION_COUNT; i++) {
         usize size = sizeof(i32) * 10;
         allocated_memory_result_t result = create_dynamic_allocation(size);

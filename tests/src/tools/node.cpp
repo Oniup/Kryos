@@ -22,7 +22,7 @@
 #include "kryos-tests/framework.hpp"
 #include "kryos-tools/containers/node.hpp"
 
-void create(test_output_t* p_out) {
+void create(TestOutput& out) {
     i32* p_data = create_node(420);
     node_t* p_node = get_node(p_data);
     IS_EQUALS(*p_data, 420, "Value is incorrect");
@@ -31,7 +31,7 @@ void create(test_output_t* p_out) {
     destroy_node(p_data);
 }
 
-void append_next(test_output_t* p_out) {
+void append_next(TestOutput& out) {
     // i32* p_root = create_node(1);
     // i32* p_tail = append_nodes_next(p_root, 5, 2, 1, 7, 4, 6);
     // i32 correct_values[] = {1, 5, 2, 1, 7, 4, 6};
@@ -45,7 +45,7 @@ void append_next(test_output_t* p_out) {
     // destroy_nodes_right(p_root);
 }
 
-void append_previous(test_output_t* p_out) {
+void append_previous(TestOutput& out) {
     // i32* p_root = create_node(1);
     // i32* p_tail = append_nodes_previous(p_root, 5, 2, 1, 7, 4, 6);
     // IS_EQUALS(get_node(p_root)->p_next, NULL, "Next from root should be NULL");
