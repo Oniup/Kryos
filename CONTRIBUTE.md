@@ -15,13 +15,14 @@ please follow these steps:
 
 To ensure high-quality and maintainable code, we have established the following standards:
 
-* All code must be pure C99 compilable with Clang, GCC and MSVC. We do not except C++ code.
+* All code must be C++23 compilable with Clang, GCC and MSVC.
+* Do not use the standard library, use engine types instead.
 * Code should be compilable on both UNIX/POSIX and Windows platforms.
 * Code with warnings will not be accepted; please address any warnings.
-* Whenever possible, include tests for new features.
+* Whenever possible, include tests for new features using the test framework.
 * Each file must begin with the specified license statement:
 
-```c
+```cpp
 /* ------------------------------------------------------------------------ *
  * This file is part of Kryos Engine (https://github.com/Oniup/KryosEngine) *
  * @file [FILENAME]                                                         *
@@ -51,23 +52,10 @@ To ensure high-quality and maintainable code, we have established the following 
 
 ### Naming Conventions
 
-* Format header guards as `KRYOS__[MOD]__[DIR]_[FILE]_H`
-* Use `.c`, `.h` extensions.
-* Use `snake_case` for everything other than macros and enum values, they should be
-  `UPPER_SNAKE_CASE`
-  enum fields and macros
-* Prefix pointers with `p_`
-* Whenever adding `typedef` to type declaration, must add `_t` with the exception of core
-  primitive types such as `u32`, `f64`, `b8`, etc...
-* Prefix internal functions and types with `_kint_`.
-* Ensure that opening curly brackets are always on the same line.
-* All functions should try to follow this syntactical structure:
-    ```
-    <verb><subject><complement>();
-    ```
-  More specifically, every syntactic element implies:
-    ```
-    <action><object><attribute/state>();
-    ```
-* Try to follow the common pattern as the rest of the codebase to be consistent
-* Prefix pointer functions with `PFN_`.
+* Format header guards as `KRYOS__[MOD]__[DIR]_[FILE]_HPP`
+* Use `.cpp` and `.hpp` extensions.
+* `snake_case` for variables, `camelCase` for functions/methods, `PascalCase` for types, enum
+  values, and `UPPER_SNAKE_CASE` for macros.
+* Internal public functions should be in the `internal` namespace.
+* Ensure that opening curly brackets are always on the same line as the function declaration.
+* Follow the common patterns and styles as the rest of the codebase to be consistent.
