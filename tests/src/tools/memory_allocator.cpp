@@ -22,79 +22,102 @@
 #include "kryos-tests/framework.hpp"
 #include "kryos-tools/containers/memory_allocator.hpp"
 
-// NOTE: These tests are checking whether the program crashes with undefined behaviour or not
-#define ITERATION_COUNT 50
-
 void allocateAndDestroy(TestOutput& out) {
-    for (usize i = 0; i < ITERATION_COUNT; i++) {
-        usize size = sizeof(i32);
-        allocated_memory_result_t result = create_dynamic_allocation(size);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    usize size = sizeof(i32);
+    Result<void*> result = createHeapAllocation(size);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
 
-        void* p_data = result.p_data;
-        IS_EQUALS(get_dynamic_allocation_size(p_data), size, "Incorrect size, should be %zu", size);
-        IS_EQUALS(get_dynamic_allocation_capacity(p_data), size,
-                  "Incorrect capacity, should be %zu", size);
-        destroy_dynamic_allocation(p_data);
+    i32* data = (i32*)result.data;
+    *data = 43;
+    IS_EQUALS(getHeapAllocationSize(data), size, "Incorrect size, should be %zu", size);
+    IS_EQUALS(getHeapAllocationCapacity(data), size, "Incorrect capacity, should be %zu", size);
+    IS_EQUALS(*data, 43, "Incorrect value, should be 43");
+    destroyHeapAllocation(data);
 
-        size = sizeof(i32) * 10;
-        result = create_dynamic_allocation(size);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    size = sizeof(i32) * 10;
+    result = createHeapAllocation(size);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
 
-        p_data = result.p_data;
-        IS_EQUALS(get_dynamic_allocation_size(p_data), size, "Incorrect size, should be %zu", size);
-        IS_EQUALS(get_dynamic_allocation_capacity(p_data), size,
-                  "Incorrect capacity, should be %zu", size);
-        destroy_dynamic_allocation(p_data);
+    data = (i32*)result.data;
+    for (i32 i = 0; i < 10; i++) {
+        data[i] = i + 1;
     }
+    IS_EQUALS(getHeapAllocationSize(data), size, "Incorrect size, should be %zu", size);
+    IS_EQUALS(getHeapAllocationCapacity(data), size, "Incorrect capacity, should be %zu", size);
+    for (i32 i = 0; i < 10; i++) {
+        IS_EQUALS(data[i], i + 1, "Incorrect value given at index %d, should be %d", i, i + 1);
+    }
+    destroyHeapAllocation(data);
 }
 
 void resizeCapacityAndResize(TestOutput& out) {
-    for (usize i = 0; i < ITERATION_COUNT; i++) {
-        allocated_memory_result_t result = create_dynamic_allocation(sizeof(i32) * 10);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
-        i32* p_data = (i32*)result.p_data;
-
-        result = resize_dynamic_allocation(p_data, sizeof(i32) * 20);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
-        p_data = (i32*)result.p_data;
-        for (usize j = 0; j < 20; j++) {
-            p_data[j] = j + 1;
-        }
-
-        result = resize_dynamic_allocation(p_data, sizeof(i32) * 5);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
-        p_data = (i32*)result.p_data;
-        for (usize j = 0; j < 5; j++) {
-            p_data[j] = j + 2;
-        }
-        destroy_dynamic_allocation(p_data);
+    Result<void*> result = createHeapAllocation(sizeof(i32) * 10);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    i32* data = (i32*)result.data;
+    for (i32 i = 0; i < 10; i++) {
+        data[i] = i + 1;
     }
+    for (i32 i = 0; i < 10; i++) {
+        IS_EQUALS(data[i], i + 1, "Incorrect value given at index %d, should be %d", i, i + 1);
+    }
+
+    result = resizeHeapAllocation(data, sizeof(i32) * 20);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    data = (i32*)result.data;
+    for (i32 i = 10; i < 20; i++) {
+        data[i] = i + 1;
+    }
+    for (i32 i = 0; i < 20; i++) {
+        IS_EQUALS(data[i], i + 1, "Incorrect value given at index %d, should be %d", i, i + 1);
+    }
+
+    result = resizeHeapAllocation(data, sizeof(i32) * 5);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    data = (i32*)result.data;
+    for (usize i = 0; i < 5; i++) {
+        data[i] = i + 2;
+    }
+    destroyHeapAllocation(data);
 }
 
 void insertSizeAtPosition(TestOutput& out) {
-    for (usize i = 0; i < ITERATION_COUNT; i++) {
-        usize size = sizeof(i32) * 10;
-        allocated_memory_result_t result = create_dynamic_allocation(size);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+    usize size = sizeof(i32) * 10;
+    Result<void*> result = createHeapAllocation(size);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
 
-        i32* p_data = (i32*)result.p_data;
-        IS_EQUALS(get_dynamic_allocation_size(p_data), size, "Incorrect size, should be %zu", size);
-        IS_EQUALS(get_dynamic_allocation_capacity(p_data), size,
-                  "Incorrect capacity, should be %zu", size);
-
-        usize insert_size = sizeof(i32) * 5;
-        usize position = sizeof(i32) * 2;
-        result = insert_dynamic_allocation(p_data, insert_size, position);
-        IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
-
-        p_data = (i32*)result.p_data;
-        IS_EQUALS(get_dynamic_allocation_size(p_data), size + insert_size,
-                  "Incorrect size, should be %zu", size + insert_size);
-        IS_EQUALS(get_dynamic_allocation_capacity(p_data), size + insert_size,
-                  "Incorrect capacity, should be %zu", size + insert_size);
-        destroy_dynamic_allocation(p_data);
+    i32* data = (i32*)result.data;
+    for (i32 i = 0; i < 10; i++) {
+        data[i] = i + 1;
     }
+    IS_EQUALS(getHeapAllocationSize(data), size, "Incorrect size, should be %zu", size);
+    IS_EQUALS(getHeapAllocationCapacity(data), size, "Incorrect capacity, should be %zu", size);
+
+    usize insert_size = sizeof(i32) * 5;
+    usize position = sizeof(i32) * 2;
+    result = insertHeapAllocation(data, insert_size, position);
+    IS_EQUALS(result.error_message, NO_ERROR_MESSAGE, "%s", result.error_message);
+
+    data = (i32*)result.data;
+    for (i32 i = 2; i < 7; i++) {
+        data[i] = i * 10;
+    }
+    IS_EQUALS(getHeapAllocationSize(data), size + insert_size, "Incorrect size, should be %zu",
+              size + insert_size);
+    IS_EQUALS(getHeapAllocationCapacity(data), size + insert_size,
+              "Incorrect capacity, should be %zu", size + insert_size);
+    i32 j = 1;
+    for (i32 i = 0; i < 12; i++) {
+        if (i > 1 && i < 7) {
+            IS_EQUALS(data[i], i * 10,
+                      "Incorrect value (%d) given at index %d (inserted), should be %d", data[i], i,
+                      i * 1);
+        } else {
+            IS_EQUALS(data[i], j, "Incorrect value (%d) given at index %d, should be %d", data[i],
+                      i, j);
+            j++;
+        }
+    }
+    destroyHeapAllocation(data);
 }
 
 namespace tools::containers {

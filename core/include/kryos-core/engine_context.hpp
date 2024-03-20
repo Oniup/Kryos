@@ -20,17 +20,17 @@
 #ifndef KRYOS__CORE__ENGINE_CONTEXT_H
 #define KRYOS__CORE__ENGINE_CONTEXT_H
 
-#include "kryos-core/asset_manager.hpp"
-#include "kryos-core/window.hpp"
-
-typedef enum graphics_backend {
-    RENDERER_API_BACKEND_OPENGL,
-    RENDERER_API_BACKEND_WEBGL,
-    RENDERER_API_BACKEND_VULKAN,
-} graphics_backend_t;
-
-typedef struct engine_context {
-    graphics_backend_t graphics_backend;
-} engine_context_t;
+// #include "kryos-core/asset_manager.hpp"
+// #include "kryos-core/window.hpp"
+//
+// typedef enum graphics_backend {
+//     RENDERER_API_BACKEND_OPENGL,
+//     RENDERER_API_BACKEND_WEBGL,
+//     RENDERER_API_BACKEND_VULKAN,
+// } graphics_backend_t;
+//
+// typedef struct engine_context {
+//     graphics_backend_t graphics_backend;
+// } engine_context_t;
 
 #endif

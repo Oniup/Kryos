@@ -53,13 +53,14 @@
 #define MAX_ASSERT_MSG_SIZE 2000
 
 #ifndef KRYOS_DISABLE_INFO_LOGS
-    #define TRACE(...)                                                                   \
-        DebugLogger::printLogMessage(DebugLogLevel::TraceFlag, __FILE__, __LINE__, NULL, \
+    #define TRACE(...)                                                                      \
+        DebugLogger::printLogMessage(DebugLogLevel::TraceFlag, __FILE__, __LINE__, nullptr, \
                                      __VA_ARGS__)
-    #define INFO(...) \
-        DebugLogger::printLogMessage(DebugLogLevel::InfoFlag, __FILE__, __LINE__, NULL, __VA_ARGS__)
-    #define DEBUG(...)                                                                   \
-        DebugLogger::printLogMessage(DebugLogLevel::DebugFlag, __FILE__, __LINE__, NULL, \
+    #define INFO(...)                                                                      \
+        DebugLogger::printLogMessage(DebugLogLevel::InfoFlag, __FILE__, __LINE__, nullptr, \
+                                     __VA_ARGS__)
+    #define DEBUG(...)                                                                      \
+        DebugLogger::printLogMessage(DebugLogLevel::DebugFlag, __FILE__, __LINE__, nullptr, \
                                      __VA_ARGS__)
 #else
     #define TRACE(...)
@@ -67,9 +68,9 @@
     #define DEBUG(...)
 #endif
 #define WARN(...) \
-    DebugLogger::printLogMessage(DebugLogLevel::WarnFlag, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    DebugLogger::printLogMessage(DebugLogLevel::WarnFlag, __FILE__, __LINE__, nullptr, __VA_ARGS__)
 #define ERROR(...) \
-    DebugLogger::printLogMessage(DebugLogLevel::ErrorFlag, __FILE__, __LINE__, NULL, __VA_ARGS__)
+    DebugLogger::printLogMessage(DebugLogLevel::ErrorFlag, __FILE__, __LINE__, nullptr, __VA_ARGS__)
 
 #define INTERNAL_LOG_WITH_CONDITION(expr, lv, ...)                                    \
     ({                                                                                \
@@ -135,6 +136,7 @@ struct KRYOS_API DebugOutTarget {
     static const char* asCString(DebugOutTarget::Type target);
 };
 
+// FIXME: Make debugger not a singleton
 struct KRYOS_API DebugLogger {
     DebugLogLevel::Value enable_level;
     struct {
@@ -156,18 +158,16 @@ struct KRYOS_API DebugLogger {
                                 const char* expression, const char* format, ...);
 
 private:
-    void implPrintLogMessage(DebugLogLevel::Flag level, const char* filename, i32 line,
-                             const char* expression, const char* format, ...);
-
     void logMessageToTargetArgs(DebugOutTarget::Type out, DebugLogLevel::Flag level,
                                 const char* filename, i32 line, const char* expression,
                                 const char* format, va_list args);
-    void messageBasedOnCondition(bool condition, FILE* out, const char* format, ...);
-    void messageWithConditionalMessageArgs(bool condition, FILE* out, const char* format,
+    void messageBasedOnCondition(bool condition, std::FILE* out, const char* format, ...);
+    void messageWithConditionalMessageArgs(bool condition, std::FILE* out, const char* format,
                                            va_list args);
-    void messageFormat(FILE* out, DebugLogLevel::Flag level, bool ansi_color, const char* filename,
-                       i32 line, const char* expression, const char* format, va_list args);
-    void ansiColorPrefix(bool ansi_color, FILE* out, DebugLogLevel::Flag level);
+    void messageFormat(std::FILE* out, DebugLogLevel::Flag level, bool ansi_color,
+                       const char* filename, i32 line, const char* expression, const char* format,
+                       va_list args);
+    void ansiColorPrefix(bool ansi_color, std::FILE* out, DebugLogLevel::Flag level);
 };
 
 #endif

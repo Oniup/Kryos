@@ -19,10 +19,15 @@
 
 #include "kryos-tests/tools/containers.hpp"
 
-int main(int argc, char* p_argv[]) {
-    tools::containers::memoryAllocator();
-    tools::containers::arrayList();
-    tools::containers::nodes();
+namespace tools::containers {
+void tests() {
+    memoryAllocator();
+    arrayList();
+    nodes();
+}
+} // namespace tools::containers
 
+int main(int argc, char* p_argv[]) {
+    tools::containers::tests();
     return 0;
 }

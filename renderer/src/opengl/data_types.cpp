@@ -17,17 +17,17 @@
  * limitations under the License.                                           *
  * ------------------------------------------------------------------------ */
 
-#include "kryos-renderer/opengl/data_types.hpp"
-#include <glad/glad.h>
-
-shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
-                       usize count) {
-    // TODO: OpenGL shader creation code ...
-    return (shader_t) {};
-}
-
-void destroy_shader(shader_t* p_shader) {
-    glDeleteProgram(p_shader->gl.program_id);
-    free(p_shader->p_name);
-    p_shader->p_name = NULL;
-}
+// #include "kryos-renderer/opengl/data_types.hpp"
+// #include <glad/glad.h>
+//
+// shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
+//                        usize count) {
+//     // TODO: OpenGL shader creation code ...
+//     return (shader_t) {};
+// }
+//
+// void destroy_shader(shader_t* p_shader) {
+//     glDeleteProgram(p_shader->gl.program_id);
+//     free(p_shader->p_name);
+//     p_shader->p_name = NULL;
+// }

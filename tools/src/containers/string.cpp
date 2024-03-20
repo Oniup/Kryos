@@ -24,96 +24,96 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-string_t create_string(const char* p_format, ...) {
-    char buffer[MAX_COPY_TMP_BUFFER_SIZE];
-    va_list args;
-    va_start(args, p_format);
-    i32 error = vsnprintf(buffer, MAX_COPY_TMP_BUFFER_SIZE, p_format, args);
-    if (error < 0) {
-        ERROR("Failed to create string using format '%s': vsnprintf error result %d", p_format,
-              error);
-        return EMPTY_STRING;
-    }
-    va_end(args);
-    usize length = strlen(buffer);
-    allocated_memory_result_t result = create_dynamic_allocation(length + 1);
-    if (result.error_message != NO_ERROR_MESSAGE) {
-        ERROR("Failed to create string using format '%s': %s", p_format, result.error_message);
-        return EMPTY_STRING;
-    }
-    string_t string = {
-        .p_cstring = (char*)result.p_data,
-        .length = length,
-    };
-    if (strncpy(string.p_cstring, buffer, length) == nullptr) {
-        ERROR("Failed to create string using format '%s': Failed to copy buffer string into heap "
-              "allocated string using strncpy",
-              p_format);
-        destroy_dynamic_allocation(string.p_cstring);
-        return EMPTY_STRING;
-    }
-    string.p_cstring[length] = '\0';
-    return string;
-}
-
-void destroy_string(string_t* p_string) {
-    destroy_dynamic_allocation(p_string->p_cstring);
-    p_string->p_cstring = nullptr;
-    p_string->length = 0;
-}
-
-string_t clone_string(const string_t* p_string) {
-    if (p_string == nullptr || p_string->p_cstring == nullptr) {
-        return EMPTY_STRING;
-    }
-    allocated_memory_result_t result = create_dynamic_allocation(p_string->length + 1);
-    if (result.error_message != NO_ERROR_MESSAGE) {
-        ERROR("Failed to clone string '%s': %s", p_string->p_cstring, result.error_message);
-        return EMPTY_STRING;
-    }
-    string_t string = {
-        .p_cstring = (char*)result.p_data,
-        .length = p_string->length,
-    };
-    if (strncpy(string.p_cstring, p_string->p_cstring, p_string->length) == nullptr) {
-        ERROR("Failed to clone string '%s': strncpy failed", p_string->p_cstring);
-        destroy_dynamic_allocation(string.p_cstring);
-        return EMPTY_STRING;
-    }
-    string.p_cstring[string.length] = '\0';
-    return string;
-}
-
-void copy_string(string_t* p_string, const string_t* p_source) {
-    if (p_source == nullptr || p_source->p_cstring == nullptr) {
-        return;
-    }
-    destroy_string(p_string);
-    *p_string = clone_string(p_source);
-}
-
-void append_string(string_t* p_string, const char* p_appending, usize count) {
-}
-
-usize find_string_substring(const string_t* p_string, const char* p_substring) {
-    return 0;
-}
-
-usize find_last_string_substring(const string_t* p_string, const char* p_substring) {
-    return 0;
-}
-
-bool compare_strings(const string_t* p_string1, const string_t* p_string2) {
-    return false;
-}
-
-bool has_string_prefix(const string_t* p_string, const char* p_prefix) {
-    return false;
-}
-
-bool has_string_suffix(const string_t* p_string, const char* p_suffix) {
-    return false;
-}
+// string_t create_string(const char* p_format, ...) {
+//     char buffer[MAX_COPY_TMP_BUFFER_SIZE];
+//     va_list args;
+//     va_start(args, p_format);
+//     i32 error = vsnprintf(buffer, MAX_COPY_TMP_BUFFER_SIZE, p_format, args);
+//     if (error < 0) {
+//         ERROR("Failed to create string using format '%s': vsnprintf error result %d", p_format,
+//               error);
+//         return EMPTY_STRING;
+//     }
+//     va_end(args);
+//     usize length = strlen(buffer);
+//     allocated_memory_result_t result = createDynamicAllocation(length + 1);
+//     if (result.error_message != NO_ERROR_MESSAGE) {
+//         ERROR("Failed to create string using format '%s': %s", p_format, result.error_message);
+//         return EMPTY_STRING;
+//     }
+//     string_t string = {
+//         .p_cstring = (char*)result.p_data,
+//         .length = length,
+//     };
+//     if (strncpy(string.p_cstring, buffer, length) == nullptr) {
+//         ERROR("Failed to create string using format '%s': Failed to copy buffer string into heap "
+//               "allocated string using strncpy",
+//               p_format);
+//         destroyHeapAllocation(string.p_cstring);
+//         return EMPTY_STRING;
+//     }
+//     string.p_cstring[length] = '\0';
+//     return string;
+// }
+//
+// void destroy_string(string_t* p_string) {
+//     destroyHeapAllocation(p_string->p_cstring);
+//     p_string->p_cstring = nullptr;
+//     p_string->length = 0;
+// }
+//
+// string_t clone_string(const string_t* p_string) {
+//     if (p_string == nullptr || p_string->p_cstring == nullptr) {
+//         return EMPTY_STRING;
+//     }
+//     allocated_memory_result_t result = createDynamicAllocation(p_string->length + 1);
+//     if (result.error_message != NO_ERROR_MESSAGE) {
+//         ERROR("Failed to clone string '%s': %s", p_string->p_cstring, result.error_message);
+//         return EMPTY_STRING;
+//     }
+//     string_t string = {
+//         .p_cstring = (char*)result.p_data,
+//         .length = p_string->length,
+//     };
+//     if (strncpy(string.p_cstring, p_string->p_cstring, p_string->length) == nullptr) {
+//         ERROR("Failed to clone string '%s': strncpy failed", p_string->p_cstring);
+//         destroyHeapAllocation(string.p_cstring);
+//         return EMPTY_STRING;
+//     }
+//     string.p_cstring[string.length] = '\0';
+//     return string;
+// }
+//
+// void copy_string(string_t* p_string, const string_t* p_source) {
+//     if (p_source == nullptr || p_source->p_cstring == nullptr) {
+//         return;
+//     }
+//     destroy_string(p_string);
+//     *p_string = clone_string(p_source);
+// }
+//
+// void append_string(string_t* p_string, const char* p_appending, usize count) {
+// }
+//
+// usize find_string_substring(const string_t* p_string, const char* p_substring) {
+//     return 0;
+// }
+//
+// usize find_last_string_substring(const string_t* p_string, const char* p_substring) {
+//     return 0;
+// }
+//
+// bool compare_strings(const string_t* p_string1, const string_t* p_string2) {
+//     return false;
+// }
+//
+// bool has_string_prefix(const string_t* p_string, const char* p_prefix) {
+//     return false;
+// }
+//
+// bool has_string_suffix(const string_t* p_string, const char* p_suffix) {
+//     return false;
+// }
 
 // usize get_string_length(const string_t* p_string) {
 //     return get_dynamic_allocation_size(p_string->p_cstring) - 1;

@@ -23,48 +23,48 @@
 #include "kryos-tools/containers/array_list.hpp"
 #include "kryos-tools/defines.hpp"
 
-#ifdef RENDERER_USE_OPENGL_BACKEND
-    #include "kryos-renderer/opengl/data_types.hpp"
-    #include "kryos-renderer/opengl/renderer.hpp"
-#endif
-
-typedef struct mesh {
-    ARRAY_LIST(vertex_t) vertices;
-    ARRAY_LIST(u32) indices;
-    material_t* material;
-} mesh_t;
-
-typedef struct model {
-    u64 uuid;
-    const char* name;
-    ARRAY_LIST(mesh_t) meshes;
-} model_t;
-
-typedef struct prefab {
-    u64 uuid;
-    const char* name;
-    ARRAY_LIST(model_t) models;
-} prefab_t;
-
-typedef struct managed_shader {
-    shader_t* p_shader;
-} managed_shader_t;
-
-typedef struct asset_manager {
-    renderer_context_t* context;
-    ARRAY_LIST(material_t) p_materials;
-    ARRAY_LIST(mesh_t) p_static_meshes;
-} asset_manager_t;
-
-asset_manager_t create_asset_manager();
-void destroy_asset_manager(asset_manager_t* p_asset_manager);
-
-typedef struct shader_source_info {
-    char* p_filename;
-    u8* p_code;
-    usize code_size;
-    shader_type_t type;
-} shader_source_info_t;
+// #ifdef RENDERER_USE_OPENGL_BACKEND
+//     #include "kryos-renderer/opengl/data_types.hpp"
+//     #include "kryos-renderer/opengl/renderer.hpp"
+// #endif
+//
+// typedef struct mesh {
+//     ARRAY_LIST(vertex_t) vertices;
+//     ARRAY_LIST(u32) indices;
+//     material_t* material;
+// } mesh_t;
+//
+// typedef struct model {
+//     u64 uuid;
+//     const char* name;
+//     ARRAY_LIST(mesh_t) meshes;
+// } model_t;
+//
+// typedef struct prefab {
+//     u64 uuid;
+//     const char* name;
+//     ARRAY_LIST(model_t) models;
+// } prefab_t;
+//
+// typedef struct managed_shader {
+//     shader_t* p_shader;
+// } managed_shader_t;
+//
+// typedef struct asset_manager {
+//     renderer_context_t* context;
+//     ARRAY_LIST(material_t) p_materials;
+//     ARRAY_LIST(mesh_t) p_static_meshes;
+// } asset_manager_t;
+//
+// asset_manager_t create_asset_manager();
+// void destroy_asset_manager(asset_manager_t* p_asset_manager);
+//
+// typedef struct shader_source_info {
+//     char* p_filename;
+//     u8* p_code;
+//     usize code_size;
+//     shader_type_t type;
+// } shader_source_info_t;
 
 #ifdef KRYOS_EDITOR
 

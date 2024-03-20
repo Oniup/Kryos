@@ -47,6 +47,14 @@ struct KRYOS_API Result {
         };
     }
 
+    static Result copyOk(const T& data) {
+        return Result {
+            .data = data,
+            .status = Status::Ok,
+            .error_message = nullptr,
+        };
+    }
+
     static Result failed(T&& data, const char* error_message_format, ...) {
         va_list args;
         va_start(args, error_message_format);
@@ -59,7 +67,19 @@ struct KRYOS_API Result {
         return result;
     }
 
-    static Result fatalError(const char* error_message_format, ...) {
+    static Result copyFailed(const T& data, const char* error_message_format, ...) {
+        va_list args;
+        va_start(args, error_message_format);
+        Result result {
+            .data = data,
+            .status = Status::Failed,
+            .error_message = setErrorMessage(error_message_format, args),
+        };
+        va_end(args);
+        return result;
+    }
+
+    static Result fatal(const char* error_message_format, ...) {
         va_list args;
         va_start(args, error_message_format);
         Result result {

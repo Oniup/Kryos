@@ -20,55 +20,55 @@
 #ifndef KRYOS__RENDERER__OPENGL_DATA_TYPES_HPP
 #define KRYOS__RENDERER__OPENGL_DATA_TYPES_HPP
 #ifdef RENDERER_USE_OPENGL_BACKEND
-
-    #include "kryos-tools/containers/array_list.hpp"
-    #include "kryos-tools/defines.hpp"
-    #include <glm/glm.hpp>
-
-typedef enum shader_type {
-    SHADER_TYPE_VERTEX,
-    SHADER_TYPE_FRAGMENTED,
-    SHADER_TYPE_GEOMETRY,
-    SHADER_TYPE_COMPUTE,
-} shader_type_t;
-
-typedef struct shader {
-    u64 uuid;
-    char* p_name;
-    struct {
-        u32 program_id;
-    } gl;
-} shader_t;
-
-shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
-                       usize count);
-void destroy_shader(shader_t* p_shader);
-
-typedef struct texture {
-    u64 uuid;
-    char* p_name;
-    i32 width;
-    i32 height;
-    i32 channels;
-} texture_t;
-
-typedef struct texture_image_data {
-    texture_t texture;
-    u8* p_image_data;
-} textexture_iamge_datature_image_data_t;
-
-typedef struct material {
-    u64 uuid;
-    char* p_name;
-    ARRAY_LIST(texture_t*) textures;
-} material_t;
-
-typedef struct vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec4 color_tint;
-    glm::vec2 uv;
-} vertex_t;
+//
+//     #include "kryos-tools/containers/array_list.hpp"
+//     #include "kryos-tools/defines.hpp"
+//     #include <glm/glm.hpp>
+//
+// typedef enum shader_type {
+//     SHADER_TYPE_VERTEX,
+//     SHADER_TYPE_FRAGMENTED,
+//     SHADER_TYPE_GEOMETRY,
+//     SHADER_TYPE_COMPUTE,
+// } shader_type_t;
+//
+// typedef struct shader {
+//     u64 uuid;
+//     char* p_name;
+//     struct {
+//         u32 program_id;
+//     } gl;
+// } shader_t;
+//
+// shader_t create_shader(const char* name, const u8* pp_sources[], const shader_type_t* p_types,
+//                        usize count);
+// void destroy_shader(shader_t* p_shader);
+//
+// typedef struct texture {
+//     u64 uuid;
+//     char* p_name;
+//     i32 width;
+//     i32 height;
+//     i32 channels;
+// } texture_t;
+//
+// typedef struct texture_image_data {
+//     texture_t texture;
+//     u8* p_image_data;
+// } textexture_iamge_datature_image_data_t;
+//
+// typedef struct material {
+//     u64 uuid;
+//     char* p_name;
+//     ARRAY_LIST(texture_t*) textures;
+// } material_t;
+//
+// typedef struct vertex {
+//     glm::vec3 position;
+//     glm::vec3 normal;
+//     glm::vec4 color_tint;
+//     glm::vec2 uv;
+// } vertex_t;
 
 #endif
 #endif

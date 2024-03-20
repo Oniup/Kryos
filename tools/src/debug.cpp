@@ -80,24 +80,18 @@ void DebugLogger::printLogMessage(DebugLogLevel::Flag level, const char* filenam
                                   const char* expression, const char* format, ...) {
     va_list args;
     va_start(args, format);
-    getInstance().implPrintLogMessage(level, filename, line, expression, format, args);
+    getInstance().logMessageToTargetArgs(DebugOutTarget::File, level, filename, line, expression,
+                                         format, args);
     va_end(args);
-}
-
-void DebugLogger::implPrintLogMessage(DebugLogLevel::Flag level, const char* filename, i32 line,
-                                      const char* expression, const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    logMessageToTargetArgs(DebugOutTarget::File, level, filename, line, expression, format, args);
     if (level > DebugLogLevel::WarnFlag) {
         va_start(args, format);
-        logMessageToTargetArgs(DebugOutTarget::StdError, level, filename, line, expression, format,
-                               args);
+        getInstance().logMessageToTargetArgs(DebugOutTarget::StdError, level, filename, line,
+                                             expression, format, args);
         va_end(args);
     } else {
         va_start(args, format);
-        logMessageToTargetArgs(DebugOutTarget::StdOut, level, filename, line, expression, format,
-                               args);
+        getInstance().logMessageToTargetArgs(DebugOutTarget::StdOut, level, filename, line,
+                                             expression, format, args);
         va_end(args);
     }
 }
@@ -116,14 +110,15 @@ void DebugLogger::logMessageToTargetArgs(DebugOutTarget::Type out, DebugLogLevel
             break;
         case DebugOutTarget::File:
             {
-                FILE* stream = fopen(io.filename, "a");
+                FILE* stream = std::fopen(io.filename, "a");
                 if (stream != nullptr) {
                     messageFormat(stream, level, io.terminal_ansi_color, filename, line, expression,
                                   format, args);
-                    fclose(stream);
+                    std::fclose(stream);
                 } else {
-                    fprintf(stderr, "Failed to open debug log file with path \"%s\"", io.filename);
-                    fflush(stderr);
+                    std::fprintf(stderr, "Failed to open debug log file with path \"%s\"",
+                                 io.filename);
+                    std::fflush(stderr);
                     io.enable = false;
                 }
             }
@@ -131,62 +126,64 @@ void DebugLogger::logMessageToTargetArgs(DebugOutTarget::Type out, DebugLogLevel
     }
 }
 
-void DebugLogger::messageFormat(FILE* out, DebugLogLevel::Flag level, bool ansi_color,
+void DebugLogger::messageFormat(std::FILE* out, DebugLogLevel::Flag level, bool ansi_color,
                                 const char* filename, i32 line, const char* expression,
                                 const char* format, va_list args) {
     ansiColorPrefix(ansi_color, out, level);
-    fprintf(out, "%s ", DebugLogLevel::asCString(level));
+    std::fprintf(out, "%s ", DebugLogLevel::asCString(level));
     messageBasedOnCondition(enable.file && filename != nullptr, out, "File: %s, ", filename);
     messageBasedOnCondition(enable.line && line != -1, out, "Line: %d, ", line);
-    messageBasedOnCondition(enable.expression && expression != nullptr, out, "expr: %s, ", expression);
+    messageBasedOnCondition(enable.expression && expression != nullptr, out, "expr: %s, ",
+                            expression);
     if (format != nullptr) {
-        fprintf(out, "Msg: ");
-        vfprintf(out, format, args);
+        std::fprintf(out, "Msg: ");
+        std::vfprintf(out, format, args);
     }
     messageBasedOnCondition(ansi_color, out, "%s", DEBUG_ANSI_RESET);
-    fprintf(out, "\n");
-    fflush(out);
+    std::fprintf(out, "\n");
+    std::fflush(out);
 }
 
-void DebugLogger::ansiColorPrefix(bool ansi_color, FILE* out, DebugLogLevel::Flag level) {
+void DebugLogger::ansiColorPrefix(bool ansi_color, std::FILE* out, DebugLogLevel::Flag level) {
     if (ansi_color) {
         switch (level) {
             case DebugLogLevel::NoneFlag:
                 break;
             case DebugLogLevel::TraceFlag:
-                fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_BLUE);
+                std::fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_BLUE);
                 break;
             case DebugLogLevel::InfoFlag:
-                fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_GREEN);
+                std::fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_GREEN);
                 break;
             case DebugLogLevel::DebugFlag:
-                fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_MAGENTA);
+                std::fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_MAGENTA);
                 break;
             case DebugLogLevel::WarnFlag:
-                fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_YELLOW);
+                std::fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_YELLOW);
                 break;
             case DebugLogLevel::ErrorFlag:
-                fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_RED);
+                std::fprintf(out, "%s%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_RED);
                 break;
             case DebugLogLevel::FatalFlag:
-                fprintf(out, "%s%s;%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_BLACK, DEBUG_ANSI_BG_RED);
+                std::fprintf(out, "%s%s;%sm", DEBUG_ANSI_PREFIX, DEBUG_ANSI_FG_BLACK,
+                             DEBUG_ANSI_BG_RED);
                 break;
         }
     }
 }
 
-void DebugLogger::messageBasedOnCondition(bool condition, FILE* out, const char* format, ...) {
+void DebugLogger::messageBasedOnCondition(bool condition, std::FILE* out, const char* format, ...) {
     if (condition) {
         va_list args;
         va_start(args, format);
-        vfprintf(out, format, args);
+        std::vfprintf(out, format, args);
         va_end(args);
     }
 }
 
-void DebugLogger::messageWithConditionalMessageArgs(bool condition, FILE* out, const char* format,
-                                                    va_list args) {
+void DebugLogger::messageWithConditionalMessageArgs(bool condition, std::FILE* out,
+                                                    const char* format, va_list args) {
     if (condition) {
-        vfprintf(out, format, args);
+        std::vfprintf(out, format, args);
     }
 }
