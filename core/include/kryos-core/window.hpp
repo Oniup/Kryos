@@ -22,7 +22,7 @@
 
 #include "kryos-tools/containers/array_list.hpp"
 #include "kryos-tools/defines.hpp"
-#include <cglm/cglm.h>
+#include <glm/glm.hpp>
 
 static bool _kint_glfw_init = false;
 static bool _kint_glad_init = false;
@@ -73,7 +73,7 @@ void update_window_handles_frames(window_manager_t* p_manager);
 void set_window_handle_title(window_handle_t* handle, const char* title);
 
 const char* get_window_handle_title(window_handle_t* handle);
-void get_window_handle_size(window_handle_t* handle, ivec2 size);
+void get_window_handle_size(window_handle_t* handle, glm::ivec2 size);
 
 /**
  * @brief Retrieves the size of the frame of the window. This function retrieves the size, in screen
@@ -86,6 +86,6 @@ void get_window_handle_size(window_handle_t* handle, ivec2 size);
  * @param[in] handle The window whose frame size to query.
  * @param[out] size Index 1 is the left, 2: top, 3: left, 4: bottom coordinates
  */
-void get_window_handle_frame_size(window_handle_t* handle, ivec4 size);
+void get_window_handle_frame_size(window_handle_t* handle, glm::ivec4 size);
 
 #endif

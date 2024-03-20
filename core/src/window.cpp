@@ -38,8 +38,8 @@
 //         INFO("created window %s", p_handles_options[i].title);
 //         window_handle_t* handle = add_window_handle(&manager, p_handles_options[i]);
 //         if (handle == nullptr && handle->p_instance == nullptr) {
-//             ERROR("Failed to create window handle %s for index %zu", p_handles_options[i].title, i);
-//             continue;
+//             ERROR("Failed to create window handle %s for index %zu", p_handles_options[i].title,
+//             i); continue;
 //         }
 //     }
 //     return manager;

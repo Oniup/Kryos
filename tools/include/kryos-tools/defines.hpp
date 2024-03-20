@@ -20,10 +20,35 @@
 #ifndef KRYOS__TOOLS__DEFINES_HPP
 #define KRYOS__TOOLS__DEFINES_HPP
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+    #ifdef KRYOS_WIN_EXPORT
+        #ifdef __GNUC__
+            #define KRYOS_API __attribute__((dllexport))
+        #else
+            #define KRYOS_API __declspec(dllexport)
+        #endif
+    #else
+        #ifdef __GNUC__
+            #define KRYOS_API __attribute__((dllimport))
+        #else
+            #define KRYOS_API __declspec(dllimport)
+        #endif
+    #endif
+    #define NOT_KRYOS_API
+#else
+    #if __GNUC__ >= 4
+        #define KRYOS_API __attribute__((visibility("default")))
+        #define NOT_KRYOS_API __attribute__((visibility("hidden")))
+    #else
+        #define KRYOS_API
+        #define NOT_KRYOS_API
+    #endif
+#endif
+
 #include <cstdint>
 #include <cstdio>
 
-#define NO_ERROR_MESSAGE NULL
+#define NO_ERROR_MESSAGE nullptr
 
 #define KRYOS_VERSION_MAJOR 0u
 #define KRYOS_VERSION_MINOR 0u

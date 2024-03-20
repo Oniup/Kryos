@@ -21,6 +21,7 @@
 #define KRYOS__TOOLS__DEBUG_HPP
 
 #include "kryos-tools/defines.hpp"
+#include <cstdlib>
 
 #define DEBUG_ANSI_PREFIX "\x1b["
 #define DEBUG_ANSI_SUFIX "m"
@@ -97,7 +98,7 @@
         if (!(expr)) {                                                                        \
             DebugLogger::printLogMessage(DebugLogLevel::FatalFlag, __FILE__, __LINE__, #expr, \
                                          __VA_ARGS__);                                        \
-            abort();                                                                          \
+            std::abort();                                                                     \
         }                                                                                     \
     })
 
@@ -108,7 +109,7 @@
     #define DEBUG_DEBUG_ASSERT(expr, ...)
 #endif
 
-struct DebugLogLevel {
+struct KRYOS_API DebugLogLevel {
     using Value = i32;
 
     enum Flag {
@@ -124,7 +125,7 @@ struct DebugLogLevel {
     static const char* asCString(DebugLogLevel::Flag level);
 };
 
-struct DebugOutTarget {
+struct KRYOS_API DebugOutTarget {
     enum Type {
         StdOut,
         StdError,
@@ -134,7 +135,7 @@ struct DebugOutTarget {
     static const char* asCString(DebugOutTarget::Type target);
 };
 
-struct DebugLogger {
+struct KRYOS_API DebugLogger {
     DebugLogLevel::Value enable_level;
     struct {
         bool expression;

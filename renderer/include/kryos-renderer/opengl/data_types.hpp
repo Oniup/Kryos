@@ -23,7 +23,7 @@
 
     #include "kryos-tools/containers/array_list.hpp"
     #include "kryos-tools/defines.hpp"
-    #include <cglm/cglm.h>
+    #include <glm/glm.hpp>
 
 typedef enum shader_type {
     SHADER_TYPE_VERTEX,
@@ -64,10 +64,10 @@ typedef struct material {
 } material_t;
 
 typedef struct vertex {
-    vec3 position;
-    vec3 normal;
-    vec4 color_tint;
-    vec2 uv;
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec4 color_tint;
+    glm::vec2 uv;
 } vertex_t;
 
 #endif
